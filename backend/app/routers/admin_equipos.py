@@ -1,0 +1,272 @@
+import math
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException
+from psycopg import Error as DatabaseError
+from psycopg.errors import CheckViolation, UniqueViolation
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl
+
+from ..auth import administrador_actual, administrador_escritura
+from ..db import connect
+
+
+router = APIRouter(prefix="/api/admin/equipos", tags=["administración: equipos"])
+
+
+class NuevoEquipo(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    id_equipo: str = Field(min_length=3, max_length=100, pattern="^[A-Z0-9-]+$")
+    marca: str = Field(min_length=1, max_length=120)
+    modelo: str = Field(min_length=1, max_length=120)
+    categoria: str = Field(min_length=1, max_length=80)
+    descripcion: str | None = None
+    anio_modelo: int | None = Field(default=None, ge=1900, le=2200)
+    imagen_url: HttpUrl | None = None
+    modelo_3d_url: HttpUrl | None = None
+    ficha_pdf_url: HttpUrl | None = None
+    web_url: HttpUrl | None = None
+    publicado: bool = True
+
+
+class CambiosEquipo(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    marca: str | None = Field(default=None, min_length=1, max_length=120)
+    modelo: str | None = Field(default=None, min_length=1, max_length=120)
+    categoria: str | None = Field(default=None, min_length=1, max_length=80)
+    descripcion: str | None = None
+    anio_modelo: int | None = Field(default=None, ge=1900, le=2200)
+    imagen_url: HttpUrl | None = None
+    modelo_3d_url: HttpUrl | None = None
+    ficha_pdf_url: HttpUrl | None = None
+    web_url: HttpUrl | None = None
+    publicado: bool | None = None
+
+
+class CambiosEspecificaciones(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    cambios: dict[str, Any] = Field(min_length=1)
+
+
+class RangoRadio(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    frecuencia_min_mhz: float = Field(ge=0)
+    frecuencia_max_mhz: float = Field(ge=0)
+
+
+BOOLEANOS = {
+    "tiene_imu", "tiene_camara", "sim_4g", "laser", "bateria_intercambiable",
+    "bateria_caliente", "gps", "glonass", "galileo", "beidou", "qzss",
+    "navic_irnss", "sbas",
+}
+ENTEROS = {"canales_gnss", "peso_max", "tiempo_inicializacion"}
+NUMERICOS = {
+    "memoria", "mp_camara", "autonomia_bateria", "rtk_horizontal_mm",
+    "rtk_vertical_mm", "rtk_ppm_h", "rtk_ppm_v", "static_horizontal_mm",
+    "static_vertical_mm", "static_ppm_h", "static_ppm_v", "largo_mm", "ancho_mm",
+    "alto_mm", "ppp_h_cm", "ppp_v_cm",
+}
+TEXTOS = {"radio_frecuencia"}
+EDITABLES = BOOLEANOS | ENTEROS | NUMERICOS | TEXTOS
+CONSTELACIONES = ("gps", "glonass", "galileo", "beidou", "qzss", "navic_irnss")
+
+
+def validar_especificaciones(cambios: dict[str, Any]):
+    desconocidos = set(cambios) - EDITABLES
+    if desconocidos:
+        raise HTTPException(status_code=422, detail={"campos_no_editables": sorted(desconocidos)})
+    for campo, valor in cambios.items():
+        if valor is None:
+            continue
+        if campo in BOOLEANOS and type(valor) is not bool:
+            raise HTTPException(status_code=422, detail=f"{campo} debe ser booleano o null.")
+        if campo in ENTEROS and (type(valor) is not int or valor < 0):
+            raise HTTPException(status_code=422, detail=f"{campo} debe ser entero no negativo o null.")
+        if campo in NUMERICOS and (type(valor) not in (int, float) or not math.isfinite(valor) or valor < 0):
+            raise HTTPException(status_code=422, detail=f"{campo} debe ser numérico no negativo o null.")
+        if campo in TEXTOS and (type(valor) is not str or len(valor) > 500):
+            raise HTTPException(status_code=422, detail=f"{campo} debe ser texto corto o null.")
+
+
+def validar_rango(datos: RangoRadio):
+    if datos.frecuencia_min_mhz > datos.frecuencia_max_mhz:
+        raise HTTPException(status_code=422, detail="La frecuencia mínima supera la máxima.")
+
+
+@router.get("")
+def listar_admin(_=Depends(administrador_actual)):
+    try:
+        with connect() as conn, conn.cursor() as cur:
+            cur.execute("SELECT * FROM equipos ORDER BY marca, modelo")
+            return cur.fetchall()
+    except DatabaseError as exc:
+        raise HTTPException(status_code=503, detail="No se pudo consultar los equipos.") from exc
+
+
+@router.get("/{id_equipo}")
+def detalle_admin(id_equipo: str, _=Depends(administrador_actual)):
+    try:
+        with connect() as conn, conn.cursor() as cur:
+            cur.execute("SELECT * FROM equipos WHERE id_equipo = %s", (id_equipo,))
+            equipo = cur.fetchone()
+            if equipo is None:
+                raise HTTPException(status_code=404, detail="Equipo no encontrado.")
+            cur.execute("SELECT * FROM base_evaluacion WHERE id_equipo = %s", (id_equipo,))
+            evaluacion = cur.fetchone()
+            cur.execute(
+                """
+                SELECT id, frecuencia_min_mhz, frecuencia_max_mhz
+                FROM equipo_radio_frecuencia WHERE id_equipo = %s ORDER BY id
+                """,
+                (id_equipo,),
+            )
+            return {"equipo": equipo, "evaluacion": evaluacion, "radio_frecuencias": cur.fetchall()}
+    except DatabaseError as exc:
+        raise HTTPException(status_code=503, detail="No se pudo consultar el equipo.") from exc
+
+
+@router.post("", status_code=201)
+def crear_equipo(datos: NuevoEquipo, _=Depends(administrador_escritura)):
+    valores = datos.model_dump(mode="json")
+    columnas = list(valores)
+    try:
+        with connect() as conn, conn.cursor() as cur:
+            cur.execute(
+                f"INSERT INTO equipos ({', '.join(columnas)}) VALUES ({', '.join(['%s'] * len(columnas))}) RETURNING *",
+                list(valores.values()),
+            )
+            return cur.fetchone()
+    except UniqueViolation as exc:
+        raise HTTPException(status_code=409, detail="Ya existe un equipo con ese ID.") from exc
+    except DatabaseError as exc:
+        raise HTTPException(status_code=503, detail="No se pudo crear el equipo.") from exc
+
+
+@router.patch("/{id_equipo}")
+def editar_equipo(id_equipo: str, datos: CambiosEquipo, _=Depends(administrador_escritura)):
+    cambios = datos.model_dump(mode="json", exclude_unset=True)
+    if not cambios:
+        raise HTTPException(status_code=422, detail="Indica al menos un campo para editar.")
+    if any(cambios.get(campo) is None for campo in ("marca", "modelo", "categoria", "publicado") if campo in cambios):
+        raise HTTPException(status_code=422, detail="Marca, modelo, categoría y publicado no pueden ser null.")
+    try:
+        with connect() as conn, conn.cursor() as cur:
+            cur.execute(
+                f"UPDATE equipos SET {', '.join(f'{campo} = %s' for campo in cambios)} WHERE id_equipo = %s RETURNING *",
+                [*cambios.values(), id_equipo],
+            )
+            actualizado = cur.fetchone()
+            if actualizado is None:
+                raise HTTPException(status_code=404, detail="Equipo no encontrado.")
+            return actualizado
+    except DatabaseError as exc:
+        raise HTTPException(status_code=503, detail="No se pudo editar el equipo.") from exc
+
+
+@router.put("/{id_equipo}")
+def reemplazar_datos_equipo(id_equipo: str, datos: CambiosEquipo, _=Depends(administrador_escritura)):
+    return editar_equipo(id_equipo, datos, _)
+
+
+@router.delete("/{id_equipo}")
+def eliminar_equipo(id_equipo: str, _=Depends(administrador_escritura)):
+    try:
+        with connect() as conn, conn.cursor() as cur:
+            cur.execute("DELETE FROM equipos WHERE id_equipo = %s RETURNING id_equipo", (id_equipo,))
+            eliminado = cur.fetchone()
+            if eliminado is None:
+                raise HTTPException(status_code=404, detail="Equipo no encontrado.")
+            return {"id_equipo": eliminado["id_equipo"], "eliminado": True}
+    except DatabaseError as exc:
+        raise HTTPException(status_code=503, detail="No se pudo eliminar el equipo.") from exc
+
+
+@router.patch("/{id_equipo}/especificaciones")
+def editar_especificaciones(id_equipo: str, datos: CambiosEspecificaciones, _=Depends(administrador_escritura)):
+    cambios = dict(datos.cambios)
+    validar_especificaciones(cambios)
+    try:
+        with connect() as conn, conn.cursor() as cur:
+            cur.execute("SELECT id_equipo FROM equipos WHERE id_equipo = %s FOR UPDATE", (id_equipo,))
+            if cur.fetchone() is None:
+                raise HTTPException(status_code=404, detail="Equipo no encontrado.")
+            cur.execute(
+                "INSERT INTO base_evaluacion (id_equipo) VALUES (%s) ON CONFLICT (id_equipo) DO NOTHING",
+                (id_equipo,),
+            )
+            cur.execute("SELECT * FROM base_evaluacion WHERE id_equipo = %s FOR UPDATE", (id_equipo,))
+            actuales = cur.fetchone()
+            if any(campo in cambios for campo in CONSTELACIONES):
+                cambios["constelaciones"] = sum(
+                    (cambios.get(campo, actuales[campo]) is True) for campo in CONSTELACIONES
+                )
+            if "ppp_h_cm" in cambios or "ppp_v_cm" in cambios:
+                cambios["tiene_ppp"] = (
+                    cambios.get("ppp_h_cm", actuales["ppp_h_cm"]) is not None
+                    or cambios.get("ppp_v_cm", actuales["ppp_v_cm"]) is not None
+                )
+            cur.execute(
+                f"UPDATE base_evaluacion SET {', '.join(f'{campo} = %s' for campo in cambios)} WHERE id_equipo = %s RETURNING *",
+                [*cambios.values(), id_equipo],
+            )
+            return cur.fetchone()
+    except CheckViolation as exc:
+        raise HTTPException(status_code=422, detail="Una especificación no cumple las restricciones de la tabla.") from exc
+    except DatabaseError as exc:
+        raise HTTPException(status_code=503, detail="No se pudo editar las especificaciones.") from exc
+
+
+@router.post("/{id_equipo}/radio", status_code=201)
+def agregar_radio(id_equipo: str, datos: RangoRadio, _=Depends(administrador_escritura)):
+    validar_rango(datos)
+    try:
+        with connect() as conn, conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO equipo_radio_frecuencia (id_equipo, frecuencia_min_mhz, frecuencia_max_mhz)
+                VALUES (%s, %s, %s) RETURNING *
+                """,
+                (id_equipo, datos.frecuencia_min_mhz, datos.frecuencia_max_mhz),
+            )
+            return cur.fetchone()
+    except UniqueViolation as exc:
+        raise HTTPException(status_code=409, detail="Ese rango ya está registrado.") from exc
+    except DatabaseError as exc:
+        raise HTTPException(status_code=503, detail="No se pudo agregar la radio.") from exc
+
+
+@router.put("/{id_equipo}/radio/{radio_id}")
+def editar_radio(id_equipo: str, radio_id: int, datos: RangoRadio, _=Depends(administrador_escritura)):
+    validar_rango(datos)
+    try:
+        with connect() as conn, conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE equipo_radio_frecuencia
+                SET frecuencia_min_mhz = %s, frecuencia_max_mhz = %s
+                WHERE id = %s AND id_equipo = %s RETURNING *
+                """,
+                (datos.frecuencia_min_mhz, datos.frecuencia_max_mhz, radio_id, id_equipo),
+            )
+            actualizado = cur.fetchone()
+            if actualizado is None:
+                raise HTTPException(status_code=404, detail="Rango no encontrado.")
+            return actualizado
+    except UniqueViolation as exc:
+        raise HTTPException(status_code=409, detail="Ese rango ya está registrado.") from exc
+    except DatabaseError as exc:
+        raise HTTPException(status_code=503, detail="No se pudo editar la radio.") from exc
+
+
+@router.delete("/{id_equipo}/radio/{radio_id}")
+def eliminar_radio(id_equipo: str, radio_id: int, _=Depends(administrador_escritura)):
+    try:
+        with connect() as conn, conn.cursor() as cur:
+            cur.execute(
+                "DELETE FROM equipo_radio_frecuencia WHERE id = %s AND id_equipo = %s RETURNING id",
+                (radio_id, id_equipo),
+            )
+            if cur.fetchone() is None:
+                raise HTTPException(status_code=404, detail="Rango no encontrado.")
+            return {"radio_id": radio_id, "eliminado": True}
+    except DatabaseError as exc:
+        raise HTTPException(status_code=503, detail="No se pudo eliminar la radio.") from exc

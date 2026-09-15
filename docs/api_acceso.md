@@ -4,11 +4,11 @@ Los endpoints de lectura del catálogo y de recomendación son públicos: sirven
 la interfaz sin cuenta. La lista `/api/equipos` y el detalle `/api/equipos/{id_equipo}` exponen
 solo equipos con `publicado = TRUE`.
 
-Cuando se implementen, los endpoints para crear, editar, ocultar o borrar equipos, cambiar
-pesos y administrar correos de recuperación requerirán autenticación de administrador y
-verificación de permisos en el backend en cada petición. No basta con ocultar botones en React.
-La recuperación de contraseña tendrá una ruta pública para solicitarla, con respuestas que no
-revelen si una dirección existe y controles de abuso.
+Los endpoints para crear, editar, ocultar o borrar equipos, cambiar pesos y administrar correos
+de recuperación requieren una sesión de administrador y `X-CSRF-Token` para cada escritura.
+No basta con ocultar botones en React. El login, la solicitud de recuperación y la confirmación
+por token son públicos; la solicitud de recuperación responde sin revelar si una dirección existe.
 
-Todavía no hay endpoints de escritura ni login de administrador; por eso no hay operaciones de
-modificación expuestas sin protección.
+El proveedor de correo todavía no está conectado: los envíos devuelven 503 y las direcciones
+nuevas permanecen sin verificar hasta confirmar un enlace real. La cuenta inicial se crea desde
+terminal, sin endpoint público de registro.
