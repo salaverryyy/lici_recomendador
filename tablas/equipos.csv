@@ -1,0 +1,23 @@
+ID_Equipo;Marca;Modelo;Categoria;Descripcion;Año_Modelo;Imagen_URL;Modelo_3D_URL;Ficha_PDF_URL;Web_URL;Publicado
+GNSS-SOUTH-G1;South;Galaxy G1;GNSS;Receptor GNSS RTK compacto para levantamientos topográficos;;;;;;TRUE
+GNSS-SOUTH-G6;South;Galaxy G6;GNSS;Receptor GNSS RTK profesional con alta precisión para aplicaciones topográficas;;;;;;TRUE
+GNSS-CHCNAV-I50;CHCNAV;i50;GNSS;Receptor GNSS RTK de 624 canales orientado a topografía e ingeniería;;;;;;TRUE
+GNSS-CHCNAV-I73;CHCNAV;i73;GNSS;Receptor GNSS RTK compacto con tecnología IMU para levantamientos eficientes;;;;;;TRUE
+GNSS-CHCNAV-I73PLUS;CHCNAV;i73+;GNSS;Receptor GNSS RTK multibanda con IMU para levantamientos rápidos;2022;;;;;TRUE
+GNSS-CHCNAV-I93;CHCNAV;i93;GNSS;Receptor GNSS RTK avanzado con IMU, cámaras duales y posicionamiento visual;;;;;;TRUE
+GNSS-TRIMBLE-R8S;Trimble;R8s;GNSS;Receptor GNSS RTK profesional Trimble para levantamientos topográficos;2017;;;;;TRUE
+GNSS-TRIMBLE-R12I;Trimble;R12i;GNSS;Receptor GNSS RTK Trimble de alta precisión con tecnología avanzada de posicionamiento;;;;;;TRUE
+GNSS-LEICA-GS16;Leica;GS16;GNSS;Antena inteligente GNSS Leica para aplicaciones profesionales de topografía;2016;;;;;TRUE
+GNSS-LEICA-GS18;Leica;GS18;GNSS;Antena inteligente GNSS Leica con tecnología RTK avanzada;;;;;;TRUE
+GNSS-LEICA-GS18T;Leica;GS18 T;GNSS;Receptor GNSS RTK Leica con compensación de inclinación y alta precisión;2025;;;;;TRUE
+GNSS-EMLID-RS2;Emlid;Reach RS2;GNSS;Receptor GNSS RTK compacto con LoRa, 3.5G y almacenamiento interno;;;;;;TRUE
+GNSS-EMLID-RS2PLUS;Emlid;Reach RS2+;GNSS;Receptor GNSS RTK compacto con LTE, LoRa y conectividad avanzada;;;;;;TRUE
+GNSS-EMLID-RS3;Emlid;Reach RS3;GNSS;Receptor GNSS RTK compacto con IMU de alta precisión y radio dual;;;;;;TRUE
+GNSS-SINGULARXYZ-X1;SingularXYZ;X1;GNSS;Receptor GNSS RTK multibanda con IMU para levantamientos topográficos eficientes;;;;;;TRUE
+GNSS-SINGULARXYZ-X1-LITE;SingularXYZ;X1 Lite;GNSS;Receptor GNSS RTK compacto con IMU para levantamientos eficientes;;;;;;TRUE
+GNSS-SINGULARXYZ-ORION-ONE;SingularXYZ;Orion ONE-Laser;GNSS;Receptor GNSS RTK compacto con láser e IMU para levantamientos sin contacto;2025;;;;;TRUE
+GNSS-SINGULARXYZ-Z1;SingularXYZ;Z1;GNSS;Receptor GNSS RTK compacto con IMU para medición inclinada y levantamientos eficientes;2025;;;;;TRUE
+GNSS-SINOGNSS-MARS-PRO;SinoGNSS;Mars Pro Laser RTK;GNSS;Receptor GNSS RTK avanzado con IMU y láser integrado para levantamientos eficientes;;;;;;TRUE
+GNSS-SINOGNSS-T300PLUS;SinoGNSS;T300+;GNSS;Receptor GNSS RTK multibanda con IMU sin calibración para levantamientos topográficos eficientes;2025;;;;;TRUE
+GNSS-SINOGNSS-JUPITER;SinoGNSS;Jupiter Laser RTK;GNSS;Receptor GNSS RTK avanzado con IMU, cámaras duales y láser para posicionamiento visual;;;;;;TRUE
+GNSS-SINOGNSS-P6H;SinoGNSS;P6H Portátil;GNSS;Dispositivo GNSS portátil con Android, pantalla integrada y módulo GNSS de alta precisión para aplicaciones GIS;2025;;;;;TRUE
