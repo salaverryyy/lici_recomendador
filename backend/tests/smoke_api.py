@@ -50,6 +50,29 @@ def main():
             datos_equipo = {"id_equipo": ID_EQUIPO, "marca": "Codex", "modelo": "Prueba", "categoria": "GNSS"}
             comprobar(client.post("/api/admin/equipos", json=datos_equipo), 403)
             comprobar(client.post("/api/admin/equipos", json=datos_equipo, headers=headers), 201)
+            comprobar(client.post("/api/admin/equipos", json=datos_equipo, headers=headers), 409)
+            comprobar(client.get("/api/admin/sesion"), 200)
+            comprobar(client.get("/api/admin/equipos"), 200)
+            comprobar(client.get("/api/equipos/opciones"), 200)
+            comprobar(client.get("/api/comparar/columnas"), 200)
+            comprobar(client.get("/api/equipos", params={"q": "Leica", "orden": "peso_asc"}), 200)
+            comprobar(client.get("/api/equipos", params={"orden": "invalido"}), 422)
+            comprobar(client.get("/api/comparar", params={"ids": ID_EQUIPO}), 422)
+            comprobar(client.post("/api/recomendar", json={}), 422)
+            comprobar(client.post("/api/recomendar", json={"necesita_imu": False}), 422)
+            comprobar(client.post("/api/recomendar", json={"constelaciones_min": 7}), 422)
+            comprobar(client.post("/api/recomendar", json={"radio_min_mhz": 450}), 422)
+            comprobar(client.patch(
+                f"/api/admin/equipos/{ID_EQUIPO}/especificaciones",
+                json={"cambios": {"peso_max": -1}}, headers=headers,
+            ), 422)
+            comprobar(client.patch(
+                f"/api/admin/equipos/{ID_EQUIPO}/especificaciones",
+                json={"cambios": {"tiene_imu": "Sí"}}, headers=headers,
+            ), 422)
+            comprobar(client.put(
+                f"/api/admin/equipos/{ID_EQUIPO}", json={"descripcion": "Ficha temporal"}, headers=headers,
+            ), 200)
 
             evaluar = comprobar(client.patch(
                 f"/api/admin/equipos/{ID_EQUIPO}/especificaciones",
@@ -62,6 +85,22 @@ def main():
                 json={"frecuencia_min_mhz": 868, "frecuencia_max_mhz": 868}, headers=headers,
             ), 201)
             assert rango["id_equipo"] == ID_EQUIPO
+            comprobar(client.post(
+                f"/api/admin/equipos/{ID_EQUIPO}/radio",
+                json={"frecuencia_min_mhz": 868, "frecuencia_max_mhz": 868}, headers=headers,
+            ), 409)
+            comprobar(client.post(
+                "/api/admin/equipos/GNSS-INEXISTENTE-TEST/radio",
+                json={"frecuencia_min_mhz": 450, "frecuencia_max_mhz": 460}, headers=headers,
+            ), 404)
+            comprobar(client.put(
+                f"/api/admin/equipos/{ID_EQUIPO}/radio/{rango['id']}",
+                json={"frecuencia_min_mhz": 900, "frecuencia_max_mhz": 890}, headers=headers,
+            ), 422)
+            comprobar(client.put(
+                f"/api/admin/equipos/{ID_EQUIPO}/radio/{rango['id']}",
+                json={"frecuencia_min_mhz": 868, "frecuencia_max_mhz": 868}, headers=headers,
+            ), 200)
 
             comparar = comprobar(client.get(
                 "/api/comparar", params={"ids": f"{ID_EQUIPO},GNSS-LEICA-GS18T", "columnas": "tiene_imu,radio_rangos"}
@@ -85,6 +124,14 @@ def main():
             ), 200)
             criterios = comprobar(client.get("/api/recomendador/criterios"), 200)
             assert next(item for item in criterios["criterios"] if item["clave"] == "tiene_imu")["peso"] == 7
+            comprobar(client.get("/api/admin/reglas"), 200)
+            comprobar(client.put("/api/admin/reglas", json=[
+                {"criterio": "tiene_imu", "peso": 7, "activo": False}
+            ], headers=headers), 200)
+            comprobar(client.post("/api/recomendar", json={"necesita_imu": True}), 422)
+            comprobar(client.put("/api/admin/reglas", json=[
+                {"criterio": "tiene_imu", "peso": 7, "activo": True}
+            ], headers=headers), 200)
 
             correo = comprobar(client.post(
                 "/api/admin/correos", json={"email": f"extra-{USERNAME}@example.com", "contrasena_actual": PASSWORD},
@@ -92,6 +139,11 @@ def main():
             ), 201)
             assert correo["correo"]["verificado_en"] is None
             correo_extra_id = correo["correo"]["id"]
+            comprobar(client.get("/api/admin/correos"), 200)
+            comprobar(client.put(
+                f"/api/admin/correos/{correo_extra_id}/principal",
+                json={"contrasena_actual": PASSWORD}, headers=headers,
+            ), 404)
             token_verificacion = secrets.token_urlsafe(32)
             with connect() as conn, conn.cursor() as cur:
                 cur.execute(
@@ -114,6 +166,11 @@ def main():
             ), 200)
             comprobar(client.get(f"/api/equipos/{ID_EQUIPO}"), 404)
             comprobar(client.get(f"/api/admin/equipos/{ID_EQUIPO}"), 200)
+            comprobar(client.delete(
+                f"/api/admin/equipos/{ID_EQUIPO}/radio/{rango['id']}", headers=headers,
+            ), 200)
+            comprobar(client.delete(f"/api/admin/equipos/{ID_EQUIPO}", headers=headers), 200)
+            comprobar(client.get(f"/api/admin/equipos/{ID_EQUIPO}"), 404)
 
             token_reset = secrets.token_urlsafe(32)
             nueva_contrasena = secrets.token_urlsafe(24)
@@ -141,7 +198,17 @@ def main():
             login_nuevo = comprobar(client.post(
                 "/api/admin/login", json={"username": USERNAME, "password": nueva_contrasena},
             ), 200)
-            comprobar(client.post("/api/admin/logout", headers={"X-CSRF-Token": login_nuevo["csrf_token"]}), 200)
+            contrasena_final = secrets.token_urlsafe(24)
+            comprobar(client.put("/api/admin/contrasena", json={
+                "contrasena_actual": nueva_contrasena,
+                "nueva_contrasena": contrasena_final,
+                "confirmar_contrasena": contrasena_final,
+            }, headers={"X-CSRF-Token": login_nuevo["csrf_token"]}), 200)
+            comprobar(client.get("/api/admin/sesion"), 401)
+            login_final = comprobar(client.post("/api/admin/login", json={
+                "username": USERNAME, "password": contrasena_final,
+            }), 200)
+            comprobar(client.post("/api/admin/logout", headers={"X-CSRF-Token": login_final["csrf_token"]}), 200)
             comprobar(client.get("/api/admin/equipos"), 401)
         print("Prueba integrada completa: catálogo, comparador, ranking, sesión, CSRF, escritura y recuperación admin.")
     finally:

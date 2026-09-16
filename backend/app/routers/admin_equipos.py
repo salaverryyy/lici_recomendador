@@ -3,7 +3,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from psycopg import Error as DatabaseError
-from psycopg.errors import CheckViolation, UniqueViolation
+from psycopg.errors import CheckViolation, ForeignKeyViolation, UniqueViolation
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 
 from ..auth import administrador_actual, administrador_escritura
@@ -230,6 +230,8 @@ def agregar_radio(id_equipo: str, datos: RangoRadio, _=Depends(administrador_esc
             return cur.fetchone()
     except UniqueViolation as exc:
         raise HTTPException(status_code=409, detail="Ese rango ya está registrado.") from exc
+    except ForeignKeyViolation as exc:
+        raise HTTPException(status_code=404, detail="Equipo no encontrado.") from exc
     except DatabaseError as exc:
         raise HTTPException(status_code=503, detail="No se pudo agregar la radio.") from exc
 
