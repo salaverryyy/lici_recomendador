@@ -155,7 +155,7 @@ def solicitar_verificacion(correo_id: int, datos: ConfirmarContrasena, sesion=De
     try:
         enviar_correo(
             destinatario,
-            "Verificar correo de Lici Recomendador",
+            "Verificar correo de Licitex",
             "Para verificar este correo, abre el enlace durante las próximas 24 horas:\n" + enlace,
         )
     except (RuntimeError, OSError, ValueError, smtplib.SMTPException) as exc:

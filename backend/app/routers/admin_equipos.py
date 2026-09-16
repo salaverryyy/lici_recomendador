@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 
 from ..auth import administrador_actual, administrador_escritura
 from ..db import connect
+from ..storage import eliminar as eliminar_archivo
 
 
 router = APIRouter(prefix="/api/admin/equipos", tags=["administración: equipos"])
@@ -171,11 +172,18 @@ def reemplazar_datos_equipo(id_equipo: str, datos: CambiosEquipo, _=Depends(admi
 def eliminar_equipo(id_equipo: str, _=Depends(administrador_escritura)):
     try:
         with connect() as conn, conn.cursor() as cur:
+            cur.execute("SELECT id_equipo FROM equipos WHERE id_equipo=%s FOR UPDATE", (id_equipo,))
+            if cur.fetchone() is None:
+                raise HTTPException(status_code=404, detail="Equipo no encontrado.")
+            cur.execute("SELECT storage_key FROM equipo_archivos WHERE id_equipo=%s AND storage_key IS NOT NULL", (id_equipo,))
+            archivos = cur.fetchall()
             cur.execute("DELETE FROM equipos WHERE id_equipo = %s RETURNING id_equipo", (id_equipo,))
             eliminado = cur.fetchone()
             if eliminado is None:
                 raise HTTPException(status_code=404, detail="Equipo no encontrado.")
-            return {"id_equipo": eliminado["id_equipo"], "eliminado": True}
+        for archivo in archivos:
+            eliminar_archivo(archivo["storage_key"])
+        return {"id_equipo": eliminado["id_equipo"], "eliminado": True}
     except DatabaseError as exc:
         raise HTTPException(status_code=503, detail="No se pudo eliminar el equipo.") from exc
 

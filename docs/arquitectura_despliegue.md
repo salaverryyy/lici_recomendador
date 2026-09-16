@@ -2,7 +2,7 @@
 
 ## Estructura
 
-Un repositorio con `frontend/` (React y TypeScript, pendiente) y `backend/` (FastAPI).
+Un repositorio con `frontend/` (React, TypeScript y Vite) y `backend/` (FastAPI).
 La API se organiza por módulos de catálogo, recomendación y administración cuando se construyan.
 Los datos y reglas se guardan en un PostgreSQL independiente. No se crean microservicios por criterio:
 el catálogo y el ranking comparten datos y cambian juntos en este MVP.
@@ -11,7 +11,7 @@ el catálogo y el ranking comparten datos y cambian juntos en este MVP.
 
 Preparar dos proyectos Vercel conectados al mismo repositorio:
 
-1. Proyecto web con directorio raíz `frontend/` cuando esté implementado.
+1. Proyecto web con directorio raíz `frontend/`.
 2. Proyecto API con directorio raíz `backend/`; `server.py` exporta la instancia FastAPI `app`.
 
 Cada proyecto obtiene inicialmente una URL `*.vercel.app`. Un dominio propio permite usar,
@@ -30,3 +30,10 @@ principal; elegiremos la ruta al construir el frontend para evitar cambios innec
 
 No se ha desplegado ningún proyecto ni migrado la base de datos. La base local `interfaz_lici`
 es la fuente actual del catálogo.
+
+## Orden de trabajo
+
+Probar primero frontend y backend juntos localmente. Después configurar PostgreSQL alojado,
+almacenamiento persistente de archivos, SMTP, proxy de API y cookies seguras en un entorno de
+prueba. Repetir la verificación antes de publicar. Ver `archivos_equipos.md` para almacenamiento
+y límites de carga; el visor 3D queda para una etapa posterior.

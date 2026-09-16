@@ -96,10 +96,13 @@ def detalle_equipo(id_equipo: str):
                 """,
                 (id_equipo,),
             )
+            radio_frecuencias = cur.fetchall()
+            cur.execute("SELECT id, url, texto_alternativo, orden FROM equipo_archivos WHERE id_equipo=%s AND tipo='foto' ORDER BY orden,id", (id_equipo,))
             return {
                 "equipo": equipo,
                 "evaluacion": evaluacion,
-                "radio_frecuencias": cur.fetchall(),
+                "radio_frecuencias": radio_frecuencias,
+                "fotografias": cur.fetchall(),
             }
     except DatabaseError as exc:
         raise HTTPException(

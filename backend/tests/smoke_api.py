@@ -1,11 +1,15 @@
 """Prueba integrada con datos temporales; limpia equipo, administrador y regla al terminar."""
 
 import secrets
+from io import BytesIO
+from PIL import Image
+from pypdf import PdfWriter
 
 import httpx
 
 from app.auth import hash_token, password_hash
 from app.db import connect
+from app.storage import eliminar as eliminar_archivo
 
 
 API = "http://127.0.0.1:8000"
@@ -51,6 +55,36 @@ def main():
             comprobar(client.post("/api/admin/equipos", json=datos_equipo), 403)
             comprobar(client.post("/api/admin/equipos", json=datos_equipo, headers=headers), 201)
             comprobar(client.post("/api/admin/equipos", json=datos_equipo, headers=headers), 409)
+            archivos_url = f"/api/admin/equipos/{ID_EQUIPO}/archivos"
+            comprobar(client.get(archivos_url), 200)
+            comprobar(client.post(archivos_url + "/enlace", json={"tipo": "foto", "url": "https://example.com/foto.jpg"}), 403)
+            comprobar(client.post(archivos_url + "/enlace", json={"tipo": "foto", "url": "javascript:alert(1)"}, headers=headers), 422)
+            foto = comprobar(client.post(archivos_url + "/enlace", json={"tipo": "foto", "url": "https://example.com/foto.jpg", "texto_alternativo": "Equipo de prueba"}, headers=headers), 201)
+            comprobar(client.patch(archivos_url + f"/{foto['id']}", json={"orden": 2}, headers=headers), 200)
+            imagen = BytesIO()
+            Image.new("RGB", (8, 8), "white").save(imagen, format="PNG")
+            subir_url = archivos_url + "/subir"
+            comprobar(client.post(subir_url, params={"tipo": "foto"}, files={"archivo": ("falsa.png", b"no es imagen", "image/png")}, headers=headers), 422)
+            subida = comprobar(client.post(subir_url, params={"tipo": "foto"}, files={"archivo": ("foto.png", imagen.getvalue(), "image/png")}, headers=headers), 201)
+            assert client.get(subida["url"]).status_code == 200
+            comprobar(client.put(archivos_url + f"/{subida['id']}/portada", headers=headers), 200)
+            detalle = comprobar(client.get(f"/api/equipos/{ID_EQUIPO}"), 200)
+            assert len(detalle["fotografias"]) == 2 and detalle["equipo"]["imagen_url"] == subida["url"]
+            comprobar(client.delete(archivos_url + f"/{subida['id']}", headers=headers), 200)
+            assert client.get(subida["url"]).status_code == 404
+            assert comprobar(client.get(f"/api/equipos/{ID_EQUIPO}"), 200)["equipo"]["imagen_url"] == foto["url"]
+            documento = BytesIO()
+            writer = PdfWriter()
+            writer.add_blank_page(width=100, height=100)
+            writer.write(documento)
+            ficha = comprobar(client.post(subir_url, params={"tipo": "ficha"}, files={"archivo": ("ficha.pdf", documento.getvalue(), "application/pdf")}, headers=headers), 201)
+            assert comprobar(client.get(f"/api/equipos/{ID_EQUIPO}"), 200)["equipo"]["ficha_pdf_url"] == ficha["url"]
+            reemplazo = comprobar(client.post(archivos_url + "/enlace", json={"tipo": "ficha", "url": "https://example.com/ficha.pdf"}, headers=headers), 201)
+            assert client.get(ficha["url"]).status_code == 404
+            comprobar(client.delete(archivos_url + f"/{reemplazo['id']}", headers=headers), 200)
+            assert comprobar(client.get(f"/api/equipos/{ID_EQUIPO}"), 200)["equipo"]["ficha_pdf_url"] is None
+            comprobar(client.delete(archivos_url + f"/{foto['id']}", headers=headers), 200)
+            comprobar(client.delete(archivos_url + f"/{foto['id']}", headers=headers), 404)
             comprobar(client.get("/api/admin/sesion"), 200)
             comprobar(client.get("/api/admin/equipos"), 200)
             comprobar(client.get("/api/equipos/opciones"), 200)
@@ -213,6 +247,8 @@ def main():
         print("Prueba integrada completa: catálogo, comparador, ranking, sesión, CSRF, escritura y recuperación admin.")
     finally:
         with connect() as conn, conn.cursor() as cur:
+            cur.execute("SELECT storage_key FROM equipo_archivos WHERE id_equipo=%s", (ID_EQUIPO,))
+            archivos = cur.fetchall()
             cur.execute("DELETE FROM equipos WHERE id_equipo = %s", (ID_EQUIPO,))
             if admin_id is not None:
                 cur.execute("DELETE FROM admin_users WHERE id = %s", (admin_id,))
@@ -228,6 +264,8 @@ def main():
                     """,
                     (regla_original["criterio"], regla_original["peso"], regla_original["activo"]),
                 )
+        for archivo in archivos:
+            eliminar_archivo(archivo["storage_key"])
 
 
 if __name__ == "__main__":

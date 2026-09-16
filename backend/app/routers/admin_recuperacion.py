@@ -74,7 +74,7 @@ def solicitar_recuperacion(datos: SolicitudRecuperacion):
         try:
             enviar_correo(
                 destinatario,
-                "Restablecer contraseña de Lici Recomendador",
+                "Restablecer contraseña de Licitex",
                 "Para restablecer la contraseña, abre este enlace durante los próximos 30 minutos:\n"
                 + enlace + "\nSi no lo solicitaste, ignora este mensaje.",
             )
