@@ -1,3 +1,20 @@
+[project]
+name = "licitex"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi",
+  "psycopg[binary]",
+  "python-dotenv",
+  "uvicorn",
+  "pwdlib[argon2]",
+  "email-validator",
+  "python-multipart",
+  "Pillow",
+  "pypdf",
+  "boto3",
+]
+
 [tool.vercel]
 entrypoint = "server:app"
 
