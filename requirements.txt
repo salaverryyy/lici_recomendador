@@ -1,1 +1,10 @@
--r backend/requirements.txt
+fastapi
+psycopg[binary]
+python-dotenv
+uvicorn
+pwdlib[argon2]
+email-validator
+python-multipart
+Pillow
+pypdf
+boto3
