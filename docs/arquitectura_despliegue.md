@@ -1,5 +1,9 @@
 # Arquitectura y despliegue propuestos
 
+**Actualización:** la configuración vigente usa un único proyecto Vercel desde
+la raíz del repositorio. Ver [despliegue_vercel.md](despliegue_vercel.md).
+La propuesta de dos proyectos que sigue queda como antecedente.
+
 ## Estructura
 
 Un repositorio con `frontend/` (React, TypeScript y Vite) y `backend/` (FastAPI).

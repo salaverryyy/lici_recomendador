@@ -19,7 +19,7 @@ npm run dev
 ```
 
 Abrir http://127.0.0.1:5173. La API y sus documentos están en http://127.0.0.1:8000/docs.
-La base local debe tener los esquemas `sql/01` a `sql/09` aplicados. No volver a importar los
+La base local debe tener los esquemas `sql/01` a `sql/12` aplicados. No volver a importar los
 CSV si ya están cargados. Ver `docs/api_acceso.md` para crear el administrador.
 
 Las modificaciones del catálogo requieren sesión de administrador y protección CSRF.

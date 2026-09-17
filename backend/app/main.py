@@ -3,6 +3,7 @@ import os
 from fastapi.staticfiles import StaticFiles
 from .storage import UPLOAD_DIR
 from .routers.admin_archivos import router as admin_archivos_router
+from .routers.admin_tablas import router as admin_tablas_router
 
 from .routers.equipos import router as equipos_router
 from .routers.comparar import router as comparar_router
@@ -19,6 +20,7 @@ if not os.getenv("VERCEL") and os.getenv("MEDIA_STORAGE", "local") == "local":
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
     app.mount("/archivos", StaticFiles(directory=UPLOAD_DIR), name="archivos")
 app.include_router(admin_archivos_router)
+app.include_router(admin_tablas_router)
 app.include_router(equipos_router)
 app.include_router(comparar_router)
 app.include_router(recomendar_router)

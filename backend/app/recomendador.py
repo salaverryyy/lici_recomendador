@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import re
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -7,6 +8,24 @@ class Preferencias(BaseModel):
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
     top_n: int = Field(default=3, ge=1, le=100)
     necesita_imu: bool | None = None
+    imu_generacion: str | None = Field(default=None, min_length=1, max_length=100)
+    gps: bool | None = None
+    glonass: bool | None = None
+    galileo: bool | None = None
+    beidou: bool | None = None
+    qzss: bool | None = None
+    navic_irnss: bool | None = None
+    sbas: bool | None = None
+    bluetooth: bool | None = None
+    wifi: bool | None = None
+    uhf_tx_rx_integrada: bool | None = None
+    lte_4g: bool | None = None
+    radio_potencia_ajustable: bool | None = None
+    radio_potencia_min_w: float | None = Field(default=None, ge=0)
+    protocolo_multimarca: bool | None = None
+    bateria_interna: bool | None = None
+    registro_rinex_3: bool | None = None
+    registro_propietario: bool | None = None
     necesita_camara: bool | None = None
     cantidad_camaras_min: int | None = Field(default=None, ge=1, le=20)
     necesita_snlonglink: bool | None = None
@@ -36,9 +55,23 @@ class Preferencias(BaseModel):
     ancho_max_mm: float | None = Field(default=None, ge=0)
     alto_max_mm: float | None = Field(default=None, ge=0)
     tiempo_inicializacion_max_s: int | None = Field(default=None, ge=0)
+    temperatura_operacion_min_c: float | None = Field(default=None, ge=-273.15, le=200)
+    temperatura_operacion_max_c: float | None = Field(default=None, ge=-273.15, le=200)
+    temperatura_almacenamiento_min_c: float | None = Field(default=None, ge=-273.15, le=200)
+    temperatura_almacenamiento_max_c: float | None = Field(default=None, ge=-273.15, le=200)
+    humedad_min_pct: float | None = Field(default=None, ge=0, le=100)
+    humedad_condicion: str | None = Field(default=None, pattern=r"^(Sin condensación|Con condensación)$")
+    caida_min_m: float | None = Field(default=None, ge=0)
+    proteccion_ip_aceptada: str | None = Field(default=None, pattern=r"^IP[0-6][0-9](?:,IP[0-6][0-9])*$", max_length=120)
+    vibracion_norma: str | None = Field(default=None, pattern=r"^MIL-STD-810[FGH]$")
 
     @model_validator(mode="after")
     def validar_radio(self):
+        for grupo in ("operacion", "almacenamiento"):
+            minimo = getattr(self, f"temperatura_{grupo}_min_c")
+            maximo = getattr(self, f"temperatura_{grupo}_max_c")
+            if minimo is not None and maximo is not None and minimo > maximo:
+                raise ValueError("La temperatura mínima solicitada supera la máxima.")
         # Compatibilidad con clientes anteriores que enviaban un único umbral ppm.
         for grupo in ("rtk", "static"):
             conjunto = getattr(self, grupo + "_ppm_max")
@@ -68,6 +101,27 @@ class Criterio:
 
 
 CRITERIOS = (
+    *(Criterio(campo, campo, campo, nombre, None, "booleano", 1)
+      for campo, nombre in (("gps", "GPS"), ("glonass", "GLONASS"), ("galileo", "Galileo"),
+                            ("beidou", "BeiDou"), ("qzss", "QZSS"), ("navic_irnss", "NavIC/IRNSS"), ("sbas", "SBAS"))),
+    Criterio("imu_generacion", "imu_generacion", "imu_generacion", "Generación de IMU declarada", None, "generacion", 3),
+    *(Criterio(campo, campo, campo, nombre, None, "booleano", 3)
+      for campo, nombre in (("bluetooth", "Bluetooth"), ("wifi", "Wi-Fi"),
+                            ("uhf_tx_rx_integrada", "Radio UHF integrada Tx/Rx"), ("lte_4g", "4G LTE integrado"),
+                            ("radio_potencia_ajustable", "Potencia de radio ajustable"),
+                            ("protocolo_multimarca", "Protocolos de radio para múltiples marcas"),
+                            ("bateria_interna", "Batería interna"), ("registro_rinex_3", "Registro RINEX 3.x"),
+                            ("registro_propietario", "Registro en formato propietario"))),
+    Criterio("radio_potencia_max_w", "radio_potencia_min_w", "radio_potencia_max_w", "Potencia de transmisión disponible", "W", "minimo", 3),
+    Criterio("temperatura_operacion_min_c", "temperatura_operacion_min_c", "temperatura_operacion_min_c", "Frío de operación requerido", "°C", "ambiente_min", 4),
+    Criterio("temperatura_operacion_max_c", "temperatura_operacion_max_c", "temperatura_operacion_max_c", "Calor de operación requerido", "°C", "ambiente_max", 4),
+    Criterio("temperatura_almacenamiento_min_c", "temperatura_almacenamiento_min_c", "temperatura_almacenamiento_min_c", "Frío de almacenamiento requerido", "°C", "ambiente_min", 2),
+    Criterio("temperatura_almacenamiento_max_c", "temperatura_almacenamiento_max_c", "temperatura_almacenamiento_max_c", "Calor de almacenamiento requerido", "°C", "ambiente_max", 2),
+    Criterio("humedad_max_pct", "humedad_min_pct", "humedad_max_pct", "Humedad soportada", "%", "minimo", 3),
+    Criterio("humedad_condicion", "humedad_condicion", "humedad_condicion", "Condición de humedad", None, "texto_exacto", 2),
+    Criterio("caida_m", "caida_min_m", "caida_m", "Caída ensayada", "m", "minimo", 3),
+    Criterio("proteccion_ip", "proteccion_ip_aceptada", "proteccion_ip", "Protección IP aceptada", None, "ip", 5),
+    Criterio("vibracion_norma", "vibracion_norma", "vibracion_norma", "Norma de ensayo de vibración", None, "norma", 3),
     Criterio("tiene_imu", "necesita_imu", "tiene_imu", "IMU", None, "booleano", 10),
     Criterio("tiene_camara", "necesita_camara", "tiene_camara", "Cámara", None, "booleano", 8),
     Criterio("cantidad_camaras", "cantidad_camaras_min", "cantidad_camaras", "Cantidad de cámaras", None, "minimo", 6),
@@ -121,18 +175,59 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
         valor = datos.get(criterio.campo_equipo) if criterio.campo_equipo else None
         estado = "sin_datos"
         factor = 0.0
+        observacion = None
+        memoria_fabrica = None
+        requiere_ampliacion = False
 
-        if criterio.modo == "booleano":
+        # Los límites térmicos se evalúan por cumplimiento, sin dividir valores
+        # Celsius negativos. Si se necesita cámara, aplicar su rango restringido.
+        if criterio.modo in ("ambiente_min", "ambiente_max"):
+            if criterio.clave.startswith("temperatura_operacion_") and (
+                preferencias.necesita_camara is True or (preferencias.cantidad_camaras_min or 0) > 0
+            ):
+                eje = "min" if criterio.modo == "ambiente_min" else "max"
+                camara = datos.get(f"temperatura_camara_{eje}_c")
+                if camara is not None:
+                    valor = camara if valor is None else (max(valor, camara) if eje == "min" else min(valor, camara))
+            if valor is not None:
+                cumple = valor <= pedido if criterio.modo == "ambiente_min" else valor >= pedido
+                estado = "cumple" if cumple else "incumple"
+                factor = float(cumple)
+        elif criterio.modo in ("ip", "texto_exacto", "norma", "generacion"):
+            if valor is not None:
+                if criterio.modo == "ip":
+                    declarados = set(re.findall(r"IP[0-6][0-9]", valor))
+                    cumple = bool(declarados.intersection(pedido.split(",")))
+                elif criterio.modo == "norma":
+                    # Versión explícita; no inferir equivalencia entre revisiones.
+                    declaradas = {"MIL-STD-810" + version for version in re.findall(r"MIL[- ]STD[- ]810([FGH])", valor.upper())}
+                    cumple = pedido in declaradas
+                else:
+                    cumple = valor == pedido
+                estado = "cumple" if cumple else "incumple"
+                factor = float(cumple)
+
+        elif criterio.modo == "booleano":
             if valor is not None:
                 estado = "cumple" if valor is True else "incumple"
                 factor = 1.0 if estado == "cumple" else 0.0
         elif criterio.modo in ("minimo", "maximo"):
+            if criterio.clave == "memoria":
+                memoria_fabrica = valor
+                ampliada = datos.get("memoria_expandida_max_gb")
+                if datos.get("memoria_expandible") is True and ampliada is not None and (valor is None or ampliada > valor):
+                    if valor is None or valor < pedido:
+                        valor = ampliada
+                        requiere_ampliacion = True
+                        observacion = f"Memoria de fábrica: {memoria_fabrica if memoria_fabrica is not None else 'sin datos'} GB; capacidad ampliada declarada: {ampliada} GB."
             if valor is not None:
                 estado = "cumple" if (
                     valor >= pedido if criterio.modo == "minimo" else valor <= pedido
                 ) else "incumple"
                 if estado == "cumple":
                     factor = 1.0
+                    if requiere_ampliacion:
+                        observacion = "Cumple con memoria extendida. " + observacion
                 elif criterio.modo == "minimo":
                     factor = float(valor) / float(pedido) if pedido else 0.0
                 else:
@@ -173,6 +268,9 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
             "pedido": pedido,
             "valor_equipo": valor,
             "estado": estado,
+            "observacion": observacion,
+            "requiere_ampliacion": requiere_ampliacion,
+            "memoria_fabrica_gb": memoria_fabrica if criterio.clave == "memoria" else None,
             "factor": round(factor, 4),
             "peso": peso,
             "puntos": round(peso * factor, 4),
@@ -181,7 +279,8 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
     peso_total = sum(item["peso"] for item in detalle)
     puntos = sum(item["puntos"] for item in detalle)
     porcentaje = round(100 * puntos / peso_total, 2) if peso_total else None
-    cumplidos = [item["nombre"] for item in detalle if item["estado"] == "cumple"]
+    cumplidos = [item["nombre"] + (" (con memoria extendida)" if item["requiere_ampliacion"] else "")
+                 for item in detalle if item["estado"] == "cumple"]
     incumplidos = [item["nombre"] for item in detalle if item["estado"] == "incumple"]
     desconocidos = [item["nombre"] for item in detalle if item["estado"] == "sin_datos"]
     partes = []

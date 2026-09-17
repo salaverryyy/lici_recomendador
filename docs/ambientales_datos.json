@@ -238,5 +238,41 @@
     "caida_condiciones": "Superficie no especificada",
     "ambiental_notas": "Protección electrostática: ±15 kV aire; ±8 kV contacto.",
     "ambiental_fuente": "Extracto de ficha técnica aportado por el usuario, 2026-09-16; URL y revisión pendientes."
+  },
+  "GNSS-CHCNAV-I50": {
+    "temperatura_operacion_min_c": -40.0,
+    "temperatura_operacion_max_c": 65.0,
+    "temperatura_almacenamiento_min_c": -40.0,
+    "temperatura_almacenamiento_max_c": 75.0,
+    "proteccion_ip": "IP67",
+    "ambiental_notas": "Inmersión temporal hasta 1 m. Humedad y choque no legibles en la imagen aportada.",
+    "ambiental_fuente": "Imagen de ficha técnica aportada por el usuario; modelo CHCNAV i50 confirmado el 2026-09-17. URL y revisión pendientes."
+  },
+  "GNSS-LEICA-GS18": {
+    "temperatura_operacion_min_c": -40.0,
+    "temperatura_operacion_max_c": 65.0,
+    "temperatura_almacenamiento_min_c": -40.0,
+    "temperatura_almacenamiento_max_c": 85.0,
+    "temperatura_camara_min_c": -30.0,
+    "temperatura_camara_max_c": 50.0,
+    "humedad_max_pct": 100.0,
+    "caida_m": 2.0,
+    "proteccion_ip": "IP66 | IP68",
+    "caida_condiciones": "Vuelco desde jalón sobre superficies duras",
+    "vibracion_norma": "ISO9022-36-08 | MIL-STD-810G 514.6 Cat.24",
+    "choque_condiciones": "40 g / 15–23 ms; MIL-STD-810G 516.6 I",
+    "ambiental_notas": "Con cámara: -30 a +50 °C; sin cámara: -40 a +65 °C. IP: IEC60529; MIL-STD-810G CHG-1 510.6 I, 506.6 II, 512.6 I. Humedad: ISO9022-13-06, ISO9022-12-04; MIL-STD-810G CHG-1 507.6 II.",
+    "ambiental_fuente": "Extracto aportado el 2026-09-16; usuario confirma que el registro GS18 corresponde a GS18I el 2026-09-17."
+  },
+  "GNSS-SINGULARXYZ-SFAIRA-ONE-PLUS": {
+    "temperatura_operacion_min_c": -45.0,
+    "temperatura_operacion_max_c": 75.0,
+    "temperatura_almacenamiento_min_c": -55.0,
+    "temperatura_almacenamiento_max_c": 85.0,
+    "caida_m": 1.5,
+    "proteccion_ip": "IP65",
+    "caida_condiciones": "Diseñado para sobrevivir caída sobre concreto",
+    "ambiental_notas": "Humedad no especificada. Dimensiones cilíndricas: diámetro 50 mm y altura 149 mm. Autonomía: 16 h en transmisión Bluetooth y RTK según tabla eléctrica. Los 5 s son inicialización de IMU, no tiempo de encendido.",
+    "ambiental_fuente": "Brochure SingularXYZ SFAIRA ONE PLUS GNSS RECEIVER, versión 17-10-2025, PDF aportado por el usuario."
   }
 }

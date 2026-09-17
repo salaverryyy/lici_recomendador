@@ -685,9 +685,22 @@ function Recommend() {
   });
   const [formVersion, setFormVersion] = useState(0);
   const result = Array.isArray(saved?.resultados) ? saved : null;
-  const unique = metadata.data?.criterios.filter((c: any) => c.activo);
+  const satellites = new Set([
+    "gps",
+    "glonass",
+    "galileo",
+    "beidou",
+    "qzss",
+    "navic_irnss",
+    "sbas",
+  ]);
+  const unique = metadata.data?.criterios.filter(
+    (c: any) =>
+      c.activo && !["constelaciones_min", "sim_4g"].includes(c.campo_input),
+  );
   const basics = new Set([
     "necesita_imu",
+    "imu_generacion",
     "necesita_camara",
     "cantidad_camaras_min",
     "laser",
@@ -696,6 +709,16 @@ function Recommend() {
     "autonomia_min_h",
   ]);
   const connection = new Set([
+    "bluetooth",
+    "wifi",
+    "uhf_tx_rx_integrada",
+    "lte_4g",
+    "radio_potencia_ajustable",
+    "radio_potencia_min_w",
+    "protocolo_multimarca",
+    "bateria_interna",
+    "registro_rinex_3",
+    "registro_propietario",
     "sim_4g",
     "necesita_snlonglink",
     "bateria_intercambiable",
@@ -703,6 +726,81 @@ function Recommend() {
     "radio_min_mhz",
   ]);
   function input(c: any): ReactNode {
+    if (satellites.has(c.campo_input))
+      return (
+        <label key={c.clave} className="satellite-option">
+          <input
+            type="checkbox"
+            name={c.campo_input}
+            value="true"
+            defaultChecked={draft[c.campo_input] === "true"}
+          />
+          {c.nombre}
+        </label>
+      );
+    if (c.modo === "generacion")
+      return (
+        <label key={c.clave}>
+          {c.nombre}
+          <select
+            name={c.campo_input}
+            defaultValue={draft[c.campo_input] || ""}
+          >
+            <option value="">Sin preferencia</option>
+            {(metadata.data?.imu_generaciones || []).map((v: string) => (
+              <option key={v}>{v}</option>
+            ))}
+          </select>
+          <small className="muted">
+            Se compara la declaración del fabricante; generaciones de marcas
+            distintas pueden describir tecnologías diferentes.
+          </small>
+        </label>
+      );
+    if (["ip", "norma", "texto_exacto"].includes(c.modo)) {
+      const options =
+        c.modo === "ip"
+          ? [
+              "IP65",
+              "IP66",
+              "IP67",
+              "IP68",
+              "IP66,IP67",
+              "IP66,IP68",
+              "IP67,IP68",
+            ]
+          : c.modo === "norma"
+            ? ["MIL-STD-810F", "MIL-STD-810G", "MIL-STD-810H"]
+            : ["Sin condensación", "Con condensación"];
+      return (
+        <label key={c.clave}>
+          {c.nombre}
+          <select
+            name={c.campo_input}
+            defaultValue={draft[c.campo_input] || ""}
+          >
+            <option value="">Sin preferencia</option>
+            {options.map((v) => (
+              <option key={v} value={v}>
+                {v.replaceAll(",", " o ")}
+              </option>
+            ))}
+          </select>
+        </label>
+      );
+    }
+    if (c.modo.startsWith("ambiente_"))
+      return (
+        <Field
+          key={c.clave}
+          name={c.campo_input}
+          title={`${c.nombre} (°C)`}
+          type="number"
+          min={-273.15}
+          max={200}
+          value={draft[c.campo_input] || ""}
+        />
+      );
     if (c.modo === "booleano")
       return (
         <label key={c.clave}>
@@ -766,11 +864,13 @@ function Recommend() {
         type="number"
         min={["constelaciones", "cantidad_camaras"].includes(c.clave) ? 1 : 0}
         max={
-          c.clave === "constelaciones"
-            ? 6
-            : c.clave === "cantidad_camaras"
-              ? 20
-              : undefined
+          c.clave === "humedad_max_pct"
+            ? 100
+            : c.clave === "constelaciones"
+              ? 6
+              : c.clave === "cantidad_camaras"
+                ? 20
+                : undefined
         }
         value={draft[c.campo_input] || ""}
       />
@@ -812,8 +912,18 @@ function Recommend() {
                 const body: Record<string, any> = {};
                 Object.entries(values).forEach(([k, v]) => {
                   if (v !== "")
-                    body[k] =
-                      v === "true" ? true : v === "false" ? false : Number(v);
+                    body[k] = [
+                      "proteccion_ip_aceptada",
+                      "humedad_condicion",
+                      "vibracion_norma",
+                      "imu_generacion",
+                    ].includes(k)
+                      ? v
+                      : v === "true"
+                        ? true
+                        : v === "false"
+                          ? false
+                          : Number(v);
                 });
                 setSaved(null);
                 const response = await api("/recomendar", "POST", body);
@@ -830,7 +940,33 @@ function Recommend() {
                   ?.filter((c: any) => basics.has(c.campo_input))
                   .map(input)}
               </div>
+              <p className="muted small-text">
+                La memoria considera también la capacidad ampliable declarada.
+                El resultado indica si hace falta ampliación.
+              </p>
+              <h3>Constelaciones y aumentación</h3>
+              <p className="muted small-text">
+                Marca solo los sistemas que necesitas. SBAS se evalúa por
+                separado y no se suma al número de constelaciones.
+              </p>
+              <div className="satellite-grid">
+                {unique
+                  ?.filter((c: any) => satellites.has(c.campo_input))
+                  .map(input)}
+              </div>
               {[
+                [
+                  "Ambiente y resistencia",
+                  (c: any) =>
+                    c.campo_input.startsWith("temperatura_") ||
+                    [
+                      "humedad_min_pct",
+                      "humedad_condicion",
+                      "proteccion_ip_aceptada",
+                      "caida_min_m",
+                      "vibracion_norma",
+                    ].includes(c.campo_input),
+                ],
                 [
                   "Precisión GNSS",
                   (c: any) =>
@@ -845,13 +981,33 @@ function Recommend() {
                   "Otros requisitos",
                   (c: any) =>
                     !basics.has(c.campo_input) &&
+                    !satellites.has(c.campo_input) &&
                     !connection.has(c.campo_input) &&
+                    !c.campo_input.startsWith("temperatura_") &&
+                    ![
+                      "humedad_min_pct",
+                      "humedad_condicion",
+                      "proteccion_ip_aceptada",
+                      "caida_min_m",
+                      "vibracion_norma",
+                    ].includes(c.campo_input) &&
                     !c.campo_input.startsWith("rtk_") &&
                     !c.campo_input.startsWith("static_"),
                 ],
               ].map(([name, predicate]: any) => (
                 <details className="input-group" key={name}>
                   <summary>{name}</summary>
+                  {name === "Ambiente y resistencia" && (
+                    <p className="muted small-text">
+                      Ejemplo: frío −40 °C, calor +65 °C, humedad 95%. Los
+                      códigos IP se comparan con los declarados; IP68 no implica
+                      automáticamente IP66. La norma corresponde al ensayo de
+                      vibración, no a una certificación general. La caída
+                      compara altura: revisa superficie y condiciones en la
+                      ficha. Con cámara se aplica su rango térmico restringido
+                      cuando está declarado.
+                    </p>
+                  )}
                   <div className="form-grid">
                     {unique?.filter(predicate).map(input)}
                   </div>
@@ -905,7 +1061,7 @@ function Recommend() {
               {result.resultados.map((r: any) => (
                 <article className="panel rank-card" key={r.equipo.id_equipo}>
                   <div className="rank-heading">
-                    <span className="rank-number">#{r.posicion}</span>
+                    <span className="rank-number">#{r.posicion}{r.empate ? " · Empate" : ""}</span>
                     <Link to={"/equipos/" + r.equipo.id_equipo}>
                       <h3>
                         {r.equipo.marca} {r.equipo.modelo}
@@ -938,6 +1094,9 @@ function Recommend() {
                                 ? "Sin datos"
                                 : "No cumple"}{" "}
                             · {d.puntos}/{d.peso} puntos
+                            {d.observacion && (
+                              <p className="muted">{d.observacion}</p>
+                            )}
                           </dd>
                         </div>
                       ))}
@@ -996,6 +1155,7 @@ function AdminLayout({ children }: { children: ReactNode }) {
       <div className="admin-nav">
         <NavLink to="/admin/equipos">Equipos</NavLink>
         <NavLink to="/admin/reglas">Pesos del ranking</NavLink>
+        <NavLink to="/admin/tablas">Tablas de la BD</NavLink>
         <NavLink to="/admin/cuenta">Mi cuenta</NavLink>
         <button
           className="outline"
@@ -1020,6 +1180,94 @@ function AdminLayout({ children }: { children: ReactNode }) {
         {session.data && children}
       </div>
     </main>
+  );
+}
+function AdminTables() {
+  const [tabla, setTabla] = useState("equipos"),
+    [pagina, setPagina] = useState(1);
+  const disponibles = useData("/admin/tablas");
+  const rows = useData(`/admin/tablas/${tabla}?pagina=${pagina}&limite=25`);
+  return (
+    <AdminLayout>
+      <h1>Tablas de la base de datos</h1>
+      <p className="muted">
+        Consulta las tablas del catálogo y los pesos. Para modificar equipos,
+        usa su editor. Las cuentas y los datos de acceso quedan fuera de esta
+        vista.
+      </p>
+      <Feedback
+        error={disponibles.error || rows.error}
+        loading={!rows.data && !rows.error}
+      />
+      <label>
+        Tabla
+        <select
+          value={tabla}
+          onChange={(e) => {
+            setTabla(e.target.value);
+            setPagina(1);
+          }}
+        >
+          {(disponibles.data?.tablas || ["equipos"]).map((t: string) => (
+            <option key={t}>{t}</option>
+          ))}
+        </select>
+      </label>
+      <button className="outline" onClick={rows.reload}>
+        Actualizar
+      </button>
+      {rows.data && (
+        <>
+          <p>
+            {rows.data.total} registros · Página {pagina} de{" "}
+            {Math.max(1, Math.ceil(rows.data.total / 25))}
+          </p>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  {rows.data.columnas.map((c: string) => (
+                    <th key={c}>{c}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.data.filas.map((r: any, i: number) => (
+                  <tr key={i}>
+                    {rows.data.columnas.map((c: string) => (
+                      <td key={c}>
+                        {r[c] == null ? (
+                          <span className="muted">NULL</span>
+                        ) : (
+                          valor(r[c])
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {!rows.data.filas.length && <p>No hay registros en esta página.</p>}
+          <div className="links">
+            <button
+              className="outline"
+              disabled={pagina <= 1}
+              onClick={() => setPagina((p) => p - 1)}
+            >
+              Anterior
+            </button>
+            <button
+              className="outline"
+              disabled={pagina * 25 >= rows.data.total}
+              onClick={() => setPagina((p) => p + 1)}
+            >
+              Siguiente
+            </button>
+          </div>
+        </>
+      )}
+    </AdminLayout>
   );
 }
 function AdminEquipment() {
@@ -1098,6 +1346,17 @@ function Editor() {
     );
   const e = isNew ? {} : details.data?.equipo;
   const textSpecs = new Set([
+    "imu_generacion",
+    "imu_tecnologia",
+    "bluetooth_version",
+    "wifi_estandar",
+    "uhf_modo",
+    "radio_protocolos",
+    "tipo_bateria",
+    "rinex_versiones",
+    "formato_propietario",
+    "tecnica_notas",
+    "tecnica_fuente",
     "radio_frecuencia",
     "humedad_condicion",
     "proteccion_ip",
@@ -1108,6 +1367,17 @@ function Editor() {
     "ambiental_fuente",
   ]);
   const bools = new Set([
+    "memoria_expandible",
+    "bluetooth",
+    "wifi",
+    "uhf_tx_rx_integrada",
+    "lte_4g",
+    "radio_potencia_ajustable",
+    "protocolo_multimarca",
+    "bateria_interna",
+    "registro_rinex",
+    "registro_rinex_3",
+    "registro_propietario",
     "tiene_imu",
     "tiene_camara",
     "sim_4g",
@@ -1889,6 +2159,7 @@ function App() {
         <Route path="/admin/equipos" element={<AdminEquipment />} />
         <Route path="/admin/equipos/:id" element={<Editor />} />
         <Route path="/admin/reglas" element={<Rules />} />
+        <Route path="/admin/tablas" element={<AdminTables />} />
         <Route path="/admin/cuenta" element={<Account />} />
         <Route path="/recuperar-contrasena" element={<Recovery />} />
         <Route path="/restablecer" element={<Recovery />} />

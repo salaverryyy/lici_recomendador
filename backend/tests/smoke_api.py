@@ -51,6 +51,12 @@ def main():
             login = comprobar(client.post("/api/admin/login", json={"username": USERNAME, "password": PASSWORD}), 200)
             csrf = login["csrf_token"]
             headers = {"X-CSRF-Token": csrf}
+            tablas = comprobar(client.get('/api/admin/tablas'), 200)
+            assert 'base_evaluacion' in tablas['tablas'] and 'admin_users' not in tablas['tablas']
+            tabla = comprobar(client.get('/api/admin/tablas/base_evaluacion', params={'limite':2}), 200)
+            assert len(tabla['filas']) <= 2 and 'temperatura_operacion_min_c' in tabla['columnas']
+            comprobar(client.get('/api/admin/tablas/admin_users'), 404)
+            comprobar(client.get('/api/admin/tablas/equipos', params={'pagina':0}), 422)
             datos_equipo = {"id_equipo": ID_EQUIPO, "marca": "Codex", "modelo": "Prueba", "categoria": "GNSS"}
             comprobar(client.post("/api/admin/equipos", json=datos_equipo), 403)
             comprobar(client.post("/api/admin/equipos", json=datos_equipo, headers=headers), 201)
@@ -61,6 +67,13 @@ def main():
             ranking_camaras=comprobar(client.post('/api/recomendar',json={"cantidad_camaras_min":2,"necesita_snlonglink":True,"top_n":100}),200)
             temporal=next(r for r in ranking_camaras["resultados"] if r["equipo"]["id_equipo"]==ID_EQUIPO)
             assert temporal["porcentaje"]==100
+            memoria = comprobar(client.post('/api/recomendar', json={"memoria_min_gb":8,"gps":True,"sbas":True,"top_n":100}),200)
+            jupiter = next(r for r in memoria['resultados'] if r['equipo']['id_equipo']=='GNSS-SINOGNSS-JUPITER')
+            assert jupiter['porcentaje']==100 and 'con memoria extendida' in jupiter['explicacion']
+            nuevos = comprobar(client.patch(f'/api/admin/equipos/{ID_EQUIPO}/especificaciones',
+                json={"cambios":{"bluetooth":True,"memoria_expandible":True,"memoria":4,"memoria_expandida_max_gb":32,"imu_generacion":"3ª generación"}},headers=headers),200)
+            assert nuevos['memoria_expandida_max_gb']==32
+            comprobar(client.patch(f'/api/admin/equipos/{ID_EQUIPO}/especificaciones',json={"cambios":{"memoria_expandida_max_gb":-1}},headers=headers),422)
             archivos_url = f"/api/admin/equipos/{ID_EQUIPO}/archivos"
             comprobar(client.get(archivos_url), 200)
             comprobar(client.post(archivos_url + "/enlace", json={"tipo": "foto", "url": "https://example.com/foto.jpg"}), 403)

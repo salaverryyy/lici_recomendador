@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "fastapi",
+  "buildCommand": "npm ci --prefix frontend && npm run build --prefix frontend && node scripts/build-static.mjs",
+  "rewrites": [
+    {"source": "/", "destination": "/index.html"},
+    {"source": "/catalogo", "destination": "/index.html"},
+    {"source": "/equipos/:id", "destination": "/index.html"},
+    {"source": "/comparar", "destination": "/index.html"},
+    {"source": "/recomendador", "destination": "/index.html"},
+    {"source": "/admin", "destination": "/index.html"},
+    {"source": "/admin/:path*", "destination": "/index.html"},
+    {"source": "/recuperar-contrasena", "destination": "/index.html"},
+    {"source": "/restablecer", "destination": "/index.html"},
+    {"source": "/restablecer-contrasena", "destination": "/index.html"},
+    {"source": "/verificar-correo", "destination": "/index.html"}
+  ]
+}

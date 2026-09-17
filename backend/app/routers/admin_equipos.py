@@ -70,6 +70,12 @@ NUMERICOS = {
 TEMPERATURAS = {'temperatura_almacenamiento_min_c', 'temperatura_operacion_max_c', 'temperatura_almacenamiento_max_c', 'temperatura_camara_min_c', 'temperatura_operacion_min_c', 'temperatura_camara_max_c'}
 NUMERICOS |= {'caida_m', 'humedad_max_pct'}
 TEXTOS = {'ambiental_notas', 'radio_frecuencia', 'proteccion_ip', 'choque_condiciones', 'ambiental_fuente', 'caida_condiciones', 'vibracion_norma', 'humedad_condicion'}
+BOOLEANOS |= {"memoria_expandible", "bluetooth", "wifi", "uhf_tx_rx_integrada", "lte_4g",
+              "radio_potencia_ajustable", "protocolo_multimarca", "bateria_interna",
+              "registro_rinex", "registro_rinex_3", "registro_propietario"}
+NUMERICOS |= {"memoria_expandida_max_gb", "memoria_opcional_fabrica_max_gb", "radio_potencia_max_w"}
+TEXTOS |= {"imu_generacion", "imu_tecnologia", "bluetooth_version", "wifi_estandar", "uhf_modo",
+           "radio_protocolos", "tipo_bateria", "rinex_versiones", "formato_propietario", "tecnica_notas", "tecnica_fuente"}
 EDITABLES = BOOLEANOS | ENTEROS | NUMERICOS | TEXTOS | TEMPERATURAS
 CONSTELACIONES = ("gps", "glonass", "galileo", "beidou", "qzss", "navic_irnss")
 

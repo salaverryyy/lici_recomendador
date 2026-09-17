@@ -8,6 +8,26 @@ from ..recomendador import CRITERIOS, Preferencias, criterios_seleccionados, eva
 router = APIRouter(prefix="/api", tags=["recomendador"])
 
 
+def ordenar_resultados(resultados):
+    # Compartir puesto según el porcentaje mostrado; los otros campos solo
+    # mantienen un orden estable dentro del empate, no deciden un ganador.
+    resultados.sort(key=lambda r: (
+        -(r["porcentaje"] if r["porcentaje"] is not None else -1),
+        r["sin_datos"], -r["cumplimientos"], r["equipo"]["id_equipo"],
+    ))
+    cantidades = {}
+    for r in resultados:
+        cantidades[r["porcentaje"]] = cantidades.get(r["porcentaje"], 0) + 1
+    anterior = object()
+    puesto = 0
+    for indice, r in enumerate(resultados, 1):
+        if r["porcentaje"] != anterior:
+            puesto = indice
+        anterior = r["porcentaje"]
+        r["posicion"] = puesto
+        r["empate"] = cantidades[r["porcentaje"]] > 1
+
+
 def leer_reglas(cur):
     pesos = {criterio.clave: criterio.peso for criterio in CRITERIOS}
     activos = {criterio.clave: True for criterio in CRITERIOS}
@@ -24,6 +44,8 @@ def ver_criterios():
     try:
         with connect() as conn, conn.cursor() as cur:
             pesos, activos = leer_reglas(cur)
+            cur.execute("SELECT DISTINCT imu_generacion FROM base_evaluacion WHERE imu_generacion IS NOT NULL ORDER BY imu_generacion")
+            generaciones = [r["imu_generacion"] for r in cur.fetchall()]
             return {
                 "criterios": [
                     {
@@ -38,6 +60,7 @@ def ver_criterios():
                     for criterio in CRITERIOS
                 ],
                 "pesos_provisionales": True,
+                "imu_generaciones": generaciones,
                 "booleano_no": "No significa que no se necesita; no aporta puntos ni peso.",
             }
     except DatabaseError as exc:
@@ -102,19 +125,13 @@ def recomendar(preferencias: Preferencias):
                 **puntuacion,
             })
 
-        resultados.sort(key=lambda resultado: (
-            -(resultado["porcentaje"] if resultado["porcentaje"] is not None else -1),
-            resultado["sin_datos"],
-            -resultado["cumplimientos"],
-            resultado["equipo"]["id_equipo"],
-        ))
-        for posicion, resultado in enumerate(resultados, start=1):
-            resultado["posicion"] = posicion
+        ordenar_resultados(resultados)
 
         return {
             "total_equipos": len(resultados),
             "top_n_solicitado": preferencias.top_n,
             "mostrados": min(preferencias.top_n, len(resultados)),
+            "empate_en_primer_puesto": bool(resultados and resultados[0]["empate"]),
             "criterios_seleccionados": [criterio.clave for criterio in elegidos],
             "resultados": resultados[:preferencias.top_n],
         }

@@ -1,0 +1,10 @@
+backend/.env
+backend/.venv
+backend/uploads
+backend/tests
+tmp
+frontend/node_modules
+frontend/.env*
+docs
+sql
+.git
