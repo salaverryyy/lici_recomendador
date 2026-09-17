@@ -49,6 +49,9 @@ button:hover,
 button:disabled,
 fieldset:disabled {
   opacity: 0.6;
+  cursor: not-allowed;
+}
+fieldset:disabled button {
   cursor: wait;
 }
 button:focus-visible,
@@ -318,8 +321,8 @@ fieldset {
 }
 .photo {
   display: block;
-  height: 205px;
-  background: #eef2f7;
+  aspect-ratio: 3 / 2;
+  background: #e7e7e7;
 }
 .photo img,
 .detail-photo img,

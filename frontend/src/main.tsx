@@ -429,9 +429,9 @@ function Detail() {
       </main>
     );
   const e = data.equipo,
-    fotos = data.fotografias || [],
+    fotos = (data.fotografias || []).filter((f: any) => f.url !== e.imagen_url),
     photo =
-      fotos.find((f: any) => String(f.id) === selected)?.url || e.imagen_url;
+      fotos.find((f: any) => String(f.id) === selected)?.url || fotos[0]?.url;
   return (
     <main className="container">
       <Link className="back" to="/catalogo">
@@ -442,17 +442,19 @@ function Detail() {
           <div className="detail-photo">
             <Photo url={photo} alt={`${e.marca} ${e.modelo}`} />
           </div>
-          <div className="thumbnails">
-            {fotos.map((f: any) => (
-              <button
-                aria-label={f.texto_alternativo || "Ver foto"}
-                key={f.id}
-                onClick={() => setSelected(String(f.id))}
-              >
-                <Photo url={f.url} alt={f.texto_alternativo || e.modelo} />
-              </button>
-            ))}
-          </div>
+          {fotos.length > 1 && (
+            <div className="thumbnails">
+              {fotos.map((f: any) => (
+                <button
+                  aria-label={f.texto_alternativo || "Ver foto"}
+                  key={f.id}
+                  onClick={() => setSelected(String(f.id))}
+                >
+                  <Photo url={f.url} alt={f.texto_alternativo || e.modelo} />
+                </button>
+              ))}
+            </div>
+          )}
           <div className="links">
             {e.ficha_pdf_url && (
               <a
@@ -1061,7 +1063,10 @@ function Recommend() {
               {result.resultados.map((r: any) => (
                 <article className="panel rank-card" key={r.equipo.id_equipo}>
                   <div className="rank-heading">
-                    <span className="rank-number">#{r.posicion}{r.empate ? " · Empate" : ""}</span>
+                    <span className="rank-number">
+                      #{r.posicion}
+                      {r.empate ? " · Empate" : ""}
+                    </span>
                     <Link to={"/equipos/" + r.equipo.id_equipo}>
                       <h3>
                         {r.equipo.marca} {r.equipo.modelo}
@@ -1499,6 +1504,11 @@ function Editor() {
                   Fotos JPG, PNG o WebP (5 MB). Ficha PDF sin contraseña (20 MB
                   en local). Máximo 20 fotos por equipo.
                 </p>
+                <p className="muted">
+                  Usa la imagen horizontal como portada del catálogo. La ficha
+                  del producto abre con la primera foto que no sea la portada;
+                  coloca la cuadrada primero usando el campo Orden.
+                </p>
                 <Feedback error={files.error} />
                 <div className="grid three">
                   {files.data?.map((f: any) => (
@@ -1531,25 +1541,26 @@ function Editor() {
                       </Action>
                       {f.tipo === "foto" && (
                         <>
-                          <Action
-                            success="Portada actualizada."
-                            onSubmit={async () => {
-                              await api(
-                                base + "/archivos/" + f.id + "/portada",
-                                "PUT",
-                              );
-                              details.reload();
-                            }}
-                          >
-                            <button
-                              className="outline small"
-                              disabled={e.imagen_url === f.url}
+                          {e.imagen_url === f.url ? (
+                            <p className="notice success" role="status">
+                              Portada del catálogo actual
+                            </p>
+                          ) : (
+                            <Action
+                              success="Portada actualizada."
+                              onSubmit={async () => {
+                                await api(
+                                  base + "/archivos/" + f.id + "/portada",
+                                  "PUT",
+                                );
+                                details.reload();
+                              }}
                             >
-                              {e.imagen_url === f.url
-                                ? "Foto de portada"
-                                : "Usar como portada"}
-                            </button>
-                          </Action>
+                              <button className="outline small">
+                                Usar como portada del catálogo
+                              </button>
+                            </Action>
+                          )}
                           <Action
                             onSubmit={async (form) => {
                               const d = fields(form);
