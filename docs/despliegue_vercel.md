@@ -20,6 +20,20 @@ sin tráfico: [límites](https://render.com/docs/free).
 
 ## Pasos
 
+Respaldo automatizado: ejecutar desde la raíz
+`backend/.venv/Scripts/python.exe scripts/backup_deploy.py`.
+Crea un archivo privado en `backups/` (ignorado por Git), con esquema y datos,
+excluyendo datos de sesiones, intentos de login y tokens de recuperación/verificación.
+Comprueba el índice del archivo; la restauración real debe verificarse en Neon.
+No incluye los archivos físicos de fotos/PDF.
+
+En Neon, crear proyecto `licitex`, plan Free, PostgreSQL 18 si está disponible,
+y región cercana a la región elegida para Functions de Vercel. En Connect,
+usar conexión directa para pgAdmin Restore y pooled para `DATABASE_URL` de la API.
+Registrar servidor en pgAdmin con host/usuario/contraseña/base de Neon y SSL Require.
+Restaurar el .dump en la base vacía con No owner / No privileges. No compartir
+la cadena de conexión en mensajes; introducirla en las variables privadas de Vercel.
+
 1. Crear PostgreSQL alojado. En pgAdmin hacer Backup local en formato Custom con
    esquema y datos y restaurar en la base remota VACÍA, sin owners/privilegios
    locales. El backup incluye hashes y cuentas: conservar privado fuera de Git.
