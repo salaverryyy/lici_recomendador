@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import os
+from pathlib import Path
 from fastapi.staticfiles import StaticFiles
 from .storage import UPLOAD_DIR
 from .routers.admin_archivos import router as admin_archivos_router
@@ -29,3 +30,9 @@ app.include_router(admin_equipos_router)
 app.include_router(admin_reglas_router)
 app.include_router(admin_recuperacion_router)
 app.include_router(admin_correos_router)
+
+# Registrar después de la API para conservar todas sus rutas. También permite
+# servir /index.html cuando un rewrite SPA llega a la función Python.
+FRONTEND_DIR = Path(__file__).resolve().parents[2] / "public"
+if FRONTEND_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
