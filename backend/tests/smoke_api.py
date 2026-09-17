@@ -55,6 +55,12 @@ def main():
             comprobar(client.post("/api/admin/equipos", json=datos_equipo), 403)
             comprobar(client.post("/api/admin/equipos", json=datos_equipo, headers=headers), 201)
             comprobar(client.post("/api/admin/equipos", json=datos_equipo, headers=headers), 409)
+            comprobar(client.patch(f"/api/admin/equipos/{ID_EQUIPO}/especificaciones", json={"cambios":{"cantidad_camaras":2,"tiene_camara":False}}, headers=headers),422)
+            camaras=comprobar(client.patch(f"/api/admin/equipos/{ID_EQUIPO}/especificaciones", json={"cambios":{"cantidad_camaras":2,"tiene_snlonglink":True}}, headers=headers),200)
+            assert camaras["cantidad_camaras"]==2 and camaras["tiene_camara"] is True
+            ranking_camaras=comprobar(client.post('/api/recomendar',json={"cantidad_camaras_min":2,"necesita_snlonglink":True,"top_n":100}),200)
+            temporal=next(r for r in ranking_camaras["resultados"] if r["equipo"]["id_equipo"]==ID_EQUIPO)
+            assert temporal["porcentaje"]==100
             archivos_url = f"/api/admin/equipos/{ID_EQUIPO}/archivos"
             comprobar(client.get(archivos_url), 200)
             comprobar(client.post(archivos_url + "/enlace", json={"tipo": "foto", "url": "https://example.com/foto.jpg"}), 403)

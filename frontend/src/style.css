@@ -877,3 +877,29 @@ footer .brand span {
     margin: 0 0 0 auto;
   }
 }
+.input-group {
+  border-top: 1px solid var(--border);
+  margin: 12px 0;
+  padding: 16px 0;
+}
+.input-group > summary {
+  color: #304765;
+}
+.input-group[open] > summary {
+  margin-bottom: 20px;
+}
+.score-details {
+  margin-top: 18px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.score-details dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+body:has(.compare-tray) main {
+  padding-bottom: 110px;
+}

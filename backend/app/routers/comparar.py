@@ -7,12 +7,30 @@ from ..db import connect
 router = APIRouter(prefix="/api", tags=["comparador"])
 
 COLUMNAS = {
+    'temperatura_operacion_min_c': ('Temperatura mínima de operación', '°C'),
+    'temperatura_operacion_max_c': ('Temperatura máxima de operación', '°C'),
+    'temperatura_almacenamiento_min_c': ('Temperatura mínima de almacenamiento', '°C'),
+    'temperatura_almacenamiento_max_c': ('Temperatura máxima de almacenamiento', '°C'),
+    'temperatura_camara_min_c': ('Temperatura mínima con cámara', '°C'),
+    'temperatura_camara_max_c': ('Temperatura máxima con cámara', '°C'),
+    'humedad_max_pct': ('Humedad máxima', '%'),
+    'caida_m': ('Altura de caída ensayada', 'm'),
+    'humedad_condicion': ('Condición de humedad', None),
+    'proteccion_ip': ('Protección IP declarada', None),
+    'caida_condiciones': ('Condiciones del ensayo de caída', None),
+    'vibracion_norma': ('Ensayo de vibración', None),
+    'choque_condiciones': ('Choque funcional', None),
+    'ambiental_notas': ('Notas ambientales', None),
+    'ambiental_fuente': ('Fuente ambiental', None),
+
     "marca": ("Marca", None),
     "modelo": ("Modelo", None),
     "categoria": ("Categoría", None),
     "anio_modelo": ("Año del modelo", None),
     "tiene_imu": ("IMU", None),
     "tiene_camara": ("Cámara", None),
+    "cantidad_camaras": ("Cantidad de cámaras", None),
+    "tiene_snlonglink": ("SNLongLink", None),
     "canales_gnss": ("Canales GNSS", None),
     "memoria": ("Memoria", "GB"),
     "sim_4g": ("SIM 4G", None),
@@ -52,7 +70,7 @@ COLUMNAS = {
 COLUMNAS_PREDETERMINADAS = [
     "tiene_imu", "tiene_camara", "canales_gnss", "constelaciones",
     "rtk_horizontal_mm", "rtk_vertical_mm", "autonomia_bateria",
-    "peso_max", "radio_rangos",
+    "peso_max", "radio_rangos", "laser", "cantidad_camaras", "memoria", "tiene_snlonglink",
 ]
 
 

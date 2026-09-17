@@ -63,7 +63,7 @@ def editar_regla(criterio: str, datos: ReglaEditable, _=Depends(administrador_es
 @router.put("")
 def editar_reglas(reglas: list[ReglaConClave], _=Depends(administrador_escritura)):
     if not reglas or len(reglas) > len(CRITERIOS):
-        raise HTTPException(status_code=422, detail="Envía entre 1 y 23 reglas.")
+        raise HTTPException(status_code=422, detail=f"Envía entre 1 y {len(CRITERIOS)} reglas.")
     claves = [regla.criterio for regla in reglas]
     if len(set(claves)) != len(claves) or any(clave not in CRITERIOS_POR_CLAVE for clave in claves):
         raise HTTPException(status_code=422, detail="Hay criterios repetidos o desconocidos.")

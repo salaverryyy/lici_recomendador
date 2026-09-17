@@ -8,9 +8,15 @@ class Preferencias(BaseModel):
     top_n: int = Field(default=3, ge=1, le=100)
     necesita_imu: bool | None = None
     necesita_camara: bool | None = None
+    cantidad_camaras_min: int | None = Field(default=None, ge=1, le=20)
+    necesita_snlonglink: bool | None = None
     canales_min: int | None = Field(default=None, ge=0)
     rtk_ppm_max: float | None = Field(default=None, ge=0)
     static_ppm_max: float | None = Field(default=None, ge=0)
+    rtk_ppm_h_max: float | None = Field(default=None, ge=0)
+    rtk_ppm_v_max: float | None = Field(default=None, ge=0)
+    static_ppm_h_max: float | None = Field(default=None, ge=0)
+    static_ppm_v_max: float | None = Field(default=None, ge=0)
     rtk_horizontal_max_mm: float | None = Field(default=None, ge=0)
     rtk_vertical_max_mm: float | None = Field(default=None, ge=0)
     static_horizontal_max_mm: float | None = Field(default=None, ge=0)
@@ -33,6 +39,16 @@ class Preferencias(BaseModel):
 
     @model_validator(mode="after")
     def validar_radio(self):
+        # Compatibilidad con clientes anteriores que enviaban un único umbral ppm.
+        for grupo in ("rtk", "static"):
+            conjunto = getattr(self, grupo + "_ppm_max")
+            if conjunto is not None:
+                for eje in ("h", "v"):
+                    campo = grupo + "_ppm_" + eje + "_max"
+                    individual = getattr(self, campo)
+                    if individual is not None and individual != conjunto:
+                        raise ValueError("No combines umbrales ppm generales e individuales distintos.")
+                    setattr(self, campo, conjunto)
         if (self.radio_min_mhz is None) != (self.radio_max_mhz is None):
             raise ValueError("Indica ambos extremos del rango de radio, o deja ambos vacíos.")
         if self.radio_min_mhz is not None and self.radio_min_mhz > self.radio_max_mhz:
@@ -54,11 +70,13 @@ class Criterio:
 CRITERIOS = (
     Criterio("tiene_imu", "necesita_imu", "tiene_imu", "IMU", None, "booleano", 10),
     Criterio("tiene_camara", "necesita_camara", "tiene_camara", "Cámara", None, "booleano", 8),
+    Criterio("cantidad_camaras", "cantidad_camaras_min", "cantidad_camaras", "Cantidad de cámaras", None, "minimo", 6),
+    Criterio("tiene_snlonglink", "necesita_snlonglink", "tiene_snlonglink", "SNLongLink", None, "booleano", 5),
     Criterio("canales_gnss", "canales_min", "canales_gnss", "Canales GNSS", None, "minimo", 5),
-    Criterio("rtk_ppm_h", "rtk_ppm_max", "rtk_ppm_h", "RTK horizontal ppm", "ppm", "maximo", 2),
-    Criterio("rtk_ppm_v", "rtk_ppm_max", "rtk_ppm_v", "RTK vertical ppm", "ppm", "maximo", 2),
-    Criterio("static_ppm_h", "static_ppm_max", "static_ppm_h", "Estático horizontal ppm", "ppm", "maximo", 2),
-    Criterio("static_ppm_v", "static_ppm_max", "static_ppm_v", "Estático vertical ppm", "ppm", "maximo", 2),
+    Criterio("rtk_ppm_h", "rtk_ppm_h_max", "rtk_ppm_h", "RTK horizontal", "ppm", "maximo", 2),
+    Criterio("rtk_ppm_v", "rtk_ppm_v_max", "rtk_ppm_v", "RTK vertical", "ppm", "maximo", 2),
+    Criterio("static_ppm_h", "static_ppm_h_max", "static_ppm_h", "Estático horizontal", "ppm", "maximo", 2),
+    Criterio("static_ppm_v", "static_ppm_v_max", "static_ppm_v", "Estático vertical", "ppm", "maximo", 2),
     Criterio("rtk_horizontal_mm", "rtk_horizontal_max_mm", "rtk_horizontal_mm", "RTK horizontal", "mm", "maximo", 6),
     Criterio("rtk_vertical_mm", "rtk_vertical_max_mm", "rtk_vertical_mm", "RTK vertical", "mm", "maximo", 6),
     Criterio("static_horizontal_mm", "static_horizontal_max_mm", "static_horizontal_mm", "Estático horizontal", "mm", "maximo", 6),

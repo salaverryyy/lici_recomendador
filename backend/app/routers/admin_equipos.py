@@ -1,4 +1,5 @@
 import math
+import re
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -57,17 +58,19 @@ class RangoRadio(BaseModel):
 BOOLEANOS = {
     "tiene_imu", "tiene_camara", "sim_4g", "laser", "bateria_intercambiable",
     "bateria_caliente", "gps", "glonass", "galileo", "beidou", "qzss",
-    "navic_irnss", "sbas",
+    "navic_irnss", "sbas", "tiene_snlonglink",
 }
-ENTEROS = {"canales_gnss", "peso_max", "tiempo_inicializacion"}
+ENTEROS = {"canales_gnss", "peso_max", "tiempo_inicializacion", "cantidad_camaras"}
 NUMERICOS = {
     "memoria", "mp_camara", "autonomia_bateria", "rtk_horizontal_mm",
     "rtk_vertical_mm", "rtk_ppm_h", "rtk_ppm_v", "static_horizontal_mm",
     "static_vertical_mm", "static_ppm_h", "static_ppm_v", "largo_mm", "ancho_mm",
     "alto_mm", "ppp_h_cm", "ppp_v_cm",
 }
-TEXTOS = {"radio_frecuencia"}
-EDITABLES = BOOLEANOS | ENTEROS | NUMERICOS | TEXTOS
+TEMPERATURAS = {'temperatura_almacenamiento_min_c', 'temperatura_operacion_max_c', 'temperatura_almacenamiento_max_c', 'temperatura_camara_min_c', 'temperatura_operacion_min_c', 'temperatura_camara_max_c'}
+NUMERICOS |= {'caida_m', 'humedad_max_pct'}
+TEXTOS = {'ambiental_notas', 'radio_frecuencia', 'proteccion_ip', 'choque_condiciones', 'ambiental_fuente', 'caida_condiciones', 'vibracion_norma', 'humedad_condicion'}
+EDITABLES = BOOLEANOS | ENTEROS | NUMERICOS | TEXTOS | TEMPERATURAS
 CONSTELACIONES = ("gps", "glonass", "galileo", "beidou", "qzss", "navic_irnss")
 
 
@@ -84,6 +87,12 @@ def validar_especificaciones(cambios: dict[str, Any]):
             raise HTTPException(status_code=422, detail=f"{campo} debe ser entero no negativo o null.")
         if campo in NUMERICOS and (type(valor) not in (int, float) or not math.isfinite(valor) or valor < 0):
             raise HTTPException(status_code=422, detail=f"{campo} debe ser numérico no negativo o null.")
+        if campo in TEMPERATURAS and (type(valor) not in (int, float) or not math.isfinite(valor) or not -273.15 <= valor <= 200):
+            raise HTTPException(422, "Temperatura inválida; usa grados Celsius entre -273.15 y 200.")
+        if campo == "humedad_max_pct" and type(valor) in (int, float) and valor > 100:
+            raise HTTPException(422, "La humedad no puede superar 100%.")
+        if campo == "proteccion_ip" and (type(valor) is not str or not re.fullmatch(r"IP[0-6][0-9](?: \| IP[0-6][0-9])*", valor)):
+            raise HTTPException(422, "Usa un código IP, por ejemplo IP67 o IP66 | IP68.")
         if campo in TEXTOS and (type(valor) is not str or len(valor) > 500):
             raise HTTPException(status_code=422, detail=f"{campo} debe ser texto corto o null.")
 
@@ -203,6 +212,21 @@ def editar_especificaciones(id_equipo: str, datos: CambiosEspecificaciones, _=De
             )
             cur.execute("SELECT * FROM base_evaluacion WHERE id_equipo = %s FOR UPDATE", (id_equipo,))
             actuales = cur.fetchone()
+            combinados = {**actuales, **cambios}
+            for prefijo in ("operacion", "almacenamiento", "camara"):
+                minimo = combinados.get(f"temperatura_{prefijo}_min_c")
+                maximo = combinados.get(f"temperatura_{prefijo}_max_c")
+                if minimo is not None and maximo is not None and minimo > maximo:
+                    raise HTTPException(422, "La temperatura mínima supera la máxima.")
+            if "cantidad_camaras" in cambios and cambios["cantidad_camaras"] is not None:
+                presencia = cambios["cantidad_camaras"] > 0
+                if "tiene_camara" in cambios and cambios["tiene_camara"] is not presencia:
+                    raise HTTPException(422, "La cantidad de cámaras contradice el indicador de cámara.")
+                cambios["tiene_camara"] = presencia
+            elif cambios.get("tiene_camara") is False:
+                cambios["cantidad_camaras"] = 0
+            elif cambios.get("tiene_camara") is True and actuales.get("cantidad_camaras") == 0:
+                cambios["cantidad_camaras"] = None
             if any(campo in cambios for campo in CONSTELACIONES):
                 cambios["constelaciones"] = sum(
                     (cambios.get(campo, actuales[campo]) is True) for campo in CONSTELACIONES

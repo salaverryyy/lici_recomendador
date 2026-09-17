@@ -34,6 +34,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { api, setCsrf } from "./api";
+import { readStored, writeStored, usePersistentState } from "./persist";
 import "./style.css";
 
 type Equipo = {
@@ -53,7 +54,8 @@ type Columna = {
 const Selection = createContext<{
   ids: string[];
   toggle: (id: string) => void;
-}>({ ids: [], toggle: () => {} });
+  clear: () => void;
+}>({ ids: [], toggle: () => {}, clear: () => {} });
 const label = (key: string) =>
   key.replaceAll("_", " ").replace(/^./, (c) => c.toUpperCase());
 function valor(v: any): string {
@@ -107,10 +109,12 @@ function Action({
   children,
   onSubmit,
   success = "Cambios guardados.",
+  onChange,
 }: {
   children: ReactNode;
   onSubmit: (form: HTMLFormElement) => Promise<unknown>;
   success?: string;
+  onChange?: (form: HTMLFormElement) => void;
 }) {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
@@ -131,7 +135,7 @@ function Action({
     }
   }
   return (
-    <form onSubmit={submit}>
+    <form onSubmit={submit} onChange={(e) => onChange?.(e.currentTarget)}>
       <Feedback error={error} />
       {message && (
         <div role="status" className="notice success">
@@ -528,9 +532,11 @@ function Detail() {
   );
 }
 function Compare() {
-  const { ids, toggle } = useContext(Selection),
+  const { ids, toggle, clear } = useContext(Selection),
     metadata = useData("/comparar/columnas");
-  const [columns, setColumns] = useState([
+  const [columns, setColumns] = usePersistentState(
+    "licitex-comparar-columnas",
+    [
       "tiene_imu",
       "tiene_camara",
       "canales_gnss",
@@ -540,8 +546,13 @@ function Compare() {
       "autonomia_bateria",
       "peso_max",
       "radio_rangos",
-    ]),
-    [hide, setHide] = useState(false);
+      "laser",
+      "cantidad_camaras",
+      "memoria",
+      "tiene_snlonglink",
+    ],
+  );
+  const [hide, setHide] = usePersistentState("licitex-comparar-iguales", false);
   const { data, error } = useData(
     ids.length >= 2
       ? "/comparar?ids=" + ids.join(",") + "&columnas=" + columns.join(",")
@@ -560,6 +571,11 @@ function Compare() {
         <Link className="button" to="/catalogo">
           <Plus size={16} /> Añadir equipos
         </Link>
+        {ids.length > 0 && (
+          <button className="outline" onClick={clear}>
+            Limpiar selección
+          </button>
+        )}
       </div>
       {ids.length < 2 ? (
         <section className="empty">
@@ -656,14 +672,116 @@ function Compare() {
   );
 }
 function Recommend() {
-  const metadata = useData("/recomendador/criterios"),
-    [result, setResult] = useState<any>(null);
-  const unique = metadata.data?.criterios
-    .filter((c: any) => c.activo)
-    .filter(
-      (c: any, i: number, all: any[]) =>
-        all.findIndex((x) => x.campo_input === c.campo_input) === i,
+  const metadata = useData("/recomendador/criterios");
+  const [saved, setSaved] = usePersistentState<any>(
+    "licitex-recomendador-resultado",
+    null,
+  );
+  const [draft, setDraft] = useState<Record<string, string>>(() => {
+    const value = readStored<unknown>("licitex-recomendador-formulario", {});
+    return value && typeof value === "object" && !Array.isArray(value)
+      ? (value as Record<string, string>)
+      : {};
+  });
+  const [formVersion, setFormVersion] = useState(0);
+  const result = Array.isArray(saved?.resultados) ? saved : null;
+  const unique = metadata.data?.criterios.filter((c: any) => c.activo);
+  const basics = new Set([
+    "necesita_imu",
+    "necesita_camara",
+    "cantidad_camaras_min",
+    "laser",
+    "canales_min",
+    "memoria_min_gb",
+    "autonomia_min_h",
+  ]);
+  const connection = new Set([
+    "sim_4g",
+    "necesita_snlonglink",
+    "bateria_intercambiable",
+    "bateria_caliente",
+    "radio_min_mhz",
+  ]);
+  function input(c: any): ReactNode {
+    if (c.modo === "booleano")
+      return (
+        <label key={c.clave}>
+          {c.nombre}
+          <select
+            name={c.campo_input}
+            defaultValue={draft[c.campo_input] || ""}
+          >
+            <option value="">Sin preferencia</option>
+            <option value="true">Sí, lo necesito</option>
+            <option value="false">No lo necesito</option>
+          </select>
+        </label>
+      );
+    if (c.modo === "radio")
+      return (
+        <React.Fragment key={c.clave}>
+          <Field
+            name="radio_min_mhz"
+            title="Radio mínima (MHz)"
+            type="number"
+            min={0}
+            value={draft.radio_min_mhz || ""}
+          />
+          <Field
+            name="radio_max_mhz"
+            title="Radio máxima (MHz)"
+            type="number"
+            min={0}
+            value={draft.radio_max_mhz || ""}
+          />
+        </React.Fragment>
+      );
+    if (c.modo === "dimensiones")
+      return (
+        <React.Fragment key={c.clave}>
+          {["largo", "ancho", "alto"].map((k) => (
+            <Field
+              key={k}
+              name={k + "_max_mm"}
+              title={label(k) + " máximo (mm)"}
+              type="number"
+              min={0}
+              value={draft[k + "_max_mm"] || ""}
+            />
+          ))}
+        </React.Fragment>
+      );
+    const feminine = [
+      "memoria",
+      "autonomia_bateria",
+      "cantidad_camaras",
+    ].includes(c.clave);
+    const bound =
+      c.modo === "minimo" ? (feminine ? "mínima" : "mínimo") : "máximo";
+    return (
+      <Field
+        key={c.clave}
+        name={c.campo_input}
+        title={`${c.nombre} ${bound}${c.unidad ? " (" + c.unidad + ")" : ""}`}
+        type="number"
+        min={["constelaciones", "cantidad_camaras"].includes(c.clave) ? 1 : 0}
+        max={
+          c.clave === "constelaciones"
+            ? 6
+            : c.clave === "cantidad_camaras"
+              ? 20
+              : undefined
+        }
+        value={draft[c.campo_input] || ""}
+      />
     );
+  }
+  function clear() {
+    setDraft({});
+    writeStored("licitex-recomendador-formulario", {});
+    setSaved(null);
+    setFormVersion((v) => v + 1);
+  }
   return (
     <main className="container">
       <div className="page-title">
@@ -671,8 +789,7 @@ function Recommend() {
           <span className="eyebrow">ENCUENTRA CON LICI</span>
           <h1>Recomendador de equipos</h1>
           <p className="muted">
-            Completa solo lo que necesitas. Los demás campos pueden quedar
-            vacíos.
+            Empieza con lo esencial. Abre los detalles solo si los necesitas.
           </p>
         </div>
       </div>
@@ -682,95 +799,84 @@ function Recommend() {
             error={metadata.error}
             loading={!metadata.data && !metadata.error}
           />
-          <Action
-            success="Ranking actualizado."
-            onSubmit={async (f) => {
-              setResult(null);
-              const values = fields(f);
-              const body: Record<string, any> = {};
-              Object.entries(values).forEach(([k, v]) => {
-                if (v !== "")
-                  body[k] =
-                    v === "true" ? true : v === "false" ? false : Number(v);
-              });
-              setResult(await api("/recomendar", "POST", body));
-            }}
-          >
-            <h3>Tus requisitos</h3>
-            <p className="muted small-text">
-              «No» significa que no lo necesitas. Ningún equipo se descarta: el
-              cumplimiento determina la puntuación.
-            </p>
-            <div className="form-grid">
-              {unique?.map((c: any) =>
-                c.modo === "booleano" ? (
-                  <label key={c.clave}>
-                    {c.nombre}
-                    <select name={c.campo_input}>
-                      <option value="">Sin preferencia</option>
-                      <option value="true">Sí, lo necesito</option>
-                      <option value="false">No lo necesito</option>
-                    </select>
-                  </label>
-                ) : c.modo === "radio" ? (
-                  <React.Fragment key={c.clave}>
-                    <Field
-                      name="radio_min_mhz"
-                      title="Radio mínima (MHz)"
-                      type="number"
-                      min={0}
-                    />
-                    <Field
-                      name="radio_max_mhz"
-                      title="Radio máxima (MHz)"
-                      type="number"
-                      min={0}
-                    />
-                  </React.Fragment>
-                ) : c.modo === "dimensiones" ? (
-                  <React.Fragment key={c.clave}>
-                    {["largo", "ancho", "alto"].map((k) => (
-                      <Field
-                        key={k}
-                        name={k + "_max_mm"}
-                        title={label(k) + " máximo (mm)"}
-                        type="number"
-                        min={0}
-                      />
-                    ))}
-                  </React.Fragment>
-                ) : (
-                  <Field
-                    key={c.clave}
-                    name={c.campo_input}
-                    title={`${c.campo_input === "rtk_ppm_max" ? "RTK horizontal y vertical" : c.campo_input === "static_ppm_max" ? "Estático horizontal y vertical" : c.nombre} ${c.modo === "minimo" ? "mínimo" : "máximo"}${c.unidad ? " (" + c.unidad + ")" : ""}`}
-                    type="number"
-                    min={c.clave === "constelaciones" ? 1 : 0}
-                    max={c.clave === "constelaciones" ? 6 : undefined}
-                  />
-                ),
-              )}
-            </div>
-            <Field
-              name="top_n"
-              title="Cantidad de resultados (1–100)"
-              type="number"
-              value={3}
-              required
-              min={1}
-              max={100}
-            />
-            <div className="links">
-              <button
-                type="reset"
-                className="outline"
-                onClick={() => setResult(null)}
-              >
-                Limpiar
-              </button>
-              <button>Buscar equipos</button>
-            </div>
-          </Action>
+          {metadata.data && (
+            <Action
+              key={formVersion}
+              success="Ranking actualizado."
+              onChange={(form) =>
+                writeStored("licitex-recomendador-formulario", fields(form))
+              }
+              onSubmit={async (form) => {
+                const values = fields(form);
+                writeStored("licitex-recomendador-formulario", values);
+                const body: Record<string, any> = {};
+                Object.entries(values).forEach(([k, v]) => {
+                  if (v !== "")
+                    body[k] =
+                      v === "true" ? true : v === "false" ? false : Number(v);
+                });
+                setSaved(null);
+                const response = await api("/recomendar", "POST", body);
+                setSaved({ ...response, guardado_en: Date.now() });
+              }}
+            >
+              <h3>Lo esencial</h3>
+              <p className="muted small-text">
+                Todo es opcional. «No» significa que no lo necesitas. La
+                puntuación considera los requisitos que completes.
+              </p>
+              <div className="form-grid">
+                {unique
+                  ?.filter((c: any) => basics.has(c.campo_input))
+                  .map(input)}
+              </div>
+              {[
+                [
+                  "Precisión GNSS",
+                  (c: any) =>
+                    c.campo_input.startsWith("rtk_") ||
+                    c.campo_input.startsWith("static_"),
+                ],
+                [
+                  "Conectividad y energía",
+                  (c: any) => connection.has(c.campo_input),
+                ],
+                [
+                  "Otros requisitos",
+                  (c: any) =>
+                    !basics.has(c.campo_input) &&
+                    !connection.has(c.campo_input) &&
+                    !c.campo_input.startsWith("rtk_") &&
+                    !c.campo_input.startsWith("static_"),
+                ],
+              ].map(([name, predicate]: any) => (
+                <details className="input-group" key={name}>
+                  <summary>{name}</summary>
+                  <div className="form-grid">
+                    {unique?.filter(predicate).map(input)}
+                  </div>
+                </details>
+              ))}
+              <Field
+                name="top_n"
+                title="Cantidad de resultados (1–100)"
+                type="number"
+                value={draft.top_n || 3}
+                min={1}
+                max={100}
+                required
+              />
+              <div className="links">
+                <button className="outline" type="button" onClick={clear}>
+                  Limpiar
+                </button>
+                <button>Buscar equipos</button>
+              </div>
+              <p className="muted small-text">
+                Tu formulario y última consulta se conservan en este navegador.
+              </p>
+            </Action>
+          )}
         </section>
         <section>
           {!result ? (
@@ -787,9 +893,14 @@ function Recommend() {
                   {result.mostrados} de {result.total_equipos}
                 </span>
               </div>
+              <p className="muted small-text">
+                Última consulta:{" "}
+                {new Date(result.guardado_en).toLocaleString("es-PE")}.
+                Recalcula si cambias requisitos o datos del catálogo.
+              </p>
               <p className="muted">
                 El porcentaje indica ajuste a tus requisitos; los pesos aún son
-                provisionales.
+                provisionales. Todos los equipos permanecen en el ranking.
               </p>
               {result.resultados.map((r: any) => (
                 <article className="panel rank-card" key={r.equipo.id_equipo}>
@@ -811,6 +922,27 @@ function Recommend() {
                   )}
                   <p>{r.explicacion}</p>
                   <CompareButton id={r.equipo.id_equipo} />
+                  <details className="score-details">
+                    <summary>Ver criterios evaluados</summary>
+                    <dl>
+                      {r.detalle.map((d: any) => (
+                        <div key={d.clave}>
+                          <dt>
+                            {d.nombre}
+                            {d.unidad ? " (" + d.unidad + ")" : ""}
+                          </dt>
+                          <dd>
+                            {d.estado === "cumple"
+                              ? "Cumple"
+                              : d.estado === "sin_datos"
+                                ? "Sin datos"
+                                : "No cumple"}{" "}
+                            · {d.puntos}/{d.peso} puntos
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </details>
                 </article>
               ))}
             </>
@@ -820,6 +952,7 @@ function Recommend() {
     </main>
   );
 }
+
 function Login() {
   const navigate = useNavigate();
   return (
@@ -964,6 +1097,16 @@ function Editor() {
       isNew ? "/comparar/columnas" : "/admin/equipos/" + id + "/archivos",
     );
   const e = isNew ? {} : details.data?.equipo;
+  const textSpecs = new Set([
+    "radio_frecuencia",
+    "humedad_condicion",
+    "proteccion_ip",
+    "caida_condiciones",
+    "vibracion_norma",
+    "choque_condiciones",
+    "ambiental_notas",
+    "ambiental_fuente",
+  ]);
   const bools = new Set([
     "tiene_imu",
     "tiene_camara",
@@ -978,6 +1121,7 @@ function Editor() {
     "qzss",
     "navic_irnss",
     "sbas",
+    "tiene_snlonglink",
   ]);
   const base = "/admin/equipos/" + id;
   return (
@@ -1253,7 +1397,7 @@ function Editor() {
                           ? null
                           : bools.has(k)
                             ? v === "true"
-                            : k === "radio_frecuencia"
+                            : textSpecs.has(k)
                               ? v
                               : Number(v);
                     });
@@ -1299,10 +1443,10 @@ function Editor() {
                             title={
                               c.nombre + (c.unidad ? " (" + c.unidad + ")" : "")
                             }
-                            type={
-                              c.clave === "radio_frecuencia" ? "text" : "number"
+                            type={textSpecs.has(c.clave) ? "text" : "number"}
+                            min={
+                              c.clave.startsWith("temperatura_") ? -273.15 : 0
                             }
-                            min={0}
                             value={details.data.evaluacion?.[c.clave] ?? ""}
                           />
                         ),
@@ -1665,6 +1809,7 @@ function Recovery({ verify = false }: { verify?: boolean }) {
   );
 }
 function App() {
+  const [trayHidden, setTrayHidden] = useState(false);
   const location = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -1672,7 +1817,9 @@ function App() {
   const [ids, setIds] = useState<string[]>(() => {
     try {
       const saved = JSON.parse(
-        sessionStorage.getItem("licitex-comparar") || "[]",
+        localStorage.getItem("licitex-comparar") ||
+          sessionStorage.getItem("licitex-comparar") ||
+          "[]",
       );
       return Array.isArray(saved)
         ? saved.filter((v) => typeof v === "string").slice(0, 100)
@@ -1682,9 +1829,26 @@ function App() {
     }
   });
   useEffect(() => {
-    sessionStorage.setItem("licitex-comparar", JSON.stringify(ids));
+    writeStored("licitex-comparar", ids);
   }, [ids]);
-  const toggle = (id: string) =>
+  useEffect(() => {
+    const sync = (e: StorageEvent) => {
+      if (e.key === "licitex-comparar") {
+        const next = readStored<unknown>("licitex-comparar", []);
+        if (Array.isArray(next))
+          setIds(
+            [...new Set(next.filter((v) => typeof v === "string"))].slice(
+              0,
+              100,
+            ),
+          );
+      }
+    };
+    window.addEventListener("storage", sync);
+    return () => window.removeEventListener("storage", sync);
+  }, []);
+  const toggle = (id: string) => {
+    setTrayHidden(false);
     setIds((v) =>
       v.includes(id)
         ? v.filter((k) => k !== id)
@@ -1692,8 +1856,9 @@ function App() {
           ? [...v, id]
           : v,
     );
+  };
   return (
-    <Selection.Provider value={{ ids, toggle }}>
+    <Selection.Provider value={{ ids, toggle, clear: () => setIds([]) }}>
       <header>
         <div className="container nav">
           <Link className="brand" to="/">
@@ -1750,24 +1915,27 @@ function App() {
           <span>GNSS hoy. Más posibilidades mañana.</span>
         </div>
       </footer>
-      {ids.length > 0 && !location.pathname.startsWith("/admin") && (
-        <aside className="compare-tray">
-          <span>
-            <Scale size={20} />
-            {ids.length} seleccionados
-          </span>
-          <Link className="button" to="/comparar">
-            Comparar <ArrowRight size={16} />
-          </Link>
-          <button
-            className="icon"
-            aria-label="Limpiar selección"
-            onClick={() => setIds([])}
-          >
-            <X size={18} />
-          </button>
-        </aside>
-      )}
+      {ids.length > 0 &&
+        !trayHidden &&
+        !location.pathname.startsWith("/admin") &&
+        location.pathname !== "/comparar" && (
+          <aside className="compare-tray">
+            <span>
+              <Scale size={20} />
+              {ids.length} seleccionados
+            </span>
+            <Link className="button" to="/comparar">
+              Comparar <ArrowRight size={16} />
+            </Link>
+            <button
+              className="icon"
+              aria-label="Ocultar barra de comparación"
+              onClick={() => setTrayHidden(true)}
+            >
+              <X size={18} />
+            </button>
+          </aside>
+        )}
     </Selection.Provider>
   );
 }
