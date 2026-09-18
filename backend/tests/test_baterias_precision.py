@@ -38,3 +38,13 @@ class PrecisionTests(TestCase):
         p=Preferencias(rtk_modo='red',rtk_ppm_h_max=0.5)
         r=evaluar_equipo(p,criterios_seleccionados(p),{c.clave:c.peso for c in CRITERIOS},{'rtk_ppm_h':0.5},[])
         self.assertEqual(r['sin_datos'],1)
+
+    def test_baseline_and_network_are_evaluated_independently(self):
+        r=self.evaluar(rtk_ppm_h_max=1,rtk_ppm_v_max=1,
+            red_rtk_ppm_h_max=0.5,red_rtk_ppm_v_max=0.5)
+        self.assertEqual(r['porcentaje'],100)
+        self.assertEqual(r['cumplimientos'],4)
+
+    def test_two_operating_batteries_do_not_prove_two_included(self):
+        r=self.evaluar(baterias_incluidas_por_receptor_min=2)
+        self.assertEqual(r['sin_datos'],1)

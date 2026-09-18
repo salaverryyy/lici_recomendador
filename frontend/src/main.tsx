@@ -393,6 +393,19 @@ function Catalog() {
             </select>
           </label>
         </div>
+        <label className="inline">
+          <input
+            type="checkbox"
+            checked={params.get("solo_cotecmi") === "true"}
+            onChange={(e) =>
+              change("solo_cotecmi", e.target.checked ? "true" : "")
+            }
+          />
+          Solo equipos de Cotecmi
+        </label>
+        <p className="muted small-text">
+          SingularXYZ, SinoGNSS y Emlid. Desmarca para incluir la competencia.
+        </p>
         <Feedback error={options.error} />
       </section>
       <Feedback error={error} loading={!data && !error} />
@@ -831,11 +844,17 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
     "necesita_camara",
     "cantidad_camaras_min",
     "laser",
+    "inclinacion_imu_min_deg",
+    "actualizacion_min_hz",
     "canales_min",
     "memoria_min_gb",
     "autonomia_min_h",
   ]);
   const connection = new Set([
+    "baterias_incluidas_por_receptor_min",
+    "usb",
+    "usb_c",
+    "rs232",
     "cantidad_baterias_min",
     "necesita_lemo",
     "lemo_pines",
@@ -1085,6 +1104,18 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                 setSaved({ ...response, guardado_en: Date.now() });
               }}
             >
+              <label>
+                Equipos a evaluar
+                <select
+                  name="solo_cotecmi"
+                  defaultValue={draft.solo_cotecmi || "false"}
+                >
+                  <option value="false">Cotecmi y competencia</option>
+                  <option value="true">
+                    Solo Cotecmi (SingularXYZ, SinoGNSS y Emlid)
+                  </option>
+                </select>
+              </label>
               <h3>Lo esencial</h3>
               <p className="muted small-text">
                 Todo es opcional. «No» significa que no lo necesitas. La
@@ -1115,9 +1146,13 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                 </label>
               </div>
               <p className="muted">
-                Los mm y ppm se evalúan por separado en el modo seleccionado. Si
-                la ficha no declara ese modo, aparecerá sin datos. Las baterías
-                cuentan las del receptor, sin sumar repuestos del kit.
+                Para exigir línea base y red a la vez, usa Línea base y completa
+                también los campos adicionales «RTK en red». Los mm y ppm se
+                evalúan por separado en el modo seleccionado. Si la ficha no
+                declara ese modo, aparecerá sin datos. Las baterías cuentan las
+                del receptor, sin sumar repuestos del kit. «Baterías incluidas
+                por receptor» evalúa el paquete documentado; se debe confirmar
+                la cantidad de la oferta.
               </p>
               <div className="form-grid">
                 {unique
@@ -1155,6 +1190,7 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                   "Precisión GNSS",
                   (c: any) =>
                     c.campo_input.startsWith("rtk_") ||
+                    c.campo_input.startsWith("red_rtk_") ||
                     c.campo_input.startsWith("static_"),
                 ],
                 [
@@ -1176,6 +1212,7 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                       "vibracion_norma",
                     ].includes(c.campo_input) &&
                     !c.campo_input.startsWith("rtk_") &&
+                    !c.campo_input.startsWith("red_rtk_") &&
                     !c.campo_input.startsWith("static_"),
                 ],
               ].map(([name, predicate]: any) => (
@@ -1236,7 +1273,10 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
               <p className="muted small-text">
                 Última consulta:{" "}
                 {new Date(result.guardado_en).toLocaleString("es-PE")}.
-                Recalcula si cambias requisitos o datos del catálogo.
+                Recalcula si cambias requisitos o datos del catálogo. El ranking
+                evalúa el hardware documentado. Accesorios, licencias, garantía,
+                capacitación y compatibilidad del kit deben verificarse en la
+                oferta.
               </p>
               <p className="muted">
                 El porcentaje indica ajuste a tus requisitos; los pesos aún son
@@ -1542,7 +1582,10 @@ function Editor() {
     );
   const e = isNew ? {} : details.data?.equipo;
   const textSpecs = new Set([
-    "baterias_conectores_fuente", "baterias_conectores_notas",
+    "auditoria_fuente",
+    "auditoria_notas",
+    "baterias_conectores_fuente",
+    "baterias_conectores_notas",
     "imu_generacion",
     "imu_tecnologia",
     "bluetooth_version",
@@ -1564,6 +1607,9 @@ function Editor() {
     "ambiental_fuente",
   ]);
   const bools = new Set([
+    "usb",
+    "usb_c",
+    "rs232",
     "lemo",
     "memoria_expandible",
     "bluetooth",

@@ -3,6 +3,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from psycopg import Error as DatabaseError, sql
 from ..auth import administrador_escritura
 from ..db import connect
+from ..cotecmi import es_cotecmi
 from ..controladoras import META, validate, evaluate, available_options
 from .recomendar import ordenar_resultados
 
@@ -15,6 +16,7 @@ class Values(BaseModel):
 class Requirements(BaseModel):
     model_config = ConfigDict(extra='forbid')
     requisitos: dict = Field(min_length=1)
+    solo_cotecmi: bool = False
     top_n: int = Field(default=10,ge=1,le=100)
 
 @router.get('/controladoras/campos')
@@ -58,6 +60,8 @@ def recommend(values: Requirements):
             cur.execute("SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.imagen_url,to_jsonb(c) AS datos FROM equipos e LEFT JOIN controladora_especificaciones c USING(id_equipo) WHERE e.publicado AND e.categoria='Controladora'")
             results=[]
             for row in cur.fetchall():
+                if values.solo_cotecmi and not es_cotecmi(row['marca']):
+                    continue
                 data=row.pop('datos') or {}
                 results.append({'equipo':row,**evaluate(data,selected)})
         ordenar_resultados(results)

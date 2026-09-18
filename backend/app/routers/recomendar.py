@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from psycopg import Error as DatabaseError
 
 from ..db import connect
+from ..cotecmi import es_cotecmi
 from ..recomendador import CRITERIOS, Preferencias, criterios_seleccionados, evaluar_equipo
 
 
@@ -89,7 +90,7 @@ def recomendar(preferencias: Preferencias):
                 WHERE e.publicado = TRUE AND e.categoria <> 'Controladora'
                 """
             )
-            equipos = cur.fetchall()
+            equipos = [e for e in cur.fetchall() if not preferencias.solo_cotecmi or es_cotecmi(e["marca"])]
             cur.execute(
                 """
                 SELECT r.id_equipo, r.frecuencia_min_mhz, r.frecuencia_max_mhz

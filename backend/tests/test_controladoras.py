@@ -16,6 +16,13 @@ class ControllerTests(unittest.TestCase):
     def test_database_numbers_can_be_validated_for_partial_edits(self):
         validate({'ram_gb':Decimal('4'), 'temperatura_operacion_min_c':Decimal('-20')})
 
+    def test_tender_threshold_can_exceed_every_catalogue_screen(self):
+        rows = [{'pantalla_pulgadas':5.45}, {'pantalla_pulgadas':5.5}]
+        options = {c['clave']:c['opciones'] for c in available_options(rows)}
+        self.assertIn(6, options['pantalla_pulgadas'])
+        for row in rows:
+            self.assertEqual(evaluate(row, {'pantalla_pulgadas':6})['porcentaje'],0)
+
     def test_unknown_stays_unknown_and_no_is_ignored(self):
         result=evaluate({'ram_gb':4},{'ram_gb':4,'wifi':True,'nfc':False})
         self.assertEqual(result['porcentaje'],50)

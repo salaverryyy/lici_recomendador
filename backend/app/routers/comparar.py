@@ -8,6 +8,11 @@ from ..controladoras import META
 router = APIRouter(prefix="/api", tags=["comparador"])
 
 COLUMNAS = {
+    'baterias_incluidas_por_receptor': ('Baterías incluidas por receptor',None),
+    'actualizacion_hz': ('Salida de posición GNSS','Hz'),
+    'inclinacion_imu_deg': ('Inclinación IMU admitida','°'),
+    'usb': ('USB',None), 'usb_c': ('USB-C',None), 'rs232': ('RS-232',None),
+    'auditoria_fuente': ('Fuente de auditoría',None), 'auditoria_notas': ('Observaciones de auditoría',None),
     "imu_generacion": ("Generación de IMU declarada", None),
     "imu_tecnologia": ("Tecnología de IMU", None),
     "memoria_expandible": ("Memoria ampliable", None),
@@ -69,7 +74,7 @@ COLUMNAS = {
     "constelaciones": ("Constelaciones", None),
     "autonomia_bateria": ("Autonomía", "h"),
     "peso_max": ("Peso", "g"),
-    "tiempo_inicializacion": ("Tiempo de encendido", "s"),
+    "tiempo_inicializacion": ("Inicialización RTK", "s"),
     "rtk_horizontal_mm": ("RTK horizontal", "mm"),
     "rtk_vertical_mm": ("RTK vertical", "mm"),
     "rtk_ppm_h": ("RTK horizontal", "ppm"),

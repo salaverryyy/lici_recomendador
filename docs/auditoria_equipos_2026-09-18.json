@@ -1,0 +1,2199 @@
+[
+  {
+    "id_equipo": "GNSS-CHCNAV-I50",
+    "modelo": "CHCNAV i50",
+    "ficha": "ficha_tecnica_GPS-CHC-GNSS-i50.pdf",
+    "paginas": "1–3",
+    "notas": "Peso no legible/declarado en la tabla aportada: requiere confirmación. Kit de 2 receptores con 4 baterías: 2 incluidas por receptor. Autonomía celular hasta 10 h; UHF 5–7 h. LEMO 7 pines confirmado visualmente en p.3.",
+    "base": {
+      "peso_max": null,
+      "lemo": true,
+      "lemo_pines": 7,
+      "baterias_incluidas_por_receptor": 2,
+      "usb": true,
+      "rs232": true,
+      "actualizacion_hz": 10,
+      "caida_m": 2,
+      "auditoria_fuente": "ficha_tecnica_GPS-CHC-GNSS-i50.pdf; páginas 1–3; auditoría 2026-09-18.",
+      "auditoria_notas": "Peso no legible/declarado en la tabla aportada: requiere confirmación. Kit de 2 receptores con 4 baterías: 2 incluidas por receptor. Autonomía celular hasta 10 h; UHF 5–7 h. LEMO 7 pines confirmado visualmente en p.3."
+    },
+    "equipo": {},
+    "controladora": {},
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 750,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "lemo",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "lemo_pines",
+        "antes": null,
+        "despues": 7
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "baterias_incluidas_por_receptor",
+        "antes": null,
+        "despues": 2
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 10
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "caida_m",
+        "antes": null,
+        "despues": 2
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "ficha_tecnica_GPS-CHC-GNSS-i50.pdf; páginas 1–3; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Peso no legible/declarado en la tabla aportada: requiere confirmación. Kit de 2 receptores con 4 baterías: 2 incluidas por receptor. Autonomía celular hasta 10 h; UHF 5–7 h. LEMO 7 pines confirmado visualmente en p.3."
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I73",
+    "modelo": "CHCNAV i73",
+    "ficha": "i73_DS_EN_Surveyour2.pdf",
+    "paginas": "2,4",
+    "notas": "Ficha revisión agosto 2020. Rover RTK 12 h, estático hasta 15 h. IMU hasta 45° en p.2; no mezclar con i73+.",
+    "base": {
+      "peso_max": 730,
+      "autonomia_bateria": 12,
+      "inclinacion_imu_deg": 45,
+      "actualizacion_hz": 10,
+      "usb": true,
+      "usb_c": true,
+      "radio_frecuencia": "430-470 MHz",
+      "auditoria_fuente": "i73_DS_EN_Surveyour2.pdf; páginas 2,4; auditoría 2026-09-18.",
+      "auditoria_notas": "Ficha revisión agosto 2020. Rover RTK 12 h, estático hasta 15 h. IMU hasta 45° en p.2; no mezclar con i73+."
+    },
+    "equipo": {},
+    "controladora": {},
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 780,
+        "despues": 730
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "autonomia_bateria",
+        "antes": 24.0,
+        "despues": 12
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "inclinacion_imu_deg",
+        "antes": null,
+        "despues": 45
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 10
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "radio_frecuencia",
+        "antes": "410-470 MHz",
+        "despues": "430-470 MHz"
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "i73_DS_EN_Surveyour2.pdf; páginas 2,4; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Ficha revisión agosto 2020. Rover RTK 12 h, estático hasta 15 h. IMU hasta 45° en p.2; no mezclar con i73+."
+      },
+      {
+        "campo": "radio_rangos_normalizados",
+        "anterior": [
+          410,
+          470
+        ],
+        "nuevo": [
+          430,
+          470
+        ]
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I73PLUS",
+    "modelo": "CHCNAV i73+",
+    "ficha": "i73+_DS_EN.pdf",
+    "paginas": "2,4",
+    "notas": "Rover hasta 24 h; base UHF 10.5 h. Especificación 60° en tabla y precisión a 30° en texto. Señales con asterisco y salida 10 Hz sujetas a firmware.",
+    "base": {
+      "peso_max": 730,
+      "inclinacion_imu_deg": 60,
+      "actualizacion_hz": null,
+      "tiene_ppp": true,
+      "largo_static_horizontal_mm": 2.5,
+      "largo_static_vertical_mm": 3.5,
+      "largo_static_ppm_h": 0.1,
+      "largo_static_ppm_v": 0.4,
+      "usb": true,
+      "usb_c": true,
+      "auditoria_fuente": "i73+_DS_EN.pdf; páginas 2,4; auditoría 2026-09-18.",
+      "auditoria_notas": "Rover hasta 24 h; base UHF 10.5 h. Especificación 60° en tabla y precisión a 30° en texto. Señales con asterisco y salida 10 Hz sujetas a firmware."
+    },
+    "equipo": {},
+    "controladora": {},
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 750,
+        "despues": 730
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "inclinacion_imu_deg",
+        "antes": null,
+        "despues": 60
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiene_ppp",
+        "antes": false,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_horizontal_mm",
+        "antes": null,
+        "despues": 2.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_vertical_mm",
+        "antes": null,
+        "despues": 3.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_ppm_h",
+        "antes": null,
+        "despues": 0.1
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_ppm_v",
+        "antes": null,
+        "despues": 0.4
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "i73+_DS_EN.pdf; páginas 2,4; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Rover hasta 24 h; base UHF 10.5 h. Especificación 60° en tabla y precisión a 30° en texto. Señales con asterisco y salida 10 Hz sujetas a firmware."
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I93",
+    "modelo": "CHCNAV i93",
+    "ficha": "i93_DS_EN.pdf",
+    "paginas": "1–4",
+    "notas": "Ficha marzo 2026: 1892 canales, 9900 mAh, IP68 y rover sin cámara hasta 34 h; visual hasta 24 h. Confirmar que el equipo ofertado es esta revisión. 10 Hz, señales marcadas y PointSky dependen de firmware/servicio. Noticia oficial tiene fecha 2023 y texto 2022: año exacto pendiente.",
+    "base": {
+      "canales_gnss": 1892,
+      "peso_max": 1150,
+      "autonomia_bateria": 34,
+      "static_ppm_h": 0.5,
+      "mp_camara": 5,
+      "proteccion_ip": "IP68",
+      "vibracion_norma": "MIL-STD-810H",
+      "bluetooth_version": "5.0 y 4.2 + EDR",
+      "wifi_estandar": "802.11 a/b/g/n/ac",
+      "tipo_bateria": "Li-ion interna no extraíble, 9900 mAh, 7.2 V",
+      "memoria_expandible": true,
+      "memoria_expandida_max_gb": 128,
+      "inclinacion_imu_deg": 60,
+      "actualizacion_hz": null,
+      "usb": true,
+      "usb_c": true,
+      "rs232": true,
+      "largo_static_horizontal_mm": 2.5,
+      "largo_static_vertical_mm": 3.5,
+      "largo_static_ppm_h": 0.1,
+      "largo_static_ppm_v": 0.4,
+      "auditoria_fuente": "i93_DS_EN.pdf; páginas 1–4; auditoría 2026-09-18.",
+      "auditoria_notas": "Ficha marzo 2026: 1892 canales, 9900 mAh, IP68 y rover sin cámara hasta 34 h; visual hasta 24 h. Confirmar que el equipo ofertado es esta revisión. 10 Hz, señales marcadas y PointSky dependen de firmware/servicio. Noticia oficial tiene fecha 2023 y texto 2022: año exacto pendiente."
+    },
+    "equipo": {},
+    "controladora": {},
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "canales_gnss",
+        "antes": 1408,
+        "despues": 1892
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 950,
+        "despues": 1150
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "autonomia_bateria",
+        "antes": 15.0,
+        "despues": 34
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "static_ppm_h",
+        "antes": 0.1,
+        "despues": 0.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tipo_bateria",
+        "antes": "Li-ion interna no extraíble",
+        "despues": "Li-ion interna no extraíble, 9900 mAh, 7.2 V"
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "inclinacion_imu_deg",
+        "antes": null,
+        "despues": 60
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_horizontal_mm",
+        "antes": null,
+        "despues": 2.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_vertical_mm",
+        "antes": null,
+        "despues": 3.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_ppm_h",
+        "antes": null,
+        "despues": 0.1
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_ppm_v",
+        "antes": null,
+        "despues": 0.4
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "i93_DS_EN.pdf; páginas 1–4; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Ficha marzo 2026: 1892 canales, 9900 mAh, IP68 y rover sin cámara hasta 34 h; visual hasta 24 h. Confirmar que el equipo ofertado es esta revisión. 10 Hz, señales marcadas y PointSky dependen de firmware/servicio. Noticia oficial tiene fecha 2023 y texto 2022: año exacto pendiente."
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2",
+    "modelo": "Emlid Reach RS2",
+    "ficha": "Datasheet RS2 ENG web.pdf",
+    "paginas": "1–2",
+    "notas": "Autonomía usada: modo rover RTK (RS2/RS2+ 16 h; RS3 con inclinación 18 h), no las 22 h de registro. ~5 s es convergencia RTK, no encendido. RS2 tiene módem 3.5G, no LTE.",
+    "base": {
+      "peso_max": 950,
+      "largo_mm": 126,
+      "ancho_mm": 126,
+      "alto_mm": 142,
+      "tiempo_inicializacion": 5,
+      "autonomia_bateria": 16,
+      "actualizacion_hz": 5,
+      "usb": true,
+      "usb_c": true,
+      "rs232": true,
+      "sim_4g": false,
+      "auditoria_fuente": "Datasheet RS2 ENG web.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Autonomía usada: modo rover RTK (RS2/RS2+ 16 h; RS3 con inclinación 18 h), no las 22 h de registro. ~5 s es convergencia RTK, no encendido. RS2 tiene módem 3.5G, no LTE."
+    },
+    "equipo": {
+      "anio_modelo": 2019
+    },
+    "controladora": {},
+    "fuente_anio": "https://blog.emlid.com/multi-band-reach-rs2-is-here/",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 500,
+        "despues": 950
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_mm",
+        "antes": 154.0,
+        "despues": 126
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "ancho_mm",
+        "antes": 154.0,
+        "despues": 126
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "alto_mm",
+        "antes": 50.0,
+        "despues": 142
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiempo_inicializacion",
+        "antes": 10,
+        "despues": 5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "sim_4g",
+        "antes": true,
+        "despues": false
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "Datasheet RS2 ENG web.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Autonomía usada: modo rover RTK (RS2/RS2+ 16 h; RS3 con inclinación 18 h), no las 22 h de registro. ~5 s es convergencia RTK, no encendido. RS2 tiene módem 3.5G, no LTE."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": null,
+        "despues": 2019
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2PLUS",
+    "modelo": "Emlid Reach RS2+",
+    "ficha": "Datasheet-RS2+-ENG-web.pdf",
+    "paginas": "1–2",
+    "notas": "Autonomía usada: modo rover RTK (RS2/RS2+ 16 h; RS3 con inclinación 18 h), no las 22 h de registro. ~5 s es convergencia RTK, no encendido. RS2 tiene módem 3.5G, no LTE.",
+    "base": {
+      "peso_max": 950,
+      "largo_mm": 126,
+      "ancho_mm": 126,
+      "alto_mm": 142,
+      "tiempo_inicializacion": 5,
+      "autonomia_bateria": 16,
+      "actualizacion_hz": 10,
+      "usb": true,
+      "usb_c": true,
+      "rs232": true,
+      "auditoria_fuente": "Datasheet-RS2+-ENG-web.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Autonomía usada: modo rover RTK (RS2/RS2+ 16 h; RS3 con inclinación 18 h), no las 22 h de registro. ~5 s es convergencia RTK, no encendido. RS2 tiene módem 3.5G, no LTE."
+    },
+    "equipo": {
+      "anio_modelo": 2022
+    },
+    "controladora": {},
+    "fuente_anio": "https://blog.emlid.com/the-new-reach-rs2plus-with-lte/",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 500,
+        "despues": 950
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_mm",
+        "antes": 154.0,
+        "despues": 126
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "ancho_mm",
+        "antes": 154.0,
+        "despues": 126
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "alto_mm",
+        "antes": 50.0,
+        "despues": 142
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiempo_inicializacion",
+        "antes": 10,
+        "despues": 5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 10
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "Datasheet-RS2+-ENG-web.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Autonomía usada: modo rover RTK (RS2/RS2+ 16 h; RS3 con inclinación 18 h), no las 22 h de registro. ~5 s es convergencia RTK, no encendido. RS2 tiene módem 3.5G, no LTE."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": null,
+        "despues": 2022
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS3",
+    "modelo": "Emlid Reach RS3",
+    "ficha": "RS3-Datasheet-UHF.pdf",
+    "paginas": "1–2",
+    "notas": "Autonomía usada: modo rover RTK (RS2/RS2+ 16 h; RS3 con inclinación 18 h), no las 22 h de registro. ~5 s es convergencia RTK, no encendido. RS2 tiene módem 3.5G, no LTE.",
+    "base": {
+      "peso_max": 950,
+      "largo_mm": 126,
+      "ancho_mm": 126,
+      "alto_mm": 142,
+      "tiempo_inicializacion": 5,
+      "autonomia_bateria": 18,
+      "actualizacion_hz": 10,
+      "usb": true,
+      "usb_c": true,
+      "rs232": true,
+      "auditoria_fuente": "RS3-Datasheet-UHF.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Autonomía usada: modo rover RTK (RS2/RS2+ 16 h; RS3 con inclinación 18 h), no las 22 h de registro. ~5 s es convergencia RTK, no encendido. RS2 tiene módem 3.5G, no LTE.",
+      "inclinacion_imu_deg": 60
+    },
+    "equipo": {
+      "anio_modelo": 2023
+    },
+    "controladora": {},
+    "fuente_anio": "https://blog.emlid.com/ten-years-of-emlid-company-from-crowdfunding-to-survey-grade-rtk-gnss-solutions/",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_mm",
+        "antes": 154.0,
+        "despues": 126
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "ancho_mm",
+        "antes": 154.0,
+        "despues": 126
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "alto_mm",
+        "antes": 80.0,
+        "despues": 142
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiempo_inicializacion",
+        "antes": 10,
+        "despues": 5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "autonomia_bateria",
+        "antes": 22.0,
+        "despues": 18
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 10
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "RS3-Datasheet-UHF.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Autonomía usada: modo rover RTK (RS2/RS2+ 16 h; RS3 con inclinación 18 h), no las 22 h de registro. ~5 s es convergencia RTK, no encendido. RS2 tiene módem 3.5G, no LTE."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": null,
+        "despues": 2023
+      },
+      {
+        "campo": "inclinacion_imu_deg",
+        "anterior": null,
+        "nuevo": 60
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS16",
+    "modelo": "Leica GS16",
+    "ficha": "Leica_Viva_GS16_GNSS_smart_antenna_DS.pdf",
+    "paginas": "1–2",
+    "notas": "Ficha 11.17: 0.93 kg, módem 3.75G; no importar Wi-Fi/LTE de GS18. RINEX y constelaciones/licencias según versión; NavIC futura actualización. SmartLink PPP opcional, H 3 cm. Memoria microSD, no memoria interna.",
+    "base": {
+      "peso_max": 930,
+      "tiempo_inicializacion": 4,
+      "sim_4g": false,
+      "lte_4g": false,
+      "wifi": null,
+      "bluetooth_version": "2.00 + EDR",
+      "proteccion_ip": "IP68",
+      "temperatura_almacenamiento_max_c": 80,
+      "tiene_ppp": true,
+      "ppp_h_cm": 3,
+      "memoria_expandible": true,
+      "radio_frecuencia": "403-470 MHz",
+      "usb": true,
+      "rs232": true,
+      "actualizacion_hz": 20,
+      "navic_irnss": null,
+      "constelaciones": 5,
+      "auditoria_fuente": "Leica_Viva_GS16_GNSS_smart_antenna_DS.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Ficha 11.17: 0.93 kg, módem 3.75G; no importar Wi-Fi/LTE de GS18. RINEX y constelaciones/licencias según versión; NavIC futura actualización. SmartLink PPP opcional, H 3 cm. Memoria microSD, no memoria interna."
+    },
+    "equipo": {
+      "anio_modelo": 2016
+    },
+    "controladora": {},
+    "fuente_anio": "https://leica-geosystems.com/pl-pl/page-archive/events/intergeo-2016/unused-pages/latest-innovations",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 1200,
+        "despues": 930
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiempo_inicializacion",
+        "antes": 10,
+        "despues": 4
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "sim_4g",
+        "antes": true,
+        "despues": false
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "lte_4g",
+        "antes": null,
+        "despues": false
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiene_ppp",
+        "antes": false,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "ppp_h_cm",
+        "antes": null,
+        "despues": 3
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 20
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "navic_irnss",
+        "antes": true,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "constelaciones",
+        "antes": 6,
+        "despues": 5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "Leica_Viva_GS16_GNSS_smart_antenna_DS.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Ficha 11.17: 0.93 kg, módem 3.75G; no importar Wi-Fi/LTE de GS18. RINEX y constelaciones/licencias según versión; NavIC futura actualización. SmartLink PPP opcional, H 3 cm. Memoria microSD, no memoria interna."
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18",
+    "modelo": "Leica GS18I",
+    "ficha": "Leica_GS18I_DS.pdf",
+    "paginas": "1–2",
+    "notas": "GS18 I: 1.25 kg, altura 109 mm y cámara 1.2 MP. Con cámara -30 a +50 °C; sin cámara -40 a +65 °C. PPP y radio según variante/servicio. NavIC L1 y otras señales futuras. Memoria hasta 4 GB y SD extraíble.",
+    "base": {
+      "peso_max": 1250,
+      "alto_mm": 109,
+      "tiempo_inicializacion": 4,
+      "mp_camara": 1.2,
+      "usb": true,
+      "rs232": true,
+      "actualizacion_hz": 20,
+      "auditoria_fuente": "Leica_GS18I_DS.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "GS18 I: 1.25 kg, altura 109 mm y cámara 1.2 MP. Con cámara -30 a +50 °C; sin cámara -40 a +65 °C. PPP y radio según variante/servicio. NavIC L1 y otras señales futuras. Memoria hasta 4 GB y SD extraíble."
+    },
+    "equipo": {
+      "anio_modelo": 2020
+    },
+    "controladora": {},
+    "fuente_anio": "https://leica-geosystems.com/es-es/products/gnss-systems/smart-antennas/leica-gs18-t/the-leica-gs18-series-gnss-rtk-rovers-from-benchmark-to-better-than-ever",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 1030,
+        "despues": 1250
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "alto_mm",
+        "antes": 108.0,
+        "despues": 109
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiempo_inicializacion",
+        "antes": 10,
+        "despues": 4
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 20
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "Leica_GS18I_DS.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "GS18 I: 1.25 kg, altura 109 mm y cámara 1.2 MP. Con cámara -30 a +50 °C; sin cámara -40 a +65 °C. PPP y radio según variante/servicio. NavIC L1 y otras señales futuras. Memoria hasta 4 GB y SD extraíble."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": null,
+        "despues": 2020
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18T",
+    "modelo": "Leica GS18 T",
+    "ficha": "Leica GS18 T BRO.pdf",
+    "paginas": "1–2",
+    "notas": "Ficha octubre 2025, lanzamiento del modelo 2017. 1.23 kg, altura 109 mm, autonomía típica hasta 8 h. PPP y radio según variante/servicio. Memoria hasta 4 GB y SD extraíble.",
+    "base": {
+      "peso_max": 1230,
+      "alto_mm": 109,
+      "autonomia_bateria": 8,
+      "tiempo_inicializacion": 4,
+      "usb": true,
+      "rs232": true,
+      "actualizacion_hz": 20,
+      "auditoria_fuente": "Leica GS18 T BRO.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Ficha octubre 2025, lanzamiento del modelo 2017. 1.23 kg, altura 109 mm, autonomía típica hasta 8 h. PPP y radio según variante/servicio. Memoria hasta 4 GB y SD extraíble."
+    },
+    "equipo": {
+      "anio_modelo": 2017
+    },
+    "controladora": {},
+    "fuente_anio": "https://leica-geosystems.com/es-es/products/gnss-systems/smart-antennas/leica-gs18-t/the-leica-gs18-series-gnss-rtk-rovers-from-benchmark-to-better-than-ever",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 1030,
+        "despues": 1230
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "alto_mm",
+        "antes": 108.0,
+        "despues": 109
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "autonomia_bateria",
+        "antes": 16.0,
+        "despues": 8
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiempo_inicializacion",
+        "antes": 10,
+        "despues": 4
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 20
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "Leica GS18 T BRO.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Ficha octubre 2025, lanzamiento del modelo 2017. 1.23 kg, altura 109 mm, autonomía típica hasta 8 h. PPP y radio según variante/servicio. Memoria hasta 4 GB y SD extraíble."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": 2025,
+        "despues": 2017
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-ORION-ONE",
+    "modelo": "SingularXYZ Orion ONE",
+    "ficha": "_Orion ONE GNSS Receiver (3).pdf",
+    "paginas": "1–2",
+    "notas": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto. Serie con variantes ONE, AR y Laser: confirmar cámara/AR en la unidad; ONE y Laser incluyen láser.",
+    "base": {
+      "inclinacion_imu_deg": 60,
+      "tiempo_inicializacion": 5,
+      "actualizacion_hz": 50,
+      "usb": true,
+      "usb_c": true,
+      "auditoria_fuente": "_Orion ONE GNSS Receiver (3).pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto. Serie con variantes ONE, AR y Laser: confirmar cámara/AR en la unidad; ONE y Laser incluyen láser."
+    },
+    "equipo": {
+      "anio_modelo": 2024
+    },
+    "controladora": {},
+    "fuente_anio": "https://www.singularxyz.com/news_detail/29",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "inclinacion_imu_deg",
+        "antes": null,
+        "despues": 60
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 50
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "_Orion ONE GNSS Receiver (3).pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto. Serie con variantes ONE, AR y Laser: confirmar cámara/AR en la unidad; ONE y Laser incluyen láser."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": 2025,
+        "despues": 2024
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-SFAIRA-ONE-PLUS",
+    "modelo": "SingularXYZ Sfaira ONE Plus",
+    "ficha": "_Sfaira ONE Plus GNSS Receiver (1).pdf",
+    "paginas": "1–2",
+    "notas": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto.",
+    "base": {
+      "inclinacion_imu_deg": 60,
+      "tiempo_inicializacion": 5,
+      "actualizacion_hz": 1,
+      "usb": true,
+      "usb_c": true,
+      "auditoria_fuente": "_Sfaira ONE Plus GNSS Receiver (1).pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto."
+    },
+    "equipo": {
+      "anio_modelo": 2023
+    },
+    "controladora": {},
+    "fuente_anio": "https://www.singularxyz.com/news_detail/47",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "inclinacion_imu_deg",
+        "antes": null,
+        "despues": 60
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiempo_inicializacion",
+        "antes": null,
+        "despues": 5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 1
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "_Sfaira ONE Plus GNSS Receiver (1).pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": null,
+        "despues": 2023
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-X1",
+    "modelo": "SingularXYZ X1",
+    "ficha": "X1 GNSS Receiver.pdf",
+    "paginas": "1–2",
+    "notas": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto. Catálogo oficial confirma batería integrada. Intercambio y cambio en caliente no declarados. UHF mejorada LoRa Tx/Rx; protocolo de otras marcas Rx o módulo normal opcional: confirmar variante.",
+    "base": {
+      "inclinacion_imu_deg": 60,
+      "tiempo_inicializacion": 5,
+      "actualizacion_hz": 50,
+      "usb": true,
+      "usb_c": true,
+      "bateria_interna": true,
+      "bateria_intercambiable": null,
+      "bateria_caliente": null,
+      "auditoria_fuente": "X1 GNSS Receiver.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto. Catálogo oficial confirma batería integrada. Intercambio y cambio en caliente no declarados. UHF mejorada LoRa Tx/Rx; protocolo de otras marcas Rx o módulo normal opcional: confirmar variante."
+    },
+    "equipo": {
+      "anio_modelo": 2023
+    },
+    "controladora": {},
+    "fuente_anio": "https://www.singularxyz.com/news_detail/55",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "inclinacion_imu_deg",
+        "antes": null,
+        "despues": 60
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 50
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "bateria_interna",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "bateria_intercambiable",
+        "antes": true,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "X1 GNSS Receiver.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto. Catálogo oficial confirma batería integrada. Intercambio y cambio en caliente no declarados. UHF mejorada LoRa Tx/Rx; protocolo de otras marcas Rx o módulo normal opcional: confirmar variante."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": null,
+        "despues": 2023
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-X1-LITE",
+    "modelo": "SingularXYZ X1 Lite",
+    "ficha": "X1 Lite GNSS Receiver.pdf",
+    "paginas": "1–2",
+    "notas": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto. Catálogo oficial confirma batería integrada. Intercambio y cambio en caliente no declarados. UHF mejorada LoRa Tx/Rx; protocolo de otras marcas Rx o módulo normal opcional: confirmar variante.",
+    "base": {
+      "inclinacion_imu_deg": 60,
+      "tiempo_inicializacion": 5,
+      "actualizacion_hz": 50,
+      "usb": true,
+      "usb_c": true,
+      "bateria_interna": true,
+      "bateria_intercambiable": null,
+      "bateria_caliente": null,
+      "auditoria_fuente": "X1 Lite GNSS Receiver.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto. Catálogo oficial confirma batería integrada. Intercambio y cambio en caliente no declarados. UHF mejorada LoRa Tx/Rx; protocolo de otras marcas Rx o módulo normal opcional: confirmar variante."
+    },
+    "equipo": {
+      "anio_modelo": 2023
+    },
+    "controladora": {},
+    "fuente_anio": "https://www.singularxyz.com/news_detail/55",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "inclinacion_imu_deg",
+        "antes": null,
+        "despues": 60
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 50
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "bateria_interna",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "bateria_intercambiable",
+        "antes": true,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "X1 Lite GNSS Receiver.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto. Catálogo oficial confirma batería integrada. Intercambio y cambio en caliente no declarados. UHF mejorada LoRa Tx/Rx; protocolo de otras marcas Rx o módulo normal opcional: confirmar variante."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": null,
+        "despues": 2023
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-Z1",
+    "modelo": "SingularXYZ Z1",
+    "ficha": "Z1 GNSS Receiver.pdf",
+    "paginas": "1–2",
+    "notas": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto. 15 km en condiciones óptimas con LoRa; no equivale a alcance garantizado con otra marca.",
+    "base": {
+      "inclinacion_imu_deg": 60,
+      "tiempo_inicializacion": 5,
+      "actualizacion_hz": 50,
+      "usb": true,
+      "usb_c": true,
+      "auditoria_fuente": "Z1 GNSS Receiver.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto. 15 km en condiciones óptimas con LoRa; no equivale a alcance garantizado con otra marca."
+    },
+    "equipo": {
+      "anio_modelo": 2024
+    },
+    "controladora": {},
+    "fuente_anio": "https://www.singularxyz.com/news_detail/28",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "inclinacion_imu_deg",
+        "antes": null,
+        "despues": 60
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 50
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "Z1 GNSS Receiver.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Inicialización RTK <5 s, no encendido. Rango IMU 60°. La expansión de memoria es capacidad soportada, no instalada. No inferir baterías de repuesto. 15 km en condiciones óptimas con LoRa; no equivale a alcance garantizado con otra marca."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": 2025,
+        "despues": 2024
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-JUPITER",
+    "modelo": "SinoGNSS Jupiter Laser RTK",
+    "ficha": "SinoGNSS Jupiter Laser RTK_ESP.pdf",
+    "paginas": "1–2",
+    "notas": "Láser y 2 cámaras de 2 MP; IMU hasta 120°. PPP B2b/HAS opcional. Puerto Tipo-C. Módem celular y batería intercambiable no declarados para el receptor en esta ficha; el 4G al pie de p.2 pertenece al R80. 15 km con SNLonglink ideal.",
+    "base": {
+      "laser": true,
+      "tiene_ppp": true,
+      "lte_4g": null,
+      "sim_4g": null,
+      "bateria_intercambiable": null,
+      "inclinacion_imu_deg": 120,
+      "actualizacion_hz": 20,
+      "usb": true,
+      "usb_c": true,
+      "largo_static_horizontal_mm": 2.5,
+      "largo_static_vertical_mm": 3.5,
+      "largo_static_ppm_h": 0.1,
+      "largo_static_ppm_v": 0.4,
+      "auditoria_fuente": "SinoGNSS Jupiter Laser RTK_ESP.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Láser y 2 cámaras de 2 MP; IMU hasta 120°. PPP B2b/HAS opcional. Puerto Tipo-C. Módem celular y batería intercambiable no declarados para el receptor en esta ficha; el 4G al pie de p.2 pertenece al R80. 15 km con SNLonglink ideal."
+    },
+    "equipo": {
+      "anio_modelo": 2025
+    },
+    "controladora": {},
+    "fuente_anio": "https://www.linkedin.com/posts/comnav-technology-ltd-_sinognss-comnavtech-surveying-activity-7363875120890716160-N7SN",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiene_ppp",
+        "antes": false,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "lte_4g",
+        "antes": true,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "sim_4g",
+        "antes": true,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "bateria_intercambiable",
+        "antes": true,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "inclinacion_imu_deg",
+        "antes": null,
+        "despues": 120
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 20
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_horizontal_mm",
+        "antes": null,
+        "despues": 2.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_vertical_mm",
+        "antes": null,
+        "despues": 3.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_ppm_h",
+        "antes": null,
+        "despues": 0.1
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_ppm_v",
+        "antes": null,
+        "despues": 0.4
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "SinoGNSS Jupiter Laser RTK_ESP.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Láser y 2 cámaras de 2 MP; IMU hasta 120°. PPP B2b/HAS opcional. Puerto Tipo-C. Módem celular y batería intercambiable no declarados para el receptor en esta ficha; el 4G al pie de p.2 pertenece al R80. 15 km con SNLonglink ideal."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": null,
+        "despues": 2025
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-MARS-PRO",
+    "modelo": "SinoGNSS Mars Pro Laser RTK",
+    "ficha": "SinoGNSS Mars Pro Laser RTK.pdf",
+    "paginas": "1–2",
+    "notas": "RTK de red y línea base separados. PPP mencionada sin precisión numérica. SNLonglink confirmado en página oficial actual, distinto a protocolos de ficha 2024. Cambio de baterías en caliente no declarado en ficha. Confirmar módulo UHF/4G ofertado.",
+    "base": {
+      "tiene_ppp": true,
+      "bateria_caliente": null,
+      "inclinacion_imu_deg": 60,
+      "actualizacion_hz": 20,
+      "auditoria_fuente": "SinoGNSS Mars Pro Laser RTK.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "RTK de red y línea base separados. PPP mencionada sin precisión numérica. SNLonglink confirmado en página oficial actual, distinto a protocolos de ficha 2024. Cambio de baterías en caliente no declarado en ficha. Confirmar módulo UHF/4G ofertado."
+    },
+    "equipo": {
+      "anio_modelo": 2023
+    },
+    "controladora": {},
+    "fuente_anio": "https://www.linkedin.com/posts/comnav-technology-ltd-_sinognss-comnavtech-surveying-activity-7363875120890716160-N7SN",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiene_ppp",
+        "antes": false,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "bateria_caliente",
+        "antes": true,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "inclinacion_imu_deg",
+        "antes": null,
+        "despues": 60
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 20
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "SinoGNSS Mars Pro Laser RTK.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "RTK de red y línea base separados. PPP mencionada sin precisión numérica. SNLonglink confirmado en página oficial actual, distinto a protocolos de ficha 2024. Cambio de baterías en caliente no declarado en ficha. Confirmar módulo UHF/4G ofertado."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": null,
+        "despues": 2023
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-P6H",
+    "modelo": "SinoGNSS P6H Portátil",
+    "ficha": "SinoGNSS P6H Portátil_ES.pdf",
+    "paginas": "1–2",
+    "notas": "Cámaras trasera 13 MP y frontal 5 MP. La ficha no declara autonomía ni inicialización RTK: no mantener 20 h/5 s sin respaldo. ROM 128 GB opcional y microSD hasta 128 GB son opciones distintas. Año exacto de lanzamiento pendiente; no usar año de revisión de ficha.",
+    "base": {
+      "autonomia_bateria": null,
+      "tiempo_inicializacion": null,
+      "cantidad_camaras": 2,
+      "actualizacion_hz": null,
+      "usb": true,
+      "usb_c": true,
+      "auditoria_fuente": "SinoGNSS P6H Portátil_ES.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Cámaras trasera 13 MP y frontal 5 MP. La ficha no declara autonomía ni inicialización RTK: no mantener 20 h/5 s sin respaldo. ROM 128 GB opcional y microSD hasta 128 GB son opciones distintas. Año exacto de lanzamiento pendiente; no usar año de revisión de ficha."
+    },
+    "equipo": {
+      "anio_modelo": null
+    },
+    "controladora": {},
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "autonomia_bateria",
+        "antes": 20.0,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiempo_inicializacion",
+        "antes": 5,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "cantidad_camaras",
+        "antes": null,
+        "despues": 2
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb_c",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "SinoGNSS P6H Portátil_ES.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Cámaras trasera 13 MP y frontal 5 MP. La ficha no declara autonomía ni inicialización RTK: no mantener 20 h/5 s sin respaldo. ROM 128 GB opcional y microSD hasta 128 GB son opciones distintas. Año exacto de lanzamiento pendiente; no usar año de revisión de ficha."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": 2025,
+        "despues": null
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T300PLUS",
+    "modelo": "SinoGNSS T300+",
+    "ficha": "SinoGNSS T300 Plus GNSS Receiver.pdf",
+    "paginas": "1–2",
+    "notas": "Ficha revisión 2025; modelo anterior con actualización K8/IMU en 2022. 14 h típicas, dos baterías intercambiables en caliente. 32 GB es opción de fábrica. Alcance 15 km ideal SNLonglink. No declara precisión distinta para RTK en red. Año exacto de lanzamiento pendiente; no usar año de revisión de ficha.",
+    "base": {
+      "tiene_snlonglink": true,
+      "inclinacion_imu_deg": 60,
+      "actualizacion_hz": 20,
+      "usb": true,
+      "rs232": true,
+      "auditoria_fuente": "SinoGNSS T300 Plus GNSS Receiver.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "Ficha revisión 2025; modelo anterior con actualización K8/IMU en 2022. 14 h típicas, dos baterías intercambiables en caliente. 32 GB es opción de fábrica. Alcance 15 km ideal SNLonglink. No declara precisión distinta para RTK en red. Año exacto de lanzamiento pendiente; no usar año de revisión de ficha."
+    },
+    "equipo": {
+      "anio_modelo": null
+    },
+    "controladora": {},
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiene_snlonglink",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "inclinacion_imu_deg",
+        "antes": null,
+        "despues": 60
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 20
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "SinoGNSS T300 Plus GNSS Receiver.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "Ficha revisión 2025; modelo anterior con actualización K8/IMU en 2022. 14 h típicas, dos baterías intercambiables en caliente. 32 GB es opción de fábrica. Alcance 15 km ideal SNLonglink. No declara precisión distinta para RTK en red. Año exacto de lanzamiento pendiente; no usar año de revisión de ficha."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": 2025,
+        "despues": null
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-SOUTH-G1",
+    "modelo": "South Galaxy G1",
+    "ficha": "ficha_Tecnica_Southern_Galaxy_G1.pdf",
+    "paginas": "1–2",
+    "notas": "1 kg con batería. Módulo estándar 220 canales; 555/965 opcionales. Sensor de inclinación 30° opcional, no IMU de 60° confirmada. No declara autonomía. Red H8/V15 +0.5ppm. Estático de observaciones largas H2.5/V5 +0.5ppm.",
+    "base": {
+      "peso_max": 1000,
+      "autonomia_bateria": null,
+      "tiene_imu": null,
+      "tiempo_inicializacion": 8,
+      "radio_frecuencia": "410-470 MHz",
+      "actualizacion_hz": null,
+      "usb": true,
+      "rs232": true,
+      "red_rtk_horizontal_mm": 8,
+      "red_rtk_vertical_mm": 15,
+      "red_rtk_ppm_h": 0.5,
+      "red_rtk_ppm_v": 0.5,
+      "largo_static_horizontal_mm": 2.5,
+      "largo_static_vertical_mm": 5,
+      "largo_static_ppm_h": 0.5,
+      "largo_static_ppm_v": 0.5,
+      "auditoria_fuente": "ficha_Tecnica_Southern_Galaxy_G1.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "1 kg con batería. Módulo estándar 220 canales; 555/965 opcionales. Sensor de inclinación 30° opcional, no IMU de 60° confirmada. No declara autonomía. Red H8/V15 +0.5ppm. Estático de observaciones largas H2.5/V5 +0.5ppm."
+    },
+    "equipo": {},
+    "controladora": {},
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 790,
+        "despues": 1000
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "autonomia_bateria",
+        "antes": 7.0,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiene_imu",
+        "antes": true,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiempo_inicializacion",
+        "antes": 10,
+        "despues": 8
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "radio_frecuencia",
+        "antes": "403-470 MHz",
+        "despues": "410-470 MHz"
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "red_rtk_horizontal_mm",
+        "antes": null,
+        "despues": 8
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "red_rtk_vertical_mm",
+        "antes": null,
+        "despues": 15
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "red_rtk_ppm_h",
+        "antes": null,
+        "despues": 0.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "red_rtk_ppm_v",
+        "antes": null,
+        "despues": 0.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_horizontal_mm",
+        "antes": null,
+        "despues": 2.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_vertical_mm",
+        "antes": null,
+        "despues": 5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_ppm_h",
+        "antes": null,
+        "despues": 0.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_ppm_v",
+        "antes": null,
+        "despues": 0.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "ficha_Tecnica_Southern_Galaxy_G1.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "1 kg con batería. Módulo estándar 220 canales; 555/965 opcionales. Sensor de inclinación 30° opcional, no IMU de 60° confirmada. No declara autonomía. Red H8/V15 +0.5ppm. Estático de observaciones largas H2.5/V5 +0.5ppm."
+      },
+      {
+        "campo": "radio_rangos_normalizados",
+        "anterior": [
+          403,
+          470
+        ],
+        "nuevo": [
+          410,
+          470
+        ]
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-SOUTH-G6",
+    "modelo": "South Galaxy G6",
+    "ficha": "ficha_tecnica_South_Galaxy_G6.pdf",
+    "paginas": "1–2",
+    "notas": "1.44 kg con batería; 336 canales estándar, 965 opcionales. Hasta 50 Hz. PPP/RTX requiere suscripción. Tabla de sensor inclinación 30°, texto shake tilt sin límite: confirmar versión. Cambio en caliente no declarado.",
+    "base": {
+      "peso_max": 1440,
+      "tiene_ppp": true,
+      "ppp_h_cm": 10,
+      "ppp_v_cm": 20,
+      "tiene_imu": null,
+      "bateria_caliente": null,
+      "actualizacion_hz": 50,
+      "usb": true,
+      "rs232": true,
+      "auditoria_fuente": "ficha_tecnica_South_Galaxy_G6.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "1.44 kg con batería; 336 canales estándar, 965 opcionales. Hasta 50 Hz. PPP/RTX requiere suscripción. Tabla de sensor inclinación 30°, texto shake tilt sin límite: confirmar versión. Cambio en caliente no declarado."
+    },
+    "equipo": {},
+    "controladora": {},
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 850,
+        "despues": 1440
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiene_ppp",
+        "antes": false,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "ppp_h_cm",
+        "antes": null,
+        "despues": 10
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "ppp_v_cm",
+        "antes": null,
+        "despues": 20
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiene_imu",
+        "antes": true,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "bateria_caliente",
+        "antes": true,
+        "despues": null
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 50
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "ficha_tecnica_South_Galaxy_G6.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "1.44 kg con batería; 336 canales estándar, 965 opcionales. Hasta 50 Hz. PPP/RTX requiere suscripción. Tabla de sensor inclinación 30°, texto shake tilt sin límite: confirmar versión. Cambio en caliente no declarado."
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R12I",
+    "modelo": "Trimble R12i",
+    "ficha": "022516-511H_Trimble R12i GNSS Receiver.pdf",
+    "paginas": "1–4",
+    "notas": "1.12 kg con batería/radio/antena; 6 h Tx 0.5 W, 5.5 h Tx 2 W y 6.5 h Rx. Inicialización RTK 2–8 s. TIP precisión especificada hasta 40°. RTX H2/V3 cm con servicio. Módem según variante/región.",
+    "base": {
+      "peso_max": 1120,
+      "tiempo_inicializacion": 8,
+      "tiene_ppp": true,
+      "ppp_h_cm": 2,
+      "ppp_v_cm": 3,
+      "inclinacion_imu_deg": 40,
+      "actualizacion_hz": 20,
+      "usb": true,
+      "rs232": true,
+      "largo_static_horizontal_mm": 3,
+      "largo_static_vertical_mm": 3.5,
+      "largo_static_ppm_h": 0.1,
+      "largo_static_ppm_v": 0.4,
+      "auditoria_fuente": "022516-511H_Trimble R12i GNSS Receiver.pdf; páginas 1–4; auditoría 2026-09-18.",
+      "auditoria_notas": "1.12 kg con batería/radio/antena; 6 h Tx 0.5 W, 5.5 h Tx 2 W y 6.5 h Rx. Inicialización RTK 2–8 s. TIP precisión especificada hasta 40°. RTX H2/V3 cm con servicio. Módem según variante/región."
+    },
+    "equipo": {
+      "anio_modelo": 2020
+    },
+    "controladora": {},
+    "fuente_anio": "https://help.fieldsystems.trimble.com/trimble-access-release-notes/en/2020.10.htm",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 890,
+        "despues": 1120
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiempo_inicializacion",
+        "antes": 10,
+        "despues": 8
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiene_ppp",
+        "antes": false,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "ppp_h_cm",
+        "antes": null,
+        "despues": 2
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "ppp_v_cm",
+        "antes": null,
+        "despues": 3
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "inclinacion_imu_deg",
+        "antes": null,
+        "despues": 40
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 20
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "usb",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_horizontal_mm",
+        "antes": null,
+        "despues": 3
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_vertical_mm",
+        "antes": null,
+        "despues": 3.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_ppm_h",
+        "antes": null,
+        "despues": 0.1
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_ppm_v",
+        "antes": null,
+        "despues": 0.4
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "022516-511H_Trimble R12i GNSS Receiver.pdf; páginas 1–4; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "1.12 kg con batería/radio/antena; 6 h Tx 0.5 W, 5.5 h Tx 2 W y 6.5 h Rx. Inicialización RTK 2–8 s. TIP precisión especificada hasta 40°. RTX H2/V3 cm con servicio. Módem según variante/región."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": null,
+        "despues": 2020
+      }
+    ]
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R8S",
+    "modelo": "Trimble R8s",
+    "ficha": "Datasheet-Trimble-R8s-GNSS-System-English-USL-Screen.pdf",
+    "paginas": "1–2",
+    "notas": "1.52 kg con batería/radio/antena; altura 104 mm incluidos conectores. Autonomía Rx5 h, Tx0.5 W2.5 h, celular4 h: se usa Rx5. Inicialización típicamente <8 s. GSM/3G opcional, no LTE. Sin declaración de Wi-Fi/USB en puertos: confirmar.",
+    "base": {
+      "peso_max": 1520,
+      "alto_mm": 104,
+      "autonomia_bateria": 5,
+      "tiempo_inicializacion": 8,
+      "actualizacion_hz": 20,
+      "rs232": true,
+      "largo_static_horizontal_mm": 3,
+      "largo_static_vertical_mm": 3.5,
+      "largo_static_ppm_h": 0.1,
+      "largo_static_ppm_v": 0.4,
+      "auditoria_fuente": "Datasheet-Trimble-R8s-GNSS-System-English-USL-Screen.pdf; páginas 1–2; auditoría 2026-09-18.",
+      "auditoria_notas": "1.52 kg con batería/radio/antena; altura 104 mm incluidos conectores. Autonomía Rx5 h, Tx0.5 W2.5 h, celular4 h: se usa Rx5. Inicialización típicamente <8 s. GSM/3G opcional, no LTE. Sin declaración de Wi-Fi/USB en puertos: confirmar."
+    },
+    "equipo": {
+      "anio_modelo": 2015
+    },
+    "controladora": {},
+    "fuente_anio": "https://www.nikon-trimble.co.jp/info/index.html?kind=3&newslist=71",
+    "cambios": [
+      {
+        "tabla": "base_evaluacion",
+        "campo": "peso_max",
+        "antes": 930,
+        "despues": 1520
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "alto_mm",
+        "antes": 102.0,
+        "despues": 104
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "autonomia_bateria",
+        "antes": 5.5,
+        "despues": 5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "tiempo_inicializacion",
+        "antes": 10,
+        "despues": 8
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "actualizacion_hz",
+        "antes": null,
+        "despues": 20
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "rs232",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_horizontal_mm",
+        "antes": null,
+        "despues": 3
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_vertical_mm",
+        "antes": null,
+        "despues": 3.5
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_ppm_h",
+        "antes": null,
+        "despues": 0.1
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "largo_static_ppm_v",
+        "antes": null,
+        "despues": 0.4
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_fuente",
+        "antes": null,
+        "despues": "Datasheet-Trimble-R8s-GNSS-System-English-USL-Screen.pdf; páginas 1–2; auditoría 2026-09-18."
+      },
+      {
+        "tabla": "base_evaluacion",
+        "campo": "auditoria_notas",
+        "antes": null,
+        "despues": "1.52 kg con batería/radio/antena; altura 104 mm incluidos conectores. Autonomía Rx5 h, Tx0.5 W2.5 h, celular4 h: se usa Rx5. Inicialización típicamente <8 s. GSM/3G opcional, no LTE. Sin declaración de Wi-Fi/USB en puertos: confirmar."
+      },
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": 2017,
+        "despues": 2015
+      }
+    ]
+  },
+  {
+    "id_equipo": "SINGULARXYZ-SC260",
+    "modelo": "SingularXYZ SC260",
+    "ficha": "colectora/_SC260 Data Collector (2).pdf",
+    "paginas": "1–2",
+    "notas": "Revisadas páginas 1–2, versión 26-08-2025: Android11, CPU2GHz, RAM4/ROM64, pantalla5.45, 18 h pantalla encendida, IP68. Peso, caída, brújula y norma MIL no declarados.",
+    "base": {},
+    "equipo": {
+      "anio_modelo": 2025
+    },
+    "controladora": {
+      "notas": "Autonomía: más de 18 h con pantalla encendida. Táctil capacitiva de 5 puntos. Peso, brillo y caída no declarados. No se infiere Wi-Fi 6 ni certificación GMS. Auditoría 2026-09-18: Revisadas páginas 1–2, versión 26-08-2025: Android11, CPU2GHz, RAM4/ROM64, pantalla5.45, 18 h pantalla encendida, IP68. Peso, caída, brújula y norma MIL no declarados."
+    },
+    "fuente_anio": "https://www.singularxyz.com/news_detail/116",
+    "cambios": [
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": null,
+        "despues": 2025
+      },
+      {
+        "tabla": "controladora_especificaciones",
+        "campo": "notas",
+        "antes": "Autonomía: más de 18 h con pantalla encendida. Táctil capacitiva de 5 puntos. Peso, brillo y caída no declarados. No se infiere Wi-Fi 6 ni certificación GMS.",
+        "despues": "Autonomía: más de 18 h con pantalla encendida. Táctil capacitiva de 5 puntos. Peso, brillo y caída no declarados. No se infiere Wi-Fi 6 ni certificación GMS. Auditoría 2026-09-18: Revisadas páginas 1–2, versión 26-08-2025: Android11, CPU2GHz, RAM4/ROM64, pantalla5.45, 18 h pantalla encendida, IP68. Peso, caída, brújula y norma MIL no declarados."
+      }
+    ]
+  },
+  {
+    "id_equipo": "SINOGNSS-R60",
+    "modelo": "SinoGNSS R60",
+    "ficha": "colectora/SinoGNSS R60 Data Collector (1).pdf",
+    "paginas": "1–2",
+    "notas": "Revisadas páginas 1–2, versión 02-08-2022: Android12, RAM4/ROM64, pantalla5.5, 30+ h, IP67, caída1.6m, brújula electrónica. Carga: texto5 h frente a tabla≤4 h; se mantiene desconocida hasta confirmar. CPU GHz no declarada.",
+    "base": {},
+    "equipo": {
+      "anio_modelo": 2022
+    },
+    "controladora": {
+      "brujula": true,
+      "carga_h": null,
+      "notas": "Autonomía 30+ h, condiciones no especificadas. Caída sobre concreto. USB 3.0, UART TTL, auriculares digitales. Carga contradictoria: 5 h en página 1 y no más de 4 h en página 2; tiempo de carga sin valor. Frecuencia CPU no declarada. Auditoría 2026-09-18: Revisadas páginas 1–2, versión 02-08-2022: Android12, RAM4/ROM64, pantalla5.5, 30+ h, IP67, caída1.6m, brújula electrónica. Carga: texto5 h frente a tabla≤4 h; se mantiene desconocida hasta confirmar. CPU GHz no declarada."
+    },
+    "fuente_anio": "https://www.comnavtech.com/about/news/256.html",
+    "cambios": [
+      {
+        "tabla": "equipos",
+        "campo": "anio_modelo",
+        "antes": null,
+        "despues": 2022
+      },
+      {
+        "tabla": "controladora_especificaciones",
+        "campo": "brujula",
+        "antes": null,
+        "despues": true
+      },
+      {
+        "tabla": "controladora_especificaciones",
+        "campo": "notas",
+        "antes": "Autonomía 30+ h, condiciones no especificadas. Caída sobre concreto. USB 3.0, UART TTL, auriculares digitales. Carga contradictoria: 5 h en página 1 y no más de 4 h en página 2; tiempo de carga sin valor. Frecuencia CPU no declarada.",
+        "despues": "Autonomía 30+ h, condiciones no especificadas. Caída sobre concreto. USB 3.0, UART TTL, auriculares digitales. Carga contradictoria: 5 h en página 1 y no más de 4 h en página 2; tiempo de carga sin valor. Frecuencia CPU no declarada. Auditoría 2026-09-18: Revisadas páginas 1–2, versión 02-08-2022: Android12, RAM4/ROM64, pantalla5.5, 30+ h, IP67, caída1.6m, brújula electrónica. Carga: texto5 h frente a tabla≤4 h; se mantiene desconocida hasta confirmar. CPU GHz no declarada."
+      }
+    ]
+  }
+]

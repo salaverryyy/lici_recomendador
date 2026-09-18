@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Query
 from psycopg import Error as DatabaseError
 
 from ..db import connect
+from ..cotecmi import COTECMI_MARCAS
 
 
 router = APIRouter(prefix="/api/equipos", tags=["equipos"])
@@ -12,6 +13,7 @@ def listar_equipos(
     q: str | None = None,
     marca: str | None = None,
     categoria: str | None = None,
+    solo_cotecmi: bool = False,
     orden: str = Query(default="marca", pattern="^(marca|modelo|anio_desc|canales_desc|peso_asc)$"),
 ):
     orden_sql = {
@@ -32,6 +34,10 @@ def listar_equipos(
     if categoria:
         condiciones.append("e.categoria = %s")
         parametros.append(categoria)
+
+    if solo_cotecmi:
+        condiciones.append('e.marca = ANY(%s)')
+        parametros.append(list(COTECMI_MARCAS))
 
     try:
         with connect() as conn, conn.cursor() as cur:

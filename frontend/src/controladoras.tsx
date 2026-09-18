@@ -201,7 +201,10 @@ export function ControllerRank({ slot }: { slot: string }) {
     try {
       setResult(
         await api("/controladoras/recomendar", "POST", {
-          requisitos: draft,
+          requisitos: Object.fromEntries(
+            Object.entries(draft).filter(([k]) => k !== "solo_cotecmi"),
+          ),
+          solo_cotecmi: draft.solo_cotecmi === true,
           top_n: 100,
         }),
       );
@@ -223,6 +226,18 @@ export function ControllerRank({ slot }: { slot: string }) {
         </p>
         {error && <p role="alert">{error}</p>}
         <form onSubmit={submit}>
+          <label>
+            Equipos a evaluar
+            <select
+              value={String(draft.solo_cotecmi ?? false)}
+              onChange={(e) =>
+                setDraft({ ...draft, solo_cotecmi: e.target.value === "true" })
+              }
+            >
+              <option value="false">Cotecmi y competencia</option>
+              <option value="true">Solo Cotecmi</option>
+            </select>
+          </label>
           <fieldset disabled={busy}>
             <div className="form-grid">
               {campos

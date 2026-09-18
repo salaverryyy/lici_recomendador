@@ -7,6 +7,7 @@ import unicodedata
 
 # clave, nombre, tipo, unidad, comparación del requisito
 FIELDS = [
+    ('brujula','Brújula electrónica','boolean','', 'yes'),
     ('sistema_operativo','Sistema operativo','text','', 'exact'),
     ('android_version','Versión Android','number','', 'min'),
     ('procesador','Procesador','text','', None),
@@ -75,9 +76,17 @@ def canonical(key, value):
         return 'Android'
     return text.casefold()
 
+# Umbrales de los pliegos: deben poder exigirse aunque ningún equipo los alcance.
+TENDER_OPTIONS = {
+    'cpu_ghz': [2], 'ram_gb': [1, 4], 'almacenamiento_gb': [8, 64],
+    'pantalla_pulgadas': [5, 6], 'autonomia_h': [7, 12], 'caida_m': [1.2, 2],
+    'camara_mp': [5], 'temperatura_operacion_min_c': [-30, -20],
+    'temperatura_operacion_max_c': [50, 60],
+}
+
 def available_options(rows):
     return [{**meta, 'opciones': sorted({canonical(key, row.get(key)) for row in rows
-              if row.get(key) is not None and row.get(key) != ''})}
+              if row.get(key) is not None and row.get(key) != ''} | set(TENDER_OPTIONS.get(key, [])))}
             for key, meta in META.items()]
 
 def validate(values, requirements=False):

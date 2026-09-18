@@ -6,8 +6,19 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 class Preferencias(BaseModel):
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    solo_cotecmi: bool = False
     top_n: int = Field(default=3, ge=1, le=100)
     cantidad_baterias_min: int | None = Field(default=None, ge=1, le=20)
+    baterias_incluidas_por_receptor_min: int | None = Field(default=None, ge=1, le=20)
+    inclinacion_imu_min_deg: float | None = Field(default=None, ge=0, le=180)
+    actualizacion_min_hz: float | None = Field(default=None, ge=0)
+    usb: bool | None = None
+    usb_c: bool | None = None
+    rs232: bool | None = None
+    red_rtk_horizontal_max_mm: float | None = Field(default=None, ge=0)
+    red_rtk_vertical_max_mm: float | None = Field(default=None, ge=0)
+    red_rtk_ppm_h_max: float | None = Field(default=None, ge=0)
+    red_rtk_ppm_v_max: float | None = Field(default=None, ge=0)
     necesita_lemo: bool | None = None
     lemo_pines: int | None = Field(default=None, ge=1, le=30)
     rtk_modo: str = Field(default='linea_base', pattern=r'^(linea_base|red)$')
@@ -77,6 +88,9 @@ class Preferencias(BaseModel):
             maximo = getattr(self, f"temperatura_{grupo}_max_c")
             if minimo is not None and maximo is not None and minimo > maximo:
                 raise ValueError("La temperatura mínima solicitada supera la máxima.")
+        if self.rtk_modo == 'red' and any(getattr(self, k) is not None for k in
+            ('red_rtk_horizontal_max_mm','red_rtk_vertical_max_mm','red_rtk_ppm_h_max','red_rtk_ppm_v_max')):
+            raise ValueError('Para exigir línea base y red simultáneamente, selecciona Línea base y completa los campos adicionales RTK en red.')
         # Compatibilidad con clientes anteriores que enviaban un único umbral ppm.
         for grupo in ("rtk", "static"):
             conjunto = getattr(self, grupo + "_ppm_max")
@@ -106,6 +120,14 @@ class Criterio:
 
 
 CRITERIOS = (
+    Criterio('baterias_incluidas_por_receptor','baterias_incluidas_por_receptor_min','baterias_incluidas_por_receptor','Baterías incluidas por receptor',None,'minimo',3),
+    Criterio('inclinacion_imu_deg','inclinacion_imu_min_deg','inclinacion_imu_deg','Inclinación IMU admitida','°','minimo',4),
+    Criterio('actualizacion_hz','actualizacion_min_hz','actualizacion_hz','Salida de posición GNSS','Hz','minimo',3),
+    *(Criterio(k,k,k,n,None,'booleano',2) for k,n in [('usb','USB'),('usb_c','USB-C'),('rs232','RS-232')]),
+    Criterio('red_rtk_horizontal_mm','red_rtk_horizontal_max_mm','red_rtk_horizontal_mm','RTK en red horizontal','mm','maximo',6),
+    Criterio('red_rtk_vertical_mm','red_rtk_vertical_max_mm','red_rtk_vertical_mm','RTK en red vertical','mm','maximo',6),
+    Criterio('red_rtk_ppm_h','red_rtk_ppm_h_max','red_rtk_ppm_h','RTK en red horizontal','ppm','maximo',2),
+    Criterio('red_rtk_ppm_v','red_rtk_ppm_v_max','red_rtk_ppm_v','RTK en red vertical','ppm','maximo',2),
     Criterio('cantidad_baterias','cantidad_baterias_min','cantidad_baterias','Cantidad de baterías del equipo',None,'minimo',3),
     Criterio('lemo','necesita_lemo','lemo','Conector LEMO',None,'booleano',3),
     Criterio('lemo_pines','lemo_pines','lemo_pines','Pines del conector LEMO',None,'exacto',3),
@@ -154,7 +176,7 @@ CRITERIOS = (
     Criterio("mp_camara", "camara_mp_min", "mp_camara", "Cámara", "MP", "minimo", 3),
     Criterio("peso_max", "peso_max_g", "peso_max", "Peso", "g", "maximo", 3),
     Criterio("dimensiones", "largo_max_mm", None, "Dimensiones", "mm", "dimensiones", 1),
-    Criterio("tiempo_inicializacion", "tiempo_inicializacion_max_s", "tiempo_inicializacion", "Encendido", "s", "maximo", 2),
+    Criterio("tiempo_inicializacion", "tiempo_inicializacion_max_s", "tiempo_inicializacion", "Inicialización RTK", "s", "maximo", 2),
 )
 
 CRITERIOS_POR_CLAVE = {criterio.clave: criterio for criterio in CRITERIOS}
