@@ -95,6 +95,12 @@ def subir(id_equipo: str, tipo: Literal["foto", "ficha"], archivo: UploadFile,
         archivo.file.close()
     if not data or len(data) > limite:
         raise HTTPException(422, f"El archivo debe contener datos y no superar {limite // 1024 // 1024} MB.")
+    extension, mime = validar_archivo(data, tipo)
+    url, key = guardar(data, extension, mime)
+    return registrar(id_equipo, tipo, url, storage_key=key)
+
+
+def validar_archivo(data, tipo):
     # No confiar en el nombre ni en el Content-Type enviados por el navegador.
     try:
         if tipo == "foto":
@@ -113,8 +119,7 @@ def subir(id_equipo: str, tipo: Literal["foto", "ficha"], archivo: UploadFile,
             extension, mime = "pdf", "application/pdf"
     except Exception as exc:
         raise HTTPException(422, "Archivo inválido: usa JPG, PNG o WebP para fotos y PDF sin contraseña para fichas.") from exc
-    url, key = guardar(data, extension, mime)
-    return registrar(id_equipo, tipo, url, storage_key=key)
+    return extension, mime
 
 
 @router.patch("/{id_equipo}/archivos/{archivo_id}")

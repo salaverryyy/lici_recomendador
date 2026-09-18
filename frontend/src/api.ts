@@ -9,7 +9,11 @@ export async function api(
   body?: unknown,
 ): Promise<any> {
   const headers: Record<string, string> = {};
-  if (body !== undefined && !(body instanceof FormData))
+  if (
+    body !== undefined &&
+    !(body instanceof FormData) &&
+    !(body instanceof Blob)
+  )
     headers["Content-Type"] = "application/json";
   if (method !== "GET" && csrf) headers["X-CSRF-Token"] = csrf;
   let response: Response;
@@ -21,7 +25,7 @@ export async function api(
       body:
         body === undefined
           ? undefined
-          : body instanceof FormData
+          : body instanceof FormData || body instanceof Blob
             ? body
             : JSON.stringify(body),
     });

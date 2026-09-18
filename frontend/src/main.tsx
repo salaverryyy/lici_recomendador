@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import { api, setCsrf } from "./api";
 import { ControllerSpecs, ControllerRank } from "./controladoras";
+import { StorageUsage, uploadFile } from "./almacenamiento";
 import { readStored, writeStored, usePersistentState } from "./persist";
 import "./style.css";
 
@@ -1309,7 +1310,12 @@ function AdminLayout({ children }: { children: ReactNode }) {
           error={session.error}
           loading={!session.data && !session.error}
         />
-        {session.data && children}
+        {session.data && (
+          <>
+            <StorageUsage />
+            {children}
+          </>
+        )}
       </div>
     </main>
   );
@@ -1725,11 +1731,10 @@ function Editor() {
                     onSubmit={async (form) => {
                       const d = new FormData(form),
                         tipo = d.get("tipo");
-                      d.delete("tipo");
-                      await api(
-                        base + "/archivos/subir?tipo=" + tipo,
-                        "POST",
-                        d,
+                      await uploadFile(
+                        base,
+                        String(tipo),
+                        d.get("archivo") as File,
                       );
                       form.reset();
                       files.reload();
@@ -1737,6 +1742,10 @@ function Editor() {
                     }}
                   >
                     <h3>Cargar desde tu computadora</h3>
+                    <p className="muted">
+                      Fotos hasta 5 MB · Fichas PDF hasta 20 MB. Los archivos se
+                      cargan por fragmentos.
+                    </p>
                     <label>
                       Tipo
                       <select name="tipo">

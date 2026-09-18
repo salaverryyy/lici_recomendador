@@ -17,6 +17,8 @@ from .routers.admin_correos import router as admin_correos_router
 
 
 app = FastAPI(title="Licitex API")
+from .routers.admin_almacenamiento import router as admin_almacenamiento_router
+app.include_router(admin_almacenamiento_router)
 from .routers.controladoras import router as controladoras_router
 app.include_router(controladoras_router)
 if not os.getenv("VERCEL") and os.getenv("MEDIA_STORAGE", "local") == "local":
