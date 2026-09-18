@@ -86,6 +86,10 @@ def detalle_equipo(id_equipo: str):
                 (id_equipo,),
             )
             evaluacion = cur.fetchone()
+            controladora = None
+            if equipo['categoria'] == 'Controladora':
+                cur.execute('SELECT * FROM controladora_especificaciones WHERE id_equipo=%s', (id_equipo,))
+                controladora = cur.fetchone()
 
             cur.execute(
                 """
@@ -100,6 +104,7 @@ def detalle_equipo(id_equipo: str):
             cur.execute("SELECT id, url, texto_alternativo, orden FROM equipo_archivos WHERE id_equipo=%s AND tipo='foto' ORDER BY orden,id", (id_equipo,))
             return {
                 "equipo": equipo,
+                "controladora": controladora,
                 "evaluacion": evaluacion,
                 "radio_frecuencias": radio_frecuencias,
                 "fotografias": cur.fetchall(),

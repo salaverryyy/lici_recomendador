@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Query
 from psycopg import Error as DatabaseError
 
 from ..db import connect
+from ..controladoras import META
 
 
 router = APIRouter(prefix="/api", tags=["comparador"])
@@ -104,7 +105,7 @@ def columnas_disponibles():
     return [
         {"clave": clave, "nombre": nombre, "unidad": unidad}
         for clave, (nombre, unidad) in COLUMNAS.items()
-    ]
+    ] + [{'clave':'controladora_'+k,'nombre':v['nombre']+' · Controladora','unidad':v['unidad']} for k,v in META.items()]
 
 
 @router.get("/comparar")
@@ -120,7 +121,8 @@ def comparar(
         [valor.strip() for valor in columnas.split(",") if valor.strip()]
         if columnas is not None else COLUMNAS_PREDETERMINADAS
     )
-    if not claves or len(set(claves)) != len(claves) or any(c not in COLUMNAS for c in claves):
+    disponibles = {**COLUMNAS, **{'controladora_'+k:(v['nombre'],v['unidad']) for k,v in META.items()}}
+    if not claves or len(set(claves)) != len(claves) or any(c not in disponibles for c in claves):
         raise HTTPException(status_code=422, detail="Selecciona columnas válidas y sin repetir.")
 
     try:
@@ -138,6 +140,14 @@ def comparar(
             faltantes = [valor for valor in equipos_ids if valor not in encontrados]
             if faltantes:
                 raise HTTPException(status_code=404, detail={"equipos_no_encontrados": faltantes})
+
+            controllers = [ident for ident in equipos_ids if encontrados[ident]['categoria']=='Controladora']
+            if controllers:
+                cur.execute('SELECT * FROM controladora_especificaciones WHERE id_equipo=ANY(%s)',(controllers,))
+                for row in cur.fetchall():
+                    encontrados[row['id_equipo']].update({'controladora_'+k:v for k,v in row.items() if k in META})
+            if len(controllers)==len(equipos_ids) and not any(k.startswith('controladora_') for k in claves):
+                claves=['marca','modelo']+['controladora_'+k for k in META]
 
             cur.execute(
                 """
@@ -163,8 +173,8 @@ def comparar(
                 "columnas": [
                     {
                         "clave": clave,
-                        "nombre": COLUMNAS[clave][0],
-                        "unidad": COLUMNAS[clave][1],
+                        "nombre": disponibles[clave][0],
+                        "unidad": disponibles[clave][1],
                         "valores": {
                             valor: (
                                 rangos[valor] if clave == "radio_rangos"

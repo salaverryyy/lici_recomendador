@@ -17,6 +17,8 @@ from .routers.admin_correos import router as admin_correos_router
 
 
 app = FastAPI(title="Licitex API")
+from .routers.controladoras import router as controladoras_router
+app.include_router(controladoras_router)
 if not os.getenv("VERCEL") and os.getenv("MEDIA_STORAGE", "local") == "local":
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
     app.mount("/archivos", StaticFiles(directory=UPLOAD_DIR), name="archivos")

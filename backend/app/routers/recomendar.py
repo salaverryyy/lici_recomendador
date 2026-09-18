@@ -86,7 +86,7 @@ def recomendar(preferencias: Preferencias):
                        to_jsonb(b) AS evaluacion
                 FROM equipos AS e
                 LEFT JOIN base_evaluacion AS b USING (id_equipo)
-                WHERE e.publicado = TRUE
+                WHERE e.publicado = TRUE AND e.categoria <> 'Controladora'
                 """
             )
             equipos = cur.fetchall()
@@ -100,6 +100,8 @@ def recomendar(preferencias: Preferencias):
             )
             radio = {equipo["id_equipo"]: [] for equipo in equipos}
             for fila in cur.fetchall():
+                if fila['id_equipo'] not in radio:
+                    continue
                 radio[fila["id_equipo"]].append({
                     "min_mhz": fila["frecuencia_min_mhz"],
                     "max_mhz": fila["frecuencia_max_mhz"],

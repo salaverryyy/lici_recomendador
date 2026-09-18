@@ -324,6 +324,10 @@ fieldset {
   aspect-ratio: 3 / 2;
   background: #e7e7e7;
 }
+.ranking-navigation { padding-top: 24px; }
+.ranking-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 16px 0; }
+.ranking-tabs button { flex-shrink: 0; }
+[hidden] { display: none !important; }
 .photo img,
 .detail-photo img,
 .thumbnails img,

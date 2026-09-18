@@ -1,0 +1,58 @@
+-- Datos verificados contra las fichas aportadas. Sin inferir valores ausentes.
+BEGIN;
+CREATE TABLE IF NOT EXISTS controladora_especificaciones (
+    id_equipo TEXT PRIMARY KEY REFERENCES equipos(id_equipo) ON DELETE CASCADE,
+    sistema_operativo TEXT,
+    android_version NUMERIC CHECK (android_version >= 0),
+    procesador TEXT,
+    cpu_nucleos NUMERIC CHECK (cpu_nucleos >= 0),
+    cpu_ghz NUMERIC CHECK (cpu_ghz >= 0),
+    ram_gb NUMERIC CHECK (ram_gb >= 0),
+    almacenamiento_gb NUMERIC CHECK (almacenamiento_gb >= 0),
+    expansion_gb NUMERIC CHECK (expansion_gb >= 0),
+    pantalla_pulgadas NUMERIC CHECK (pantalla_pulgadas >= 0),
+    resolucion_ancho_px NUMERIC CHECK (resolucion_ancho_px >= 0),
+    resolucion_alto_px NUMERIC CHECK (resolucion_alto_px >= 0),
+    brillo_nits NUMERIC CHECK (brillo_nits >= 0),
+    pantalla_tactil BOOLEAN,
+    teclado_qwerty BOOLEAN,
+    teclado_retroiluminado BOOLEAN,
+    botones_programables NUMERIC CHECK (botones_programables >= 0),
+    bateria_mah NUMERIC CHECK (bateria_mah >= 0),
+    autonomia_h NUMERIC CHECK (autonomia_h >= 0),
+    carga_h NUMERIC CHECK (carga_h >= 0),
+    carga_rapida BOOLEAN,
+    camara_mp NUMERIC CHECK (camara_mp >= 0),
+    autofocus BOOLEAN,
+    lte_4g BOOLEAN,
+    bluetooth BOOLEAN,
+    bluetooth_version TEXT,
+    wifi BOOLEAN,
+    wifi_estandar TEXT,
+    wifi_6 BOOLEAN,
+    nfc BOOLEAN,
+    usb_c BOOLEAN,
+    usb_otg BOOLEAN,
+    gms BOOLEAN,
+    proteccion_ip TEXT,
+    temperatura_operacion_min_c NUMERIC,
+    temperatura_operacion_max_c NUMERIC,
+    temperatura_almacenamiento_min_c NUMERIC,
+    temperatura_almacenamiento_max_c NUMERIC,
+    caida_m NUMERIC CHECK (caida_m >= 0),
+    peso_g NUMERIC CHECK (peso_g >= 0),
+    largo_mm NUMERIC CHECK (largo_mm >= 0),
+    ancho_mm NUMERIC CHECK (ancho_mm >= 0),
+    alto_mm NUMERIC CHECK (alto_mm >= 0),
+    bandas_celulares TEXT,
+    sim TEXT,
+    sensores TEXT,
+    software TEXT,
+    notas TEXT,
+    fuente TEXT
+);
+INSERT INTO equipos(id_equipo,marca,modelo,categoria,descripcion) VALUES ('SINGULARXYZ-SC260','SingularXYZ','SC260','Controladora','Controladora de campo Android con teclado QWERTY') ON CONFLICT(id_equipo) DO NOTHING;
+INSERT INTO controladora_especificaciones (id_equipo,cpu_nucleos,ram_gb,almacenamiento_gb,bateria_mah,camara_mp,pantalla_tactil,teclado_qwerty,carga_rapida,lte_4g,bluetooth,bluetooth_version,wifi,nfc,usb_c,usb_otg,temperatura_operacion_min_c,temperatura_almacenamiento_min_c,temperatura_almacenamiento_max_c,sistema_operativo,android_version,procesador,cpu_ghz,expansion_gb,pantalla_pulgadas,resolucion_ancho_px,resolucion_alto_px,botones_programables,autonomia_h,carga_h,proteccion_ip,temperatura_operacion_max_c,largo_mm,ancho_mm,alto_mm,wifi_estandar,bandas_celulares,sim,sensores,software,notas,fuente) VALUES ('SINGULARXYZ-SC260',8,4,64,9000,13,TRUE,TRUE,TRUE,TRUE,TRUE,'5.0',TRUE,TRUE,TRUE,TRUE,-20,-40,70,'Android',11,'8 núcleos 2.0 GHz',2,512,5.45,720,1440,1,18,4,'IP68',55,221,78,16.5,'IEEE 802.11 a/b/g/n/ac, 2.4/5 GHz','FDD-LTE B1/B2/B3/B4/B5/B7/B8/B12/B17/B20/B28; TDD B34/B38/B39/B40/B41; WCDMA B1/B2/B5/B8; GSM B2/B3/B5/B8','1 nano SIM; 1 ranura SIM compartida con TF','GPS/BDS/GLONASS; G-Sensor, luz, acelerómetro, NFC, flash LED, micrófono, altavoz','Compatibilidad con software de campo de terceros, sin lista específica declarada','Autonomía: más de 18 h con pantalla encendida. Táctil capacitiva de 5 puntos. Peso, brillo y caída no declarados. No se infiere Wi-Fi 6 ni certificación GMS.','SC260 Data Collector, versión 26-08-2025, página 2') ON CONFLICT(id_equipo) DO NOTHING;
+INSERT INTO equipos(id_equipo,marca,modelo,categoria,descripcion) VALUES ('SINOGNSS-R60','SinoGNSS','R60','Controladora','Controladora de campo Android con teclado QWERTY') ON CONFLICT(id_equipo) DO NOTHING;
+INSERT INTO controladora_especificaciones (id_equipo,cpu_nucleos,ram_gb,almacenamiento_gb,bateria_mah,camara_mp,pantalla_tactil,teclado_qwerty,carga_rapida,lte_4g,bluetooth,bluetooth_version,wifi,nfc,usb_c,usb_otg,temperatura_operacion_min_c,temperatura_almacenamiento_min_c,temperatura_almacenamiento_max_c,sistema_operativo,android_version,procesador,expansion_gb,pantalla_pulgadas,resolucion_ancho_px,resolucion_alto_px,brillo_nits,botones_programables,teclado_retroiluminado,autonomia_h,autofocus,wifi_6,gms,proteccion_ip,caida_m,temperatura_operacion_max_c,peso_g,largo_mm,ancho_mm,alto_mm,wifi_estandar,bandas_celulares,sensores,software,notas,fuente) VALUES ('SINOGNSS-R60',8,4,64,9000,13,TRUE,TRUE,TRUE,TRUE,TRUE,'5.0',TRUE,TRUE,TRUE,TRUE,-20,-40,70,'Android',12,'Qualcomm 8 núcleos',128,5.5,1080,1920,500,4,TRUE,30,TRUE,TRUE,TRUE,'IP67',1.6,65,412,219.6,91.2,21.2,'Wi-Fi 6, 2.4/5 GHz','GSM 850/900/1800/1900; WCDMA B1/B2/B4/B5/B8; LTE-TDD B38/B39/B40/B41; LTE-FDD B1/B2/B3/B4/B5/B7/B8/B12','Acelerómetro, giroscopio, luz, NFC, brújula; GPS/A-GPS, GLONASS, BDS, Galileo','Survey Master; ubicación simulada para GIS de terceros; FieldGenius opcional','Autonomía 30+ h, condiciones no especificadas. Caída sobre concreto. USB 3.0, UART TTL, auriculares digitales. Carga contradictoria: 5 h en página 1 y no más de 4 h en página 2; tiempo de carga sin valor. Frecuencia CPU no declarada.','SinoGNSS R60 Data Collector, Ver.2022.08.02, páginas 1-2') ON CONFLICT(id_equipo) DO NOTHING;
+COMMIT;

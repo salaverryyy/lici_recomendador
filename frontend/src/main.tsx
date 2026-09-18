@@ -34,6 +34,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { api, setCsrf } from "./api";
+import { ControllerSpecs, ControllerRank } from "./controladoras";
 import { readStored, writeStored, usePersistentState } from "./persist";
 import "./style.css";
 
@@ -485,39 +486,47 @@ function Detail() {
           </span>
           <h1>{e.modelo}</h1>
           {e.descripcion && <p>{e.descripcion}</p>}
-          <div className="panel">
-            <h3>Especificaciones técnicas</h3>
-            <Feedback error={columns.error} />
-            <dl>
-              {columns.data
-                ?.filter(
-                  (c: Columna) =>
-                    !["marca", "modelo", "categoria", "radio_rangos"].includes(
-                      c.clave,
-                    ),
-                )
-                .map((c: Columna) => (
-                  <div key={c.clave}>
-                    <dt>
-                      {c.nombre}
-                      {c.unidad ? " (" + c.unidad + ")" : ""}
-                    </dt>
-                    <dd>{valor(e[c.clave] ?? data.evaluacion?.[c.clave])}</dd>
-                  </div>
-                ))}
-              <div>
-                <dt>Rangos de radio (MHz)</dt>
-                <dd>
-                  {data.radio_frecuencias
-                    .map(
-                      (r: any) =>
-                        `${r.frecuencia_min_mhz}–${r.frecuencia_max_mhz}`,
-                    )
-                    .join(" / ") || "Sin datos"}
-                </dd>
-              </div>
-            </dl>
-          </div>
+          {e.categoria === "Controladora" ? (
+            <ControllerSpecs data={data.controladora} />
+          ) : (
+            <div className="panel">
+              <h3>Especificaciones técnicas</h3>
+              <Feedback error={columns.error} />
+              <dl>
+                {columns.data
+                  ?.filter(
+                    (c: Columna) =>
+                      !c.clave.startsWith("controladora_") &&
+                      ![
+                        "marca",
+                        "modelo",
+                        "categoria",
+                        "radio_rangos",
+                      ].includes(c.clave),
+                  )
+                  .map((c: Columna) => (
+                    <div key={c.clave}>
+                      <dt>
+                        {c.nombre}
+                        {c.unidad ? " (" + c.unidad + ")" : ""}
+                      </dt>
+                      <dd>{valor(e[c.clave] ?? data.evaluacion?.[c.clave])}</dd>
+                    </div>
+                  ))}
+                <div>
+                  <dt>Rangos de radio (MHz)</dt>
+                  <dd>
+                    {data.radio_frecuencias
+                      .map(
+                        (r: any) =>
+                          `${r.frecuencia_min_mhz}–${r.frecuencia_max_mhz}`,
+                      )
+                      .join(" / ") || "Sin datos"}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          )}
           {e.modelo_3d_url && (
             <a
               className="outline"
@@ -674,13 +683,97 @@ function Compare() {
   );
 }
 function Recommend() {
+  const [slots, setSlots] = usePersistentState<{ id: string; tipo: string }[]>(
+    "licitex-consultas-ranking",
+    [{ id: "", tipo: "GNSS" }],
+  );
+  const [active, setActive] = useState(0);
+  const touch = useRef<number | null>(null);
+  function add(tipo: string) {
+    setSlots([...slots, { id: crypto.randomUUID(), tipo }]);
+    setActive(slots.length);
+  }
+  return (
+    <>
+      <section
+        className="container ranking-navigation"
+        aria-label="Consultas de ranking"
+        onTouchStart={(e) => {
+          touch.current = e.touches[0].clientX;
+        }}
+        onTouchEnd={(e) => {
+          if (touch.current !== null) {
+            const dx = e.changedTouches[0].clientX - touch.current;
+            if (Math.abs(dx) > 70)
+              setActive((a) =>
+                Math.max(0, Math.min(slots.length - 1, a + (dx < 0 ? 1 : -1))),
+              );
+          }
+          touch.current = null;
+        }}
+      >
+        <div className="links">
+          <button
+            className="outline"
+            disabled={active === 0}
+            onClick={() => setActive(active - 1)}
+          >
+            ← Anterior
+          </button>
+          <button
+            className="outline"
+            disabled={active === slots.length - 1}
+            onClick={() => setActive(active + 1)}
+          >
+            Siguiente →
+          </button>
+          <button onClick={() => add("GNSS")}>+ Consulta GNSS</button>
+          <button onClick={() => add("Controladora")}>
+            + Consulta controladoras
+          </button>
+        </div>
+        <div className="ranking-tabs">
+          {slots.map((s, i) => (
+            <button
+              key={s.id}
+              className={active === i ? "" : "outline"}
+              aria-pressed={active === i}
+              onClick={() => setActive(i)}
+            >
+              {i + 1}. {s.tipo}
+            </button>
+          ))}
+        </div>
+        <p className="muted">
+          Cada consulta conserva sus requisitos y resultados. Puedes deslizar
+          esta barra o seleccionar una consulta.
+        </p>
+      </section>
+      {slots.map((s, i) => (
+        <div key={s.id} hidden={active !== i}>
+          {s.tipo === "GNSS" ? (
+            <GnssRecommend slot={s.id} />
+          ) : (
+            <main className="container">
+              <ControllerRank slot={s.id} />
+            </main>
+          )}
+        </div>
+      ))}
+    </>
+  );
+}
+function GnssRecommend({ slot = "" }: { slot?: string }) {
   const metadata = useData("/recomendador/criterios");
   const [saved, setSaved] = usePersistentState<any>(
-    "licitex-recomendador-resultado",
+    "licitex-recomendador-resultado" + slot,
     null,
   );
   const [draft, setDraft] = useState<Record<string, string>>(() => {
-    const value = readStored<unknown>("licitex-recomendador-formulario", {});
+    const value = readStored<unknown>(
+      "licitex-recomendador-formulario" + slot,
+      {},
+    );
     return value && typeof value === "object" && !Array.isArray(value)
       ? (value as Record<string, string>)
       : {};
@@ -880,7 +973,7 @@ function Recommend() {
   }
   function clear() {
     setDraft({});
-    writeStored("licitex-recomendador-formulario", {});
+    writeStored("licitex-recomendador-formulario" + slot, {});
     setSaved(null);
     setFormVersion((v) => v + 1);
   }
@@ -906,11 +999,14 @@ function Recommend() {
               key={formVersion}
               success="Ranking actualizado."
               onChange={(form) =>
-                writeStored("licitex-recomendador-formulario", fields(form))
+                writeStored(
+                  "licitex-recomendador-formulario" + slot,
+                  fields(form),
+                )
               }
               onSubmit={async (form) => {
                 const values = fields(form);
-                writeStored("licitex-recomendador-formulario", values);
+                writeStored("licitex-recomendador-formulario" + slot, values);
                 const body: Record<string, any> = {};
                 Object.entries(values).forEach(([k, v]) => {
                   if (v !== "")
@@ -1660,93 +1756,158 @@ function Editor() {
                   </Action>
                 </div>
               </section>
-              <section className="panel">
-                <h2>Especificaciones técnicas</h2>
-                <p className="muted">
-                  Deja vacío si no hay datos. Constelaciones y disponibilidad
-                  PPP se calculan automáticamente.
-                </p>
-                <Feedback error={metadata.error} />
-                <Action
-                  key={JSON.stringify(details.data.evaluacion)}
-                  onSubmit={async (form) => {
-                    const d = fields(form),
-                      cambios: Record<string, any> = {};
-                    Object.entries(d).forEach(([k, v]) => {
-                      cambios[k] =
-                        v === ""
-                          ? null
-                          : bools.has(k)
-                            ? v === "true"
-                            : textSpecs.has(k)
-                              ? v
-                              : Number(v);
-                    });
-                    await api(base + "/especificaciones", "PATCH", { cambios });
-                    details.reload();
-                  }}
-                >
-                  <div className="form-grid">
-                    {metadata.data
-                      ?.filter(
-                        (c: Columna) =>
-                          ![
-                            "marca",
-                            "modelo",
-                            "categoria",
-                            "anio_modelo",
-                            "radio_rangos",
-                            "constelaciones",
-                            "tiene_ppp",
-                          ].includes(c.clave),
-                      )
-                      .map((c: Columna) =>
-                        bools.has(c.clave) ? (
-                          <label key={c.clave}>
-                            {c.nombre}
-                            <select
-                              name={c.clave}
-                              defaultValue={
-                                details.data.evaluacion?.[c.clave] == null
-                                  ? ""
-                                  : String(details.data.evaluacion[c.clave])
-                              }
-                            >
-                              <option value="">Sin datos</option>
-                              <option value="true">Sí</option>
-                              <option value="false">No</option>
-                            </select>
-                          </label>
-                        ) : (
-                          <Field
-                            key={c.clave}
-                            name={c.clave}
-                            title={
-                              c.nombre + (c.unidad ? " (" + c.unidad + ")" : "")
-                            }
-                            type={textSpecs.has(c.clave) ? "text" : "number"}
-                            min={
-                              c.clave.startsWith("temperatura_") ? -273.15 : 0
-                            }
-                            value={details.data.evaluacion?.[c.clave] ?? ""}
-                          />
-                        ),
-                      )}
-                  </div>
-                  <button>Guardar especificaciones</button>
-                </Action>
-              </section>
-              <section className="panel">
-                <h2>Rangos de radio</h2>
-                {details.data.radio_frecuencias.map((r: any) => (
-                  <div key={r.id} className="radio-row">
+              {e.categoria === "Controladora" ? (
+                <ControllerSpecs
+                  id={id}
+                  data={details.data.controladora}
+                  onSaved={details.reload}
+                />
+              ) : (
+                <>
+                  {" "}
+                  <section className="panel">
+                    <h2>Especificaciones técnicas</h2>
+                    <p className="muted">
+                      Deja vacío si no hay datos. Constelaciones y
+                      disponibilidad PPP se calculan automáticamente.
+                    </p>
+                    <Feedback error={metadata.error} />
                     <Action
+                      key={JSON.stringify(details.data.evaluacion)}
                       onSubmit={async (form) => {
-                        const d = fields(form);
-                        await api(base + "/radio/" + r.id, "PUT", {
+                        const d = fields(form),
+                          cambios: Record<string, any> = {};
+                        Object.entries(d).forEach(([k, v]) => {
+                          cambios[k] =
+                            v === ""
+                              ? null
+                              : bools.has(k)
+                                ? v === "true"
+                                : textSpecs.has(k)
+                                  ? v
+                                  : Number(v);
+                        });
+                        await api(base + "/especificaciones", "PATCH", {
+                          cambios,
+                        });
+                        details.reload();
+                      }}
+                    >
+                      <div className="form-grid">
+                        {metadata.data
+                          ?.filter(
+                            (c: Columna) =>
+                              !c.clave.startsWith("controladora_") &&
+                              ![
+                                "marca",
+                                "modelo",
+                                "categoria",
+                                "anio_modelo",
+                                "radio_rangos",
+                                "constelaciones",
+                                "tiene_ppp",
+                              ].includes(c.clave),
+                          )
+                          .map((c: Columna) =>
+                            bools.has(c.clave) ? (
+                              <label key={c.clave}>
+                                {c.nombre}
+                                <select
+                                  name={c.clave}
+                                  defaultValue={
+                                    details.data.evaluacion?.[c.clave] == null
+                                      ? ""
+                                      : String(details.data.evaluacion[c.clave])
+                                  }
+                                >
+                                  <option value="">Sin datos</option>
+                                  <option value="true">Sí</option>
+                                  <option value="false">No</option>
+                                </select>
+                              </label>
+                            ) : (
+                              <Field
+                                key={c.clave}
+                                name={c.clave}
+                                title={
+                                  c.nombre +
+                                  (c.unidad ? " (" + c.unidad + ")" : "")
+                                }
+                                type={
+                                  textSpecs.has(c.clave) ? "text" : "number"
+                                }
+                                min={
+                                  c.clave.startsWith("temperatura_")
+                                    ? -273.15
+                                    : 0
+                                }
+                                value={details.data.evaluacion?.[c.clave] ?? ""}
+                              />
+                            ),
+                          )}
+                      </div>
+                      <button>Guardar especificaciones</button>
+                    </Action>
+                  </section>
+                  <section className="panel">
+                    <h2>Rangos de radio</h2>
+                    {details.data.radio_frecuencias.map((r: any) => (
+                      <div key={r.id} className="radio-row">
+                        <Action
+                          onSubmit={async (form) => {
+                            const d = fields(form);
+                            await api(base + "/radio/" + r.id, "PUT", {
+                              frecuencia_min_mhz: Number(d.frecuencia_min_mhz),
+                              frecuencia_max_mhz: Number(d.frecuencia_max_mhz),
+                            });
+                            details.reload();
+                          }}
+                        >
+                          <div className="form-grid">
+                            <Field
+                              name="frecuencia_min_mhz"
+                              title="Mínima (MHz)"
+                              type="number"
+                              required
+                              min={0}
+                              value={r.frecuencia_min_mhz}
+                            />
+                            <Field
+                              name="frecuencia_max_mhz"
+                              title="Máxima (MHz)"
+                              type="number"
+                              required
+                              min={0}
+                              value={r.frecuencia_max_mhz}
+                            />
+                          </div>
+                          <button className="outline small">
+                            Guardar rango
+                          </button>
+                        </Action>
+                        <Action
+                          onSubmit={async () => {
+                            await api(base + "/radio/" + r.id, "DELETE");
+                            details.reload();
+                          }}
+                        >
+                          <p>
+                            {r.frecuencia_min_mhz}–{r.frecuencia_max_mhz} MHz{" "}
+                            <button className="danger small">
+                              Quitar rango
+                            </button>
+                          </p>
+                        </Action>
+                      </div>
+                    ))}
+                    <Action
+                      onSubmit={async (f) => {
+                        const d = fields(f);
+                        await api(base + "/radio", "POST", {
                           frecuencia_min_mhz: Number(d.frecuencia_min_mhz),
                           frecuencia_max_mhz: Number(d.frecuencia_max_mhz),
                         });
+                        f.reset();
                         details.reload();
                       }}
                     >
@@ -1755,64 +1916,22 @@ function Editor() {
                           name="frecuencia_min_mhz"
                           title="Mínima (MHz)"
                           type="number"
-                          required
                           min={0}
-                          value={r.frecuencia_min_mhz}
+                          required
                         />
                         <Field
                           name="frecuencia_max_mhz"
                           title="Máxima (MHz)"
                           type="number"
-                          required
                           min={0}
-                          value={r.frecuencia_max_mhz}
+                          required
                         />
                       </div>
-                      <button className="outline small">Guardar rango</button>
+                      <button className="outline">Añadir rango</button>
                     </Action>
-                    <Action
-                      onSubmit={async () => {
-                        await api(base + "/radio/" + r.id, "DELETE");
-                        details.reload();
-                      }}
-                    >
-                      <p>
-                        {r.frecuencia_min_mhz}–{r.frecuencia_max_mhz} MHz{" "}
-                        <button className="danger small">Quitar rango</button>
-                      </p>
-                    </Action>
-                  </div>
-                ))}
-                <Action
-                  onSubmit={async (f) => {
-                    const d = fields(f);
-                    await api(base + "/radio", "POST", {
-                      frecuencia_min_mhz: Number(d.frecuencia_min_mhz),
-                      frecuencia_max_mhz: Number(d.frecuencia_max_mhz),
-                    });
-                    f.reset();
-                    details.reload();
-                  }}
-                >
-                  <div className="form-grid">
-                    <Field
-                      name="frecuencia_min_mhz"
-                      title="Mínima (MHz)"
-                      type="number"
-                      min={0}
-                      required
-                    />
-                    <Field
-                      name="frecuencia_max_mhz"
-                      title="Máxima (MHz)"
-                      type="number"
-                      min={0}
-                      required
-                    />
-                  </div>
-                  <button className="outline">Añadir rango</button>
-                </Action>
-              </section>
+                  </section>
+                </>
+              )}
             </>
           )}
         </>

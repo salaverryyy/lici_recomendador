@@ -128,6 +128,10 @@ def detalle_admin(id_equipo: str, _=Depends(administrador_actual)):
                 raise HTTPException(status_code=404, detail="Equipo no encontrado.")
             cur.execute("SELECT * FROM base_evaluacion WHERE id_equipo = %s", (id_equipo,))
             evaluacion = cur.fetchone()
+            controladora = None
+            if equipo['categoria'] == 'Controladora':
+                cur.execute('SELECT * FROM controladora_especificaciones WHERE id_equipo=%s', (id_equipo,))
+                controladora = cur.fetchone()
             cur.execute(
                 """
                 SELECT id, frecuencia_min_mhz, frecuencia_max_mhz
@@ -135,7 +139,7 @@ def detalle_admin(id_equipo: str, _=Depends(administrador_actual)):
                 """,
                 (id_equipo,),
             )
-            return {"equipo": equipo, "evaluacion": evaluacion, "radio_frecuencias": cur.fetchall()}
+            return {"equipo": equipo, "evaluacion": evaluacion, "controladora": controladora, "radio_frecuencias": cur.fetchall()}
     except DatabaseError as exc:
         raise HTTPException(status_code=503, detail="No se pudo consultar el equipo.") from exc
 
