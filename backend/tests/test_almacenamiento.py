@@ -10,6 +10,18 @@ from pypdf import PdfWriter
 from app.routers import admin_almacenamiento as a
 
 class StorageTests(TestCase):
+    def test_pdf_with_owner_restrictions_but_no_open_password_is_accepted(self):
+        writer=PdfWriter(); writer.add_blank_page(width=100,height=100)
+        writer.encrypt(user_password='',owner_password='owner-only')
+        out=BytesIO(); writer.write(out)
+        self.assertEqual(a.validar_archivo(out.getvalue(),'ficha'),('pdf','application/pdf'))
+
+    def test_pdf_requiring_open_password_is_rejected(self):
+        writer=PdfWriter(); writer.add_blank_page(width=100,height=100)
+        writer.encrypt(user_password='required')
+        out=BytesIO(); writer.write(out)
+        with self.assertRaises(HTTPException): a.validar_archivo(out.getvalue(),'ficha')
+
     session = {'csrf_token':'test-session-secret'}
     def manifest(self, size):
         return {'id':'a'*32,'equipo':'EMLID-RS2','tipo':'ficha','bytes':size,'expira':time.time()+100}

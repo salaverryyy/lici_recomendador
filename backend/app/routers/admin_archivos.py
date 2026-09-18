@@ -114,8 +114,10 @@ def validar_archivo(data, tipo):
             if not data.startswith(b"%PDF-"):
                 raise ValueError("No es PDF")
             reader = PdfReader(BytesIO(data))
-            if reader.is_encrypted or not len(reader.pages):
-                raise ValueError("PDF cifrado o vacío")
+            if reader.is_encrypted and not reader.decrypt(""):
+                raise ValueError("PDF requiere contraseña")
+            if not len(reader.pages):
+                raise ValueError("PDF vacío")
             extension, mime = "pdf", "application/pdf"
     except Exception as exc:
         raise HTTPException(422, "Archivo inválido: usa JPG, PNG o WebP para fotos y PDF sin contraseña para fichas.") from exc
