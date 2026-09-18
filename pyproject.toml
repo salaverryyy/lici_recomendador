@@ -11,7 +11,7 @@ dependencies = [
   "email-validator",
   "python-multipart",
   "Pillow",
-  "pypdf",
+  "pypdf[crypto]",
   "boto3",
 ]
 
