@@ -7,6 +7,11 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 class Preferencias(BaseModel):
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
     top_n: int = Field(default=3, ge=1, le=100)
+    cantidad_baterias_min: int | None = Field(default=None, ge=1, le=20)
+    necesita_lemo: bool | None = None
+    lemo_pines: int | None = Field(default=None, ge=1, le=30)
+    rtk_modo: str = Field(default='linea_base', pattern=r'^(linea_base|red)$')
+    static_modo: str = Field(default='rapido', pattern=r'^(rapido|largo)$')
     necesita_imu: bool | None = None
     imu_generacion: str | None = Field(default=None, min_length=1, max_length=100)
     gps: bool | None = None
@@ -101,6 +106,9 @@ class Criterio:
 
 
 CRITERIOS = (
+    Criterio('cantidad_baterias','cantidad_baterias_min','cantidad_baterias','Cantidad de baterías del equipo',None,'minimo',3),
+    Criterio('lemo','necesita_lemo','lemo','Conector LEMO',None,'booleano',3),
+    Criterio('lemo_pines','lemo_pines','lemo_pines','Pines del conector LEMO',None,'exacto',3),
     *(Criterio(campo, campo, campo, nombre, None, "booleano", 1)
       for campo, nombre in (("gps", "GPS"), ("glonass", "GLONASS"), ("galileo", "Galileo"),
                             ("beidou", "BeiDou"), ("qzss", "QZSS"), ("navic_irnss", "NavIC/IRNSS"), ("sbas", "SBAS"))),
@@ -176,6 +184,14 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
         estado = "sin_datos"
         factor = 0.0
         observacion = None
+        if criterio.clave in ('rtk_horizontal_mm','rtk_vertical_mm','rtk_ppm_h','rtk_ppm_v'):
+            modo = 'RTK en red' if preferencias.rtk_modo == 'red' else 'RTK de línea base / RTK declarado'
+            if preferencias.rtk_modo == 'red': valor = datos.get('red_'+criterio.clave)
+            observacion = modo
+        elif criterio.clave in ('static_horizontal_mm','static_vertical_mm','static_ppm_h','static_ppm_v'):
+            modo = 'Estático de observaciones largas' if preferencias.static_modo == 'largo' else 'Estático / estático rápido'
+            if preferencias.static_modo == 'largo': valor = datos.get('largo_'+criterio.clave)
+            observacion = modo
         memoria_fabrica = None
         requiere_ampliacion = False
 
@@ -193,7 +209,7 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
                 cumple = valor <= pedido if criterio.modo == "ambiente_min" else valor >= pedido
                 estado = "cumple" if cumple else "incumple"
                 factor = float(cumple)
-        elif criterio.modo in ("ip", "texto_exacto", "norma", "generacion"):
+        elif criterio.modo in ("ip", "texto_exacto", "norma", "generacion", "exacto"):
             if valor is not None:
                 if criterio.modo == "ip":
                     declarados = set(re.findall(r"IP[0-6][0-9]", valor))
@@ -279,10 +295,10 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
     peso_total = sum(item["peso"] for item in detalle)
     puntos = sum(item["puntos"] for item in detalle)
     porcentaje = round(100 * puntos / peso_total, 2) if peso_total else None
-    cumplidos = [item["nombre"] + (" (con memoria extendida)" if item["requiere_ampliacion"] else "")
+    cumplidos = [item["nombre"] + (" ("+item['unidad']+")" if item['unidad'] else '') + (" (con memoria extendida)" if item["requiere_ampliacion"] else "")
                  for item in detalle if item["estado"] == "cumple"]
-    incumplidos = [item["nombre"] for item in detalle if item["estado"] == "incumple"]
-    desconocidos = [item["nombre"] for item in detalle if item["estado"] == "sin_datos"]
+    incumplidos = [item["nombre"] + (" ("+item['unidad']+")" if item['unidad'] else '') for item in detalle if item["estado"] == "incumple"]
+    desconocidos = [item["nombre"] + (" ("+item['unidad']+")" if item['unidad'] else '') for item in detalle if item["estado"] == "sin_datos"]
     partes = []
     if cumplidos:
         partes.append("Cumple: " + ", ".join(cumplidos) + ".")

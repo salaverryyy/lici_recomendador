@@ -836,6 +836,9 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
     "autonomia_min_h",
   ]);
   const connection = new Set([
+    "cantidad_baterias_min",
+    "necesita_lemo",
+    "lemo_pines",
     "bluetooth",
     "wifi",
     "uhf_tx_rx_integrada",
@@ -853,6 +856,26 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
     "radio_min_mhz",
   ]);
   function input(c: any): ReactNode {
+    if (
+      c.campo_input === "lemo_pines" ||
+      c.campo_input === "cantidad_baterias_min"
+    )
+      return (
+        <label key={c.clave}>
+          {c.nombre}
+          <select
+            name={c.campo_input}
+            defaultValue={draft[c.campo_input] || ""}
+          >
+            <option value="">Sin preferencia</option>
+            {(c.campo_input === "lemo_pines" ? [5, 7] : [1, 2]).map((v) => (
+              <option key={v} value={v}>
+                {v}
+              </option>
+            ))}
+          </select>
+        </label>
+      );
     if (satellites.has(c.campo_input))
       return (
         <label key={c.clave} className="satellite-option">
@@ -1047,6 +1070,8 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                       "humedad_condicion",
                       "vibracion_norma",
                       "imu_generacion",
+                      "rtk_modo",
+                      "static_modo",
                     ].includes(k)
                       ? v
                       : v === "true"
@@ -1064,6 +1089,35 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
               <p className="muted small-text">
                 Todo es opcional. «No» significa que no lo necesitas. La
                 puntuación considera los requisitos que completes.
+              </p>
+              <div className="form-grid">
+                <label>
+                  Modo de precisión RTK
+                  <select
+                    name="rtk_modo"
+                    defaultValue={draft.rtk_modo || "linea_base"}
+                  >
+                    <option value="linea_base">
+                      Línea base / RTK declarado
+                    </option>
+                    <option value="red">RTK en red</option>
+                  </select>
+                </label>
+                <label>
+                  Modo de precisión estática
+                  <select
+                    name="static_modo"
+                    defaultValue={draft.static_modo || "rapido"}
+                  >
+                    <option value="rapido">Estático / estático rápido</option>
+                    <option value="largo">Observaciones largas</option>
+                  </select>
+                </label>
+              </div>
+              <p className="muted">
+                Los mm y ppm se evalúan por separado en el modo seleccionado. Si
+                la ficha no declara ese modo, aparecerá sin datos. Las baterías
+                cuentan las del receptor, sin sumar repuestos del kit.
               </p>
               <div className="form-grid">
                 {unique
@@ -1227,6 +1281,10 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                                 ? "Sin datos"
                                 : "No cumple"}{" "}
                             · {d.puntos}/{d.peso} puntos
+                            <p className="muted">
+                              Equipo: {valor(d.valor_equipo)} {d.unidad} ·
+                              Requerido: {valor(d.pedido)} {d.unidad}
+                            </p>
                             {d.observacion && (
                               <p className="muted">{d.observacion}</p>
                             )}
@@ -1484,6 +1542,7 @@ function Editor() {
     );
   const e = isNew ? {} : details.data?.equipo;
   const textSpecs = new Set([
+    "baterias_conectores_fuente", "baterias_conectores_notas",
     "imu_generacion",
     "imu_tecnologia",
     "bluetooth_version",
@@ -1505,6 +1564,7 @@ function Editor() {
     "ambiental_fuente",
   ]);
   const bools = new Set([
+    "lemo",
     "memoria_expandible",
     "bluetooth",
     "wifi",

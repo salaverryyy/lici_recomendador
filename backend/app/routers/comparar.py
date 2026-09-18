@@ -98,6 +98,13 @@ COLUMNAS_PREDETERMINADAS = [
     "rtk_horizontal_mm", "rtk_vertical_mm", "autonomia_bateria",
     "peso_max", "radio_rangos", "laser", "cantidad_camaras", "memoria", "tiene_snlonglink",
 ]
+COLUMNAS.update({'cantidad_baterias':('Cantidad de baterías del equipo',None),
+    'cantidad_baterias_kit':('Baterías incluidas en el kit declarado',None), 'lemo':('Conector LEMO',None),
+    'lemo_pines':('Pines del conector LEMO',None), 'baterias_conectores_fuente':('Fuente de baterías y conectores',None),
+    'baterias_conectores_notas':('Condiciones de baterías y conectores',None)})
+for prefix,keys,name in [('red_',('rtk_horizontal_mm','rtk_vertical_mm','rtk_ppm_h','rtk_ppm_v'),'RTK en red'),
+                          ('largo_',('static_horizontal_mm','static_vertical_mm','static_ppm_h','static_ppm_v'),'Estático largo')]:
+    for key in keys: COLUMNAS[prefix+key]=(name+' '+('horizontal' if key.endswith(('_h','horizontal_mm')) else 'vertical'), 'mm' if key.endswith('_mm') else 'ppm')
 
 
 @router.get("/comparar/columnas")

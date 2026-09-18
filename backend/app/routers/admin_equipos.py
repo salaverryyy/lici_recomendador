@@ -77,6 +77,12 @@ NUMERICOS |= {"memoria_expandida_max_gb", "memoria_opcional_fabrica_max_gb", "ra
 TEXTOS |= {"imu_generacion", "imu_tecnologia", "bluetooth_version", "wifi_estandar", "uhf_modo",
            "radio_protocolos", "tipo_bateria", "rinex_versiones", "formato_propietario", "tecnica_notas", "tecnica_fuente"}
 EDITABLES = BOOLEANOS | ENTEROS | NUMERICOS | TEXTOS | TEMPERATURAS
+BOOLEANOS.add('lemo')
+ENTEROS |= {'cantidad_baterias','cantidad_baterias_kit','lemo_pines'}
+TEXTOS |= {'baterias_conectores_fuente','baterias_conectores_notas'}
+NUMERICOS |= {'red_'+k for k in ('rtk_horizontal_mm','rtk_vertical_mm','rtk_ppm_h','rtk_ppm_v')}
+NUMERICOS |= {'largo_'+k for k in ('static_horizontal_mm','static_vertical_mm','static_ppm_h','static_ppm_v')}
+EDITABLES = BOOLEANOS | ENTEROS | NUMERICOS | TEXTOS | TEMPERATURAS
 CONSTELACIONES = ("gps", "glonass", "galileo", "beidou", "qzss", "navic_irnss")
 
 
@@ -91,6 +97,8 @@ def validar_especificaciones(cambios: dict[str, Any]):
             raise HTTPException(status_code=422, detail=f"{campo} debe ser booleano o null.")
         if campo in ENTEROS and (type(valor) is not int or valor < 0):
             raise HTTPException(status_code=422, detail=f"{campo} debe ser entero no negativo o null.")
+        if campo in {'cantidad_baterias','cantidad_baterias_kit','lemo_pines'} and valor < 1:
+            raise HTTPException(422,f'{campo} debe ser un entero positivo o null.')
         if campo in NUMERICOS and (type(valor) not in (int, float) or not math.isfinite(valor) or valor < 0):
             raise HTTPException(status_code=422, detail=f"{campo} debe ser numérico no negativo o null.")
         if campo in TEMPERATURAS and (type(valor) not in (int, float) or not math.isfinite(valor) or not -273.15 <= valor <= 200):
