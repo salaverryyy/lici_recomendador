@@ -930,3 +930,4 @@ body:has(.compare-tray) main {
   margin: 0;
   accent-color: var(--teal);
 }
+.ranking-tab { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; }

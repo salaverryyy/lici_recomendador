@@ -1,9 +1,18 @@
 import unittest
 from decimal import Decimal
 from fastapi import HTTPException
-from app.controladoras import evaluate, validate
+from app.controladoras import evaluate, validate, available_options
 
 class ControllerTests(unittest.TestCase):
+    def test_equivalent_options_are_deduplicated_and_match(self):
+        rows = [{'sistema_operativo':'Android OS','proteccion_ip':'ip 67','bluetooth_version':'Bluetooth v5.0'},
+                {'sistema_operativo':' Android ','proteccion_ip':'IP67','bluetooth_version':'5'}]
+        options = {c['clave']:c['opciones'] for c in available_options(rows)}
+        self.assertEqual(options['sistema_operativo'], ['Android'])
+        self.assertEqual(options['proteccion_ip'], ['IP67'])
+        self.assertEqual(options['bluetooth_version'], ['5.0'])
+        self.assertEqual(evaluate(rows[0], {'sistema_operativo':'Android','proteccion_ip':'IP67','bluetooth_version':'5.0'})['porcentaje'],100)
+
     def test_database_numbers_can_be_validated_for_partial_edits(self):
         validate({'ram_gb':Decimal('4'), 'temperatura_operacion_min_c':Decimal('-20')})
 

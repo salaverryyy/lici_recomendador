@@ -2,6 +2,8 @@
 from fastapi import HTTPException
 import math
 from decimal import Decimal
+import re
+import unicodedata
 
 # clave, nombre, tipo, unidad, comparación del requisito
 FIELDS = [
@@ -56,6 +58,28 @@ FIELDS = [
 ]
 META = {k: {'clave':k,'nombre':n,'tipo':t,'unidad':u,'modo':m} for k,n,t,u,m in FIELDS}
 
+def canonical(key, value):
+    """Unificar formatos equivalentes sin convertir especificaciones distintas."""
+    if not isinstance(value, str):
+        return value
+    text = ' '.join(unicodedata.normalize('NFKC', value).strip().split())
+    if key == 'proteccion_ip':
+        compact = re.sub(r'[\s-]', '', text).upper()
+        return compact if re.fullmatch(r'IP\d{2}', compact) else text.casefold()
+    if key == 'bluetooth_version':
+        version = re.sub(r'^(?:bluetooth|bt)\s*', '', text, flags=re.I)
+        version = re.sub(r'^v(?:ersion|ersión)?\s*', '', version, flags=re.I).replace(',', '.')
+        if re.fullmatch(r'\d+(?:\.\d+)?', version):
+            return format(Decimal(version).normalize(), 'f') + ('.0' if '.' not in format(Decimal(version).normalize(), 'f') else '')
+    if key == 'sistema_operativo' and text.casefold() in ('android', 'android os', 'sistema android'):
+        return 'Android'
+    return text.casefold()
+
+def available_options(rows):
+    return [{**meta, 'opciones': sorted({canonical(key, row.get(key)) for row in rows
+              if row.get(key) is not None and row.get(key) != ''})}
+            for key, meta in META.items()]
+
 def validate(values, requirements=False):
     for key, value in values.items():
         if key not in META or (requirements and META[key]['modo'] is None):
@@ -85,7 +109,7 @@ def evaluate(data, requirements):
         else:
             mode = meta['modo']
             meets = (actual >= requested if mode == 'min' else actual <= requested if mode == 'max'
-                     else actual is True if mode == 'yes' else str(actual).casefold() == str(requested).casefold())
+                     else actual is True if mode == 'yes' else canonical(key, actual) == canonical(key, requested))
             state = 'cumple' if meets else 'no_cumple'
         detail.append({'clave':key,'nombre':meta['nombre'],'unidad':meta['unidad'],
                        'requerido':requested,'valor':actual,'estado':state})

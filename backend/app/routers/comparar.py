@@ -110,12 +110,12 @@ def columnas_disponibles():
 
 @router.get("/comparar")
 def comparar(
-    ids: str = Query(description="IDs separados por coma; mínimo 2"),
+    ids: str = Query(description="IDs separados por coma; mínimo 1"),
     columnas: str | None = Query(default=None, description="Claves separadas por coma; omitir para columnas predeterminadas"),
 ):
     equipos_ids = [valor.strip() for valor in ids.split(",") if valor.strip()]
-    if not 2 <= len(equipos_ids) <= 100 or len(set(equipos_ids)) != len(equipos_ids):
-        raise HTTPException(status_code=422, detail="Elige entre 2 y 100 equipos distintos.")
+    if not 1 <= len(equipos_ids) <= 100 or len(set(equipos_ids)) != len(equipos_ids):
+        raise HTTPException(status_code=422, detail="Elige entre 1 y 100 equipos distintos.")
 
     claves = (
         [valor.strip() for valor in columnas.split(",") if valor.strip()]

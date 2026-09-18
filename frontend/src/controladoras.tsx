@@ -9,6 +9,7 @@ type Campo = {
   tipo: string;
   unidad: string;
   modo: string | null;
+  opciones: (string | number | boolean)[];
 };
 function useCampos() {
   const [campos, setCampos] = useState<Campo[]>([]),
@@ -64,6 +65,27 @@ function input(
           <option value="false">
             {requirements ? "No lo necesito" : "No"}
           </option>
+        </select>
+      ) : requirements ? (
+        <select
+          value={v ?? ""}
+          onChange={(e) =>
+            onChange(
+              e.target.value === ""
+                ? null
+                : c.tipo === "number"
+                  ? Number(e.target.value)
+                  : e.target.value,
+            )
+          }
+        >
+          <option value="">Sin preferencia</option>
+          {c.opciones.map((option) => (
+            <option key={String(option)} value={String(option)}>
+              {String(option)}
+              {c.unidad ? " " + c.unidad : ""}
+            </option>
+          ))}
         </select>
       ) : (
         <input
@@ -195,9 +217,9 @@ export function ControllerRank({ slot }: { slot: string }) {
         <h2>Ranking de controladoras</h2>
         <p className="muted">
           Solo puntúan los requisitos indicados, con el mismo peso provisional.
-          Seleccionar «No lo necesito» omite ese criterio. La autonomía se compara según lo
-          declarado; revisa las condiciones de cada ficha. Los códigos IP se
-          comparan exactamente.
+          Seleccionar «No lo necesito» omite ese criterio. La autonomía se
+          compara según lo declarado; revisa las condiciones de cada ficha. Los
+          códigos IP se comparan exactamente.
         </p>
         {error && <p role="alert">{error}</p>}
         <form onSubmit={submit}>
@@ -241,15 +263,26 @@ export function ControllerRank({ slot }: { slot: string }) {
             <p>{result.total_equipos} controladoras evaluadas</p>
             {result.resultados.map((r: any) => (
               <article className="panel" key={r.equipo.id_equipo}>
-                <h3>
-                  #{r.posicion}
-                  {r.empate ? " · Empate" : ""}{" "}
+                <div className="rank-heading">
+                  <span className="rank-number">
+                    #{r.posicion}
+                    {r.empate ? " · Empate" : ""}
+                  </span>
                   <Link to={"/equipos/" + r.equipo.id_equipo}>
-                    {r.equipo.marca} {r.equipo.modelo}
+                    <h3>
+                      {r.equipo.marca} {r.equipo.modelo}
+                    </h3>
                   </Link>
-                </h3>
-                <strong>{r.porcentaje}% de ajuste</strong>
-                <details>
+                  <strong>{r.porcentaje}% de ajuste</strong>
+                </div>
+                <progress max={100} value={r.porcentaje} />
+                <p>
+                  {r.cumplimientos} requisitos cumplidos · {r.sin_datos} sin
+                  información ·{" "}
+                  {r.detalle.length - r.cumplimientos - r.sin_datos} no
+                  cumplidos
+                </p>
+                <details className="score-details">
                   <summary>Ver criterios evaluados</summary>
                   <dl>
                     {r.detalle.map((d: any) => (

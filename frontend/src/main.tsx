@@ -565,7 +565,7 @@ function Compare() {
   );
   const [hide, setHide] = usePersistentState("licitex-comparar-iguales", false);
   const { data, error } = useData(
-    ids.length >= 2
+    ids.length >= 1
       ? "/comparar?ids=" + ids.join(",") + "&columnas=" + columns.join(",")
       : "/comparar/columnas",
   );
@@ -588,7 +588,7 @@ function Compare() {
           </button>
         )}
       </div>
-      {ids.length < 2 ? (
+      {ids.length === 0 ? (
         <section className="empty">
           <Scale size={40} />
           <h2>Elige al menos dos equipos</h2>
@@ -693,6 +693,29 @@ function Recommend() {
     setSlots([...slots, { id: crypto.randomUUID(), tipo }]);
     setActive(slots.length);
   }
+  function remove(index: number) {
+    const removed = slots[index];
+    const keys =
+      removed.tipo === "GNSS"
+        ? [
+            "licitex-recomendador-formulario" + removed.id,
+            "licitex-recomendador-resultado" + removed.id,
+          ]
+        : [
+            "licitex-controladora-form-" + removed.id,
+            "licitex-controladora-resultado-" + removed.id,
+          ];
+    try {
+      keys.forEach((key) => localStorage.removeItem(key));
+    } catch {
+      /* almacenamiento opcional */
+    }
+    const next = slots.filter((_, i) => i !== index);
+    setSlots(next.length ? next : [{ id: crypto.randomUUID(), tipo: "GNSS" }]);
+    setActive((a) =>
+      Math.max(0, Math.min(next.length - 1, a > index ? a - 1 : a)),
+    );
+  }
   return (
     <>
       <section
@@ -734,14 +757,22 @@ function Recommend() {
         </div>
         <div className="ranking-tabs">
           {slots.map((s, i) => (
-            <button
-              key={s.id}
-              className={active === i ? "" : "outline"}
-              aria-pressed={active === i}
-              onClick={() => setActive(i)}
-            >
-              {i + 1}. {s.tipo}
-            </button>
+            <span key={s.id} className="ranking-tab">
+              <button
+                className={active === i ? "" : "outline"}
+                aria-pressed={active === i}
+                onClick={() => setActive(i)}
+              >
+                {i + 1}. {s.tipo}
+              </button>
+              <button
+                className="icon"
+                aria-label={`Quitar consulta ${i + 1} de ${s.tipo}`}
+                onClick={() => remove(i)}
+              >
+                <X size={16} />
+              </button>
+            </span>
           ))}
         </div>
         <p className="muted">

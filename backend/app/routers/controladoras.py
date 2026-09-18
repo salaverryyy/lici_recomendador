@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from psycopg import Error as DatabaseError, sql
 from ..auth import administrador_escritura
 from ..db import connect
-from ..controladoras import META, validate, evaluate
+from ..controladoras import META, validate, evaluate, available_options
 from .recomendar import ordenar_resultados
 
 router = APIRouter(prefix='/api', tags=['controladoras'])
@@ -19,7 +19,12 @@ class Requirements(BaseModel):
 
 @router.get('/controladoras/campos')
 def fields():
-    return list(META.values())
+    try:
+        with connect() as conn, conn.cursor() as cur:
+            cur.execute("SELECT c.* FROM controladora_especificaciones c JOIN equipos e USING(id_equipo) WHERE e.publicado AND e.categoria='Controladora'")
+            return available_options(cur.fetchall())
+    except DatabaseError as exc:
+        raise HTTPException(503,'No se pudieron consultar las opciones de controladoras.') from exc
 
 @router.patch('/admin/equipos/{id_equipo}/controladora')
 def edit(id_equipo: str, values: Values, _=Depends(administrador_escritura)):
