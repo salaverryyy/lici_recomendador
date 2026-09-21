@@ -1,0 +1,5 @@
+Mode: built-in image_gen. Both assets: separate 1254 x 1254 PNG; clean monochrome vector-like technical pictogram; pure black; transparent alpha background; no letters or numbers.
+
+Dual camera: simplified three-quarter SinoGNSS Jupiter receiver showing one upper/front camera and one vertically separated underside camera, with two distinct fields of view.
+
+Laser stakeout: recognizable Jupiter receiver on survey pole, one diagonal laser beam aimed at a precise ground crosshair, plus a dashed stakeout direction path and position marker.

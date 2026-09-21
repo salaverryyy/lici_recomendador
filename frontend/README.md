@@ -19,7 +19,7 @@ Para publicar, configurar reescrituras de `/api/*` hacia la API y, si correspond
 Las demás rutas deben resolver a `index.html`. No definir secretos en variables `VITE_*`.
 
 Incluye catálogo, detalle con galería, comparador con selección de características,
-recomendador, administración del catálogo/especificaciones/radios/archivos/pesos,
+recomendador, asistente con IA e historial local de cinco chats, administración del catálogo/especificaciones/radios/archivos/pesos,
 gestión de correos y cambio/recuperación de contraseña. Los correos requieren configurar SMTP
 en el backend. El modelo 3D es un enlace opcional; aún no hay visor interactivo.
 

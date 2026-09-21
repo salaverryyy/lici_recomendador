@@ -32,11 +32,13 @@ import {
   Check,
   Upload,
   LogOut,
+  Sparkles,
 } from "lucide-react";
 import { api, setCsrf } from "./api";
 import { ControllerSpecs, ControllerRank } from "./controladoras";
 import { StorageUsage, uploadFile } from "./almacenamiento";
 import { readStored, writeStored, usePersistentState } from "./persist";
+import { AiAdvisor } from "./ia";
 import "./style.css";
 
 type Equipo = {
@@ -280,9 +282,9 @@ function Home() {
       </section>
       <section className="container home-tools">
         <span className="eyebrow">DEL DATO A LA DECISIÓN</span>
-        <h2>Tres formas de encontrar tu equipo</h2>
+        <h2>Cuatro formas de encontrar tu equipo</h2>
         <p className="muted">Explora a tu ritmo. Compara lo que importa.</p>
-        <div className="grid three">
+        <div className="grid four">
           {[
             [
               "/catalogo",
@@ -301,6 +303,12 @@ function Home() {
               "Recomendador",
               "Indica tus requisitos y revisa un ranking con sus motivos.",
               SlidersHorizontal,
+            ],
+            [
+              "/asistente-ia",
+              "Asistente con IA",
+              "Describe lo que necesitas y recibe una recomendación explicada.",
+              Sparkles,
             ],
           ].map(([url, title, text, Icon]: any) => (
             <Link className="tool-card" to={url} key={url}>
@@ -2419,6 +2427,7 @@ function App() {
             <NavLink to="/catalogo">Catálogo</NavLink>
             <NavLink to="/comparar">Comparador</NavLink>
             <NavLink to="/recomendador">Recomendador</NavLink>
+            <NavLink to="/asistente-ia">Asistente IA</NavLink>
           </nav>
           <Link className="admin-link" to="/admin">
             <LockKeyhole size={14} /> Admin
@@ -2431,6 +2440,7 @@ function App() {
         <Route path="/equipos/:id" element={<Detail />} />
         <Route path="/comparar" element={<Compare />} />
         <Route path="/recomendador" element={<Recommend />} />
+        <Route path="/asistente-ia" element={<AiAdvisor />} />
         <Route path="/admin" element={<Login />} />
         <Route path="/admin/equipos" element={<AdminEquipment />} />
         <Route path="/admin/equipos/:id" element={<Editor />} />

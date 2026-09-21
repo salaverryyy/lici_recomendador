@@ -17,3 +17,21 @@ Instalar nuevamente los requisitos si el entorno es anterior a la galería. Apli
 Las fotos y fichas cargadas localmente se conservan en `backend/uploads/` (fuera de Git).
 Ver `docs/archivos_equipos.md` para configurar almacenamiento persistente en producción.
 El acceso y la creación del administrador se describen en `docs/api_acceso.md`.
+
+## Asistente con IA
+
+El asistente convierte texto libre en los mismos requisitos validados que usan los
+rankings de GNSS y controladoras. La IA no puntúa equipos ni escribe datos en la BD.
+
+Para probarlo localmente, crear una clave de Gemini en Google AI Studio y agregar a
+`backend/.env`:
+
+```env
+GEMINI_API_KEY=TU_CLAVE
+AI_PROVIDER=gemini
+GEMINI_MODEL=gemini-3.8-flash
+```
+
+La clave permanece en el backend. `GET /api/ia/estado` indica si el servicio está
+configurado o si la cuota gratuita se agotó. Los últimos cinco chats se guardan en
+`localStorage` del navegador y no se comparten con otros visitantes.

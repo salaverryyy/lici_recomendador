@@ -14,6 +14,7 @@ from .routers.admin_equipos import router as admin_equipos_router
 from .routers.admin_reglas import router as admin_reglas_router
 from .routers.admin_recuperacion import router as admin_recuperacion_router
 from .routers.admin_correos import router as admin_correos_router
+from .routers.ia import router as ia_router
 
 
 app = FastAPI(title="Licitex API")
@@ -34,6 +35,7 @@ app.include_router(admin_equipos_router)
 app.include_router(admin_reglas_router)
 app.include_router(admin_recuperacion_router)
 app.include_router(admin_correos_router)
+app.include_router(ia_router)
 
 # Registrar después de la API para conservar todas sus rutas. También permite
 # servir /index.html cuando un rewrite SPA llega a la función Python.

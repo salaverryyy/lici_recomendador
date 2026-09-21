@@ -8,6 +8,7 @@
     {"source": "/equipos/:id", "destination": "/index.html"},
     {"source": "/comparar", "destination": "/index.html"},
     {"source": "/recomendador", "destination": "/index.html"},
+    {"source": "/asistente-ia", "destination": "/index.html"},
     {"source": "/admin", "destination": "/index.html"},
     {"source": "/admin/:path*", "destination": "/index.html"},
     {"source": "/recuperar-contrasena", "destination": "/index.html"},

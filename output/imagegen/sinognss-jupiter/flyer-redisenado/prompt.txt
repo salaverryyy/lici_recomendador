@@ -1,0 +1,21 @@
+Mode: built-in image_gen.
+Use case: ads-marketing. Asset type: redesigned Spanish A5 portrait product flyer concept. Edit the reference flyer. Preserve the complete existing header above the red gradient separator exactly as shown, including both logos, all header text, spacing, colors and proportions. Preserve the complete dark-blue contact footer below the lower gradient separator exactly as shown, including phone, email, address, website, icons, spacing and colors. Redesign ONLY the large middle section between those separator lines.
+
+Goal: fit more benefits while keeping the Jupiter receiver as the dominant hero product. Use the existing pale Jupiter-planet pattern background, white and very light gray palette, black headings, SinoGNSS red accents, navy accents, and subtle shadows. Make the center organized, premium and easy to scan.
+
+Middle composition: title “JUPITER” near the top with compact subtitle “VISUAL LASER RTK”. Keep a large photorealistic frontal image of the same Jupiter receiver as the central focus, occupying about 40 percent of the middle. Around it use two tidy vertical columns of compact rounded feature cards, each with a simple black icon and short Spanish label. Consistent card sizes, strong hierarchy and generous gutters.
+
+Include ALL of these exact messages without duplication:
+“1668 canales”
+“IMU integrado”
+“Más de 16 h de autonomía”
+“Precisión 2.5 mm + 0.5 ppm”
+“Doble cámara”
+“Láser de largo alcance · 50 m”
+“Radio UHF interna · hasta 15 km”
+“Replanteo con realidad aumentada”
+“NUEVO · Replanteo con láser”
+
+Emphasize “NUEVO · Replanteo con láser” in one red-accented card. Other cards remain white/light gray. Use clean pictograms for satellites, tilt, battery, target, dual camera, laser beam, internal radio antenna, augmented reality and laser stakeout. At the bottom of the middle retain three compact modules: “A UN PRECIO ESPECIAL”, “Certificación de Puntos de Orden C”, and the existing real close-up photo of the Jupiter dual-camera/laser module. Reduce these modules enough to prevent crowding.
+
+Every Spanish phrase must be legible and correctly spelled. No invented specifications, no extra paragraphs, no extra logos, no new contact details, no duplicated features, no random text, no QR code, no watermark. Full flyer, one image, portrait A5.

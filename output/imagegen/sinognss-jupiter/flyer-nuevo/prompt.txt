@@ -1,0 +1,15 @@
+Mode: built-in image_gen.
+Use case: ads-marketing. Asset type: completely new Spanish A5 portrait sales flyer for the SinoGNSS Jupiter GNSS receiver. Use the reference only as a source for the exact logos, product appearance, close-up camera photo, promotion, certification message, and contact information. Create a genuinely new layout and visual direction; do not reuse the previous circular hero layout or the scattered feature-circle arrangement.
+
+Design direction: premium modern geospatial technology. Portrait A5. Use a dark navy-to-black technical background in the main body with subtle topographic contour lines, faint coordinate-grid marks, a soft red laser beam accent and small restrained red highlights. Keep the overall result elegant, spacious and high contrast. Use white, pale gray, SinoGNSS blue, navy and red. No Jupiter planet pattern.
+
+Composition:
+1. A slim clean white header containing the SinoGNSS logo on the left and COTECMI PERÚ logo on the right. Between or below them place the small brand message “Soluciones GNSS de alta precisión y bajo costo”.
+2. Below the header, create a bold editorial title block aligned left: large “JUPITER”, smaller “VISUAL LASER RTK”, and a red capsule reading “NUEVO · REPLANTEO CON LÁSER”.
+3. Make the same Jupiter receiver the dominant photorealistic hero, large and dramatic in the center-right, shown at a slight three-quarter angle. Show a thin red laser ray projecting from its camera/laser module toward a precise target point, clearly communicating laser stakeout.
+4. On the left, use a compact vertical specification rail with five clean icon rows: “1668 canales”, “IMU integrado”, “Más de 16 h de autonomía”, “Precisión 2.5 mm + 0.5 ppm”, “Radio UHF interna · hasta 15 km”.
+5. Beneath the hero, add a wide horizontal section titled “TECNOLOGÍA QUE ACELERA EL REPLANTEO” with four equal feature tiles: “Doble cámara”, “Láser de largo alcance · 50 m”, “Replanteo con realidad aumentada”, “Replanteo con láser”. Use simple clear technical pictograms. Give the laser-stakeout tile a red border.
+6. Near the lower body, integrate the real close-up camera photo in a small tilted photo card with caption “Cámara dual + láser”. Beside it place two compact badges: “A UN PRECIO ESPECIAL” in green and “Certificación de Puntos de Orden C” in blue.
+7. Finish with a clean dark contact footer containing exactly: “CONTÁCTANOS”, WhatsApp “+51 982 057 796”, email “ventasperu@cotecmi.com”, address “Av. José Pardo 541, Oficina 106 · Miraflores – Lima – Perú”, and website “www.cotecmisac.com”.
+
+All Spanish text must be legible and correctly spelled. Keep the product as the largest visual element. Maintain generous margins, clear hierarchy, consistent icon style and commercial polish. No invented specifications, no duplicated claims, no extra logos, no QR code, no random text, no watermark. One complete flyer image.
