@@ -6,5 +6,4 @@ tmp
 frontend/node_modules
 frontend/.env*
 docs
-sql
 .git

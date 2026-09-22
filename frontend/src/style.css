@@ -1151,6 +1151,32 @@ body:has(.compare-tray) main {
 .ai-conversation > .notice {
   margin: 0 22px 10px;
 }
+.ai-error-legend {
+  margin: 0 22px 20px;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: #fbfcfe;
+  color: var(--muted);
+  font-size: 11px;
+}
+.ai-error-legend summary {
+  cursor: pointer;
+  color: #31415a;
+  font-weight: 700;
+}
+.ai-error-legend dl {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0 0;
+}
+.ai-error-legend dl > div {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: 8px;
+}
+.ai-error-legend dt { font-weight: 800; color: #253a5a; }
+.ai-error-legend dd { margin: 0; }
 
 @media (max-width: 900px) {
   .four {

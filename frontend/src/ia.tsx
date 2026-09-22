@@ -25,8 +25,9 @@ type Chat = {
   messages: Message[];
 };
 
-const STORAGE_KEY = "licitex-ia-chats-v1";
-const ACTIVE_KEY = "licitex-ia-chat-activo-v1";
+// v2 inicia las búsquedas en el catálogo Cotecmi; el usuario puede ampliar cada chat.
+const STORAGE_KEY = "licitex-ia-chats-v2";
+const ACTIVE_KEY = "licitex-ia-chat-activo-v2";
 const id = () => crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`;
 const makeChat = (): Chat => {
   const now = Date.now();
@@ -36,7 +37,7 @@ const makeChat = (): Chat => {
     createdAt: now,
     updatedAt: now,
     type: "auto",
-    onlyCotecmi: false,
+    onlyCotecmi: true,
     messages: [],
   };
 };
@@ -205,9 +206,19 @@ export function AiAdvisor() {
     }
   }, [activeId, chats, setActiveId]);
   useEffect(() => {
-    api("/ia/estado")
-      .then(setAvailability)
-      .catch((e) => setAvailability({ disponible: false, mensaje: e.message }));
+    let active = true;
+    const check = () =>
+      api("/ia/estado?comprobar=true")
+        .then((value) => active && setAvailability(value))
+        .catch((e) => active && setAvailability({ disponible: false, mensaje: e.message }));
+    check();
+    const interval = window.setInterval(check, 60_000);
+    window.addEventListener("focus", check);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+      window.removeEventListener("focus", check);
+    };
   }, []);
 
   function createChat() {
@@ -314,7 +325,7 @@ export function AiAdvisor() {
         <span
           className={`ai-availability ${availability?.disponible ? "online" : "offline"}`}
         >
-          {availability?.disponible ? "IA disponible" : "IA no disponible"}
+          IA limitada · Capa gratuita · {availability?.disponible ? "Disponible ahora" : "No disponible"}
         </span>
       </div>
 
@@ -394,8 +405,8 @@ export function AiAdvisor() {
                   patchActive({ onlyCotecmi: e.target.value === "true" })
                 }
               >
-                <option value="false">Cotecmi y competencia</option>
                 <option value="true">Solo Cotecmi</option>
+                <option value="false">Cotecmi y competencia</option>
               </select>
             </label>
           </div>
@@ -456,6 +467,17 @@ export function AiAdvisor() {
             oferta. No ingreses información confidencial mientras uses el nivel
             gratuito.
           </p>
+          <details className="ai-error-legend">
+            <summary>Qué significan los códigos de error de la IA</summary>
+            <dl>
+              <div><dt>400</dt><dd>La consulta no tuvo un formato aceptado por el proveedor.</dd></div>
+              <div><dt>401 / 403</dt><dd>La clave no es válida o no tiene permiso para usar el modelo.</dd></div>
+              <div><dt>404</dt><dd>El modelo configurado no existe o dejó de estar disponible.</dd></div>
+              <div><dt>429</dt><dd>Se alcanzó la cuota gratuita o el límite temporal de consultas.</dd></div>
+              <div><dt>500</dt><dd>El proveedor tuvo un error interno.</dd></div>
+              <div><dt>502 / 503 / 504</dt><dd>Falla temporal, saturación o demora del proveedor; Licitex reintenta automáticamente.</dd></div>
+            </dl>
+          </details>
         </section>
       </div>
     </main>

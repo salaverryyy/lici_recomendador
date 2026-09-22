@@ -44,6 +44,13 @@ class RecomendadorTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             Preferencias(cantidad_camaras_min=1.5)
 
+    def test_alcance_laser_es_independiente_de_tener_laser(self):
+        p = Preferencias(laser=True, laser_alcance_min_m=50)
+        self.assertEqual(evaluar(p, {'laser': True, 'laser_alcance_m': 50})['porcentaje'], 100)
+        result = evaluar(p, {'laser': True, 'laser_alcance_m': 10})
+        self.assertEqual(result['cumplimientos'], 1)
+        self.assertEqual(result['incumplimientos'], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

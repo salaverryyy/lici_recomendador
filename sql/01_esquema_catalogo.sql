@@ -23,6 +23,7 @@ CREATE TABLE base_evaluacion (
     memoria NUMERIC(10,3) CHECK (memoria >= 0),
     sim_4g BOOLEAN,
     laser BOOLEAN,
+    laser_alcance_m NUMERIC(8,2) CHECK (laser_alcance_m >= 0),
     bateria_intercambiable BOOLEAN,
     bateria_caliente BOOLEAN,
     mp_camara NUMERIC(6,1) CHECK (mp_camara >= 0),

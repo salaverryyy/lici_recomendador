@@ -43,6 +43,22 @@ class AITests(unittest.TestCase):
         self.assertFalse(result['disponible'])
         self.assertEqual(result['motivo'], 'configuracion')
 
+    def test_general_catalog_question_can_answer_without_ranking_fields(self):
+        provider = ({
+            'tipo_equipo': 'gnss', 'intencion': 'consulta_catalogo',
+            'requisitos': {}, 'resumen': 'Comparación general.',
+            'respuesta_general': 'Jupiter destaca para replanteo con láser; X1 para un flujo RTK convencional.',
+            'preguntas': ['¿Necesitas láser?'], 'omitidos': [],
+        }, {})
+        catalog = [{'marca': 'SinoGNSS', 'modelo': 'Jupiter Laser RTK', 'laser_alcance_m': 50}]
+        with patch.dict(os.environ, {'GEMINI_API_KEY': 'test'}, clear=False), \
+             patch.object(ia, 'quota_until', return_value=None), \
+             patch.object(ia, '_post_gemini', return_value=provider):
+            result = ia.interpret('¿Cuál es el mejor equipo?', catalog_context=catalog)
+        self.assertFalse(result['tiene_criterios'])
+        self.assertEqual(result['intencion'], 'consulta_catalogo')
+        self.assertIn('Jupiter', result['respuesta_general'])
+
 
 if __name__ == '__main__':
     unittest.main()

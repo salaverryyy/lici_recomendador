@@ -63,6 +63,7 @@ class Preferencias(BaseModel):
     memoria_min_gb: float | None = Field(default=None, ge=0)
     sim_4g: bool | None = None
     laser: bool | None = None
+    laser_alcance_min_m: float | None = Field(default=None, ge=0)
     bateria_intercambiable: bool | None = None
     bateria_caliente: bool | None = None
     camara_mp_min: float | None = Field(default=None, ge=0)
@@ -171,6 +172,7 @@ CRITERIOS = (
     Criterio("memoria", "memoria_min_gb", "memoria", "Memoria", "GB", "minimo", 3),
     Criterio("sim_4g", "sim_4g", "sim_4g", "SIM 4G", None, "booleano", 5),
     Criterio("laser", "laser", "laser", "Láser", None, "booleano", 8),
+    Criterio("laser_alcance_m", "laser_alcance_min_m", "laser_alcance_m", "Alcance del láser", "m", "minimo", 5),
     Criterio("bateria_intercambiable", "bateria_intercambiable", "bateria_intercambiable", "Batería intercambiable", None, "booleano", 4),
     Criterio("bateria_caliente", "bateria_caliente", "bateria_caliente", "Batería en caliente", None, "booleano", 4),
     Criterio("mp_camara", "camara_mp_min", "mp_camara", "Cámara", "MP", "minimo", 3),

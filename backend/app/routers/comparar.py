@@ -66,6 +66,7 @@ COLUMNAS = {
     "memoria": ("Memoria", "GB"),
     "sim_4g": ("SIM 4G", None),
     "laser": ("Láser", None),
+    "laser_alcance_m": ("Alcance del láser", "m"),
     "bateria_intercambiable": ("Batería intercambiable", None),
     "bateria_caliente": ("Batería en caliente", None),
     "mp_camara": ("Cámara", "MP"),

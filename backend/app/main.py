@@ -15,9 +15,15 @@ from .routers.admin_reglas import router as admin_reglas_router
 from .routers.admin_recuperacion import router as admin_recuperacion_router
 from .routers.admin_correos import router as admin_correos_router
 from .routers.ia import router as ia_router
+from .migrations import apply_runtime_migrations
 
 
 app = FastAPI(title="Licitex API")
+
+
+@app.on_event("startup")
+def migrate_production_database():
+    apply_runtime_migrations()
 from .routers.admin_almacenamiento import router as admin_almacenamiento_router
 app.include_router(admin_almacenamiento_router)
 from .routers.controladoras import router as controladoras_router
