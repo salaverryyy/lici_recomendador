@@ -57,7 +57,7 @@ def main():
             assert len(tabla['filas']) <= 2 and 'temperatura_operacion_min_c' in tabla['columnas']
             comprobar(client.get('/api/admin/tablas/admin_users'), 404)
             comprobar(client.get('/api/admin/tablas/equipos', params={'pagina':0}), 422)
-            datos_equipo = {"id_equipo": ID_EQUIPO, "marca": "Codex", "modelo": "Prueba", "categoria": "GNSS"}
+            datos_equipo = {"id_equipo": ID_EQUIPO, "marca": "Codex", "modelo": "Prueba", "categoria": "GNSS", "pais_marca": "Perú", "pais_fabricacion": "Perú"}
             comprobar(client.post("/api/admin/equipos", json=datos_equipo), 403)
             comprobar(client.post("/api/admin/equipos", json=datos_equipo, headers=headers), 201)
             comprobar(client.post("/api/admin/equipos", json=datos_equipo, headers=headers), 409)
@@ -107,7 +107,8 @@ def main():
             comprobar(client.get("/api/admin/sesion"), 200)
             comprobar(client.get("/api/admin/equipos"), 200)
             comprobar(client.get("/api/equipos/opciones"), 200)
-            comprobar(client.get("/api/comparar/columnas"), 200)
+            columnas = comprobar(client.get("/api/comparar/columnas"), 200)
+            assert any(c["clave"] == "pais_marca" for c in columnas)
             comprobar(client.get("/api/equipos", params={"q": "Leica", "orden": "peso_asc"}), 200)
             comprobar(client.get("/api/equipos", params={"orden": "invalido"}), 422)
             comprobar(client.get("/api/comparar", params={"ids": ID_EQUIPO}), 422)

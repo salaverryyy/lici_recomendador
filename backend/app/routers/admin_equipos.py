@@ -21,6 +21,8 @@ class NuevoEquipo(BaseModel):
     marca: str = Field(min_length=1, max_length=120)
     modelo: str = Field(min_length=1, max_length=120)
     categoria: str = Field(min_length=1, max_length=80)
+    pais_marca: str = Field(min_length=1, max_length=100)
+    pais_fabricacion: str = Field(min_length=1, max_length=100)
     descripcion: str | None = None
     anio_modelo: int | None = Field(default=None, ge=1900, le=2200)
     imagen_url: HttpUrl | None = None
@@ -35,6 +37,8 @@ class CambiosEquipo(BaseModel):
     marca: str | None = Field(default=None, min_length=1, max_length=120)
     modelo: str | None = Field(default=None, min_length=1, max_length=120)
     categoria: str | None = Field(default=None, min_length=1, max_length=80)
+    pais_marca: str | None = Field(default=None, min_length=1, max_length=100)
+    pais_fabricacion: str | None = Field(default=None, min_length=1, max_length=100)
     descripcion: str | None = None
     anio_modelo: int | None = Field(default=None, ge=1900, le=2200)
     imagen_url: HttpUrl | None = None
@@ -180,8 +184,8 @@ def editar_equipo(id_equipo: str, datos: CambiosEquipo, _=Depends(administrador_
     cambios = datos.model_dump(mode="json", exclude_unset=True)
     if not cambios:
         raise HTTPException(status_code=422, detail="Indica al menos un campo para editar.")
-    if any(cambios.get(campo) is None for campo in ("marca", "modelo", "categoria", "publicado") if campo in cambios):
-        raise HTTPException(status_code=422, detail="Marca, modelo, categoría y publicado no pueden ser null.")
+    if any(cambios.get(campo) is None for campo in ("marca", "modelo", "categoria", "pais_marca", "pais_fabricacion", "publicado") if campo in cambios):
+        raise HTTPException(status_code=422, detail="Marca, modelo, categoría, países y publicado no pueden ser null.")
     try:
         with connect() as conn, conn.cursor() as cur:
             cur.execute(

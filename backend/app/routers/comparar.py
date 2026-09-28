@@ -57,6 +57,8 @@ COLUMNAS = {
     "marca": ("Marca", None),
     "modelo": ("Modelo", None),
     "categoria": ("Categoría", None),
+    "pais_marca": ("País de la marca", None),
+    "pais_fabricacion": ("País de fabricación", None),
     "anio_modelo": ("Año del modelo", None),
     "tiene_imu": ("IMU", None),
     "tiene_camara": ("Cámara", None),
@@ -100,9 +102,9 @@ COLUMNAS = {
 }
 
 COLUMNAS_PREDETERMINADAS = [
-    "tiene_imu", "tiene_camara", "canales_gnss", "constelaciones",
+    "pais_marca", "pais_fabricacion", "tiene_imu", "tiene_camara", "canales_gnss", "constelaciones",
     "rtk_horizontal_mm", "rtk_vertical_mm", "autonomia_bateria",
-    "peso_max", "radio_rangos", "laser", "cantidad_camaras", "memoria", "tiene_snlonglink",
+    "peso_max", "radio_rangos", "laser", "cantidad_camaras", "memoria",
 ]
 COLUMNAS.update({'cantidad_baterias':('Cantidad de baterías del equipo',None),
     'cantidad_baterias_kit':('Baterías incluidas en el kit declarado',None), 'lemo':('Conector LEMO',None),

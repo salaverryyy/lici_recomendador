@@ -6,6 +6,8 @@ CREATE TABLE equipos (
     marca TEXT NOT NULL,
     modelo TEXT NOT NULL,
     categoria TEXT NOT NULL,
+    pais_marca TEXT NOT NULL,
+    pais_fabricacion TEXT NOT NULL,
     descripcion TEXT,
     anio_modelo INTEGER,
     imagen_url TEXT,

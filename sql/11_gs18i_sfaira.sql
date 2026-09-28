@@ -13,8 +13,8 @@ UPDATE base_evaluacion SET temperatura_operacion_min_c=-40, temperatura_operacio
 WHERE id_equipo='GNSS-LEICA-GS18';
 
 -- Brochure SingularXYZ SFAIRA ONE PLUS, versión 17-10-2025.
-INSERT INTO equipos (id_equipo,marca,modelo,categoria,descripcion,publicado)
-VALUES ('GNSS-SINGULARXYZ-SFAIRA-ONE-PLUS','SingularXYZ','Sfaira ONE Plus','GNSS',
+INSERT INTO equipos (id_equipo,marca,modelo,categoria,pais_marca,pais_fabricacion,descripcion,publicado)
+VALUES ('GNSS-SINGULARXYZ-SFAIRA-ONE-PLUS','SingularXYZ','Sfaira ONE Plus','GNSS','China','China',
         'Receptor GNSS compacto para RTK mediante CORS/NTRIP y conexión Bluetooth al teléfono.',TRUE)
 ON CONFLICT (id_equipo) DO NOTHING;
 INSERT INTO base_evaluacion (id_equipo,tiene_imu,canales_gnss,autonomia_bateria,peso_max,

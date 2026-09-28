@@ -11,7 +11,7 @@ from .db import connect
 def apply_runtime_migrations() -> None:
     if not os.getenv("VERCEL"):
         return
-    version = "17_ia_evidencia_y_correcciones"
+    version = "18_paises_equipos"
     path = Path(__file__).resolve().parents[2] / "sql" / f"{version}.sql"
     try:
         script = path.read_text(encoding="utf-8").strip()

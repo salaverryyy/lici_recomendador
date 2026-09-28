@@ -50,7 +50,7 @@ lines=['-- Datos verificados contra las fichas aportadas. Sin inferir valores au
        '    id_equipo TEXT PRIMARY KEY REFERENCES equipos(id_equipo) ON DELETE CASCADE,',
        ',\n'.join(columns),');']
 for ident,brand,model,data in models:
-    lines.append(f"INSERT INTO equipos(id_equipo,marca,modelo,categoria,descripcion) VALUES ({literal(ident)},{literal(brand)},{literal(model)},'Controladora','Controladora de campo Android con teclado QWERTY') ON CONFLICT(id_equipo) DO NOTHING;")
+    lines.append(f"INSERT INTO equipos(id_equipo,marca,modelo,categoria,pais_marca,pais_fabricacion,descripcion) VALUES ({literal(ident)},{literal(brand)},{literal(model)},'Controladora','China','China','Controladora de campo Android con teclado QWERTY') ON CONFLICT(id_equipo) DO NOTHING;")
     values={'id_equipo':ident,**data}
     lines.append('INSERT INTO controladora_especificaciones ('+','.join(values)+') VALUES ('+','.join(literal(v) for v in values.values())+') ON CONFLICT(id_equipo) DO NOTHING;')
 lines.append('COMMIT;')

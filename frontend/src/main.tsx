@@ -568,8 +568,10 @@ function Compare() {
   const { ids, toggle, clear } = useContext(Selection),
     metadata = useData("/comparar/columnas");
   const [columns, setColumns] = usePersistentState(
-    "licitex-comparar-columnas",
+    "licitex-comparar-columnas-v2",
     [
+      "pais_marca",
+      "pais_fabricacion",
       "tiene_imu",
       "tiene_camara",
       "canales_gnss",
@@ -582,7 +584,6 @@ function Compare() {
       "laser",
       "cantidad_camaras",
       "memoria",
-      "tiene_snlonglink",
     ],
   );
   const [hide, setHide] = usePersistentState("licitex-comparar-iguales", false);
@@ -624,23 +625,27 @@ function Compare() {
           <details className="panel">
             <summary>Características visibles ({columns.length})</summary>
             <div className="checks">
-              {metadata.data?.map((c: Columna) => (
-                <label key={c.clave}>
-                  <input
-                    type="checkbox"
-                    checked={columns.includes(c.clave)}
-                    disabled={columns.length === 1 && columns.includes(c.clave)}
-                    onChange={() =>
-                      setColumns((v) =>
-                        v.includes(c.clave)
-                          ? v.filter((k) => k !== c.clave)
-                          : [...v, c.clave],
-                      )
-                    }
-                  />
-                  {c.nombre} {c.unidad}
-                </label>
-              ))}
+              {metadata.data
+                ?.filter((c: Columna) => c.clave !== "tiene_snlonglink")
+                .map((c: Columna) => (
+                  <label key={c.clave}>
+                    <input
+                      type="checkbox"
+                      checked={columns.includes(c.clave)}
+                      disabled={
+                        columns.length === 1 && columns.includes(c.clave)
+                      }
+                      onChange={() =>
+                        setColumns((v) =>
+                          v.includes(c.clave)
+                            ? v.filter((k) => k !== c.clave)
+                            : [...v, c.clave],
+                        )
+                      }
+                    />
+                    {c.nombre} {c.unidad}
+                  </label>
+                ))}
             </div>
           </details>
           <label className="inline">
@@ -1665,6 +1670,8 @@ function Editor() {
                 e.marca,
                 e.modelo,
                 e.categoria,
+                e.pais_marca,
+                e.pais_fabricacion,
                 e.descripcion,
                 e.anio_modelo,
                 e.web_url,
@@ -1695,7 +1702,13 @@ function Editor() {
                     required
                   />
                 )}
-                {["marca", "modelo", "categoria"].map((k) => (
+                {[
+                  "marca",
+                  "modelo",
+                  "categoria",
+                  "pais_marca",
+                  "pais_fabricacion",
+                ].map((k) => (
                   <Field
                     key={k}
                     name={k}
