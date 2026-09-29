@@ -10,6 +10,8 @@ GNSS-TRIMBLE-R12I;Trimble;R12i;GNSS;Estados Unidos;Estados Unidos;Receptor GNSS 
 GNSS-LEICA-GS16;Leica;GS16;GNSS;Suiza;Suiza;Antena inteligente GNSS Leica para aplicaciones profesionales de topografía;2016;;;;;TRUE
 GNSS-LEICA-GS18;Leica;GS18;GNSS;Suiza;Suiza;Antena inteligente GNSS Leica con tecnología RTK avanzada;;;;;;TRUE
 GNSS-LEICA-GS18T;Leica;GS18 T;GNSS;Suiza;Suiza;Receptor GNSS RTK Leica con compensación de inclinación y alta precisión;2025;;;;;TRUE
+GNSS-LEICA-GS10;Leica;Viva GS10;GNSS;Suiza;Suiza;Receptor GNSS modular para estaciones base y rover con antena externa, registro RINEX y enlaces de datos externos;2015;;;;;TRUE
+GNSS-LEICA-GS25;Leica;Viva GS25;GNSS;Suiza;Suiza;Receptor GNSS profesional con radio UHF y módem 3.5G integrados para estaciones base, rover y monitoreo;2016;;;;;TRUE
 GNSS-EMLID-RS2;Emlid;Reach RS2;GNSS;Hungría;China;Receptor GNSS RTK compacto con LoRa, 3.5G y almacenamiento interno;;;;;;TRUE
 GNSS-EMLID-RS2PLUS;Emlid;Reach RS2+;GNSS;Hungría;China;Receptor GNSS RTK compacto con LTE, LoRa y conectividad avanzada;;;;;;TRUE
 GNSS-EMLID-RS3;Emlid;Reach RS3;GNSS;Hungría;China;Receptor GNSS RTK compacto con IMU de alta precisión y radio dual;;;;;;TRUE

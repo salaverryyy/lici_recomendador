@@ -1,0 +1,4 @@
+interface:
+  display_name: "Imagenes de equipos Licitex"
+  short_description: "Genera galeria y portada coherentes para Licitex"
+  default_prompt: "Usa $licitex-equipment-images para generar la imagen cuadrada y la portada horizontal de este equipo."
