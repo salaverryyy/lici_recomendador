@@ -34,4 +34,7 @@ GEMINI_MODEL=gemini-3.8-flash
 
 La clave permanece en el backend. `GET /api/ia/estado` indica si el servicio está
 configurado o si la cuota gratuita se agotó. Los últimos cinco chats se guardan en
-`localStorage` del navegador y no se comparten con otros visitantes.
+`localStorage` del navegador y no se comparten con otros visitantes. Cada respuesta
+usa como memoria un máximo de seis turnos anteriores del chat activo. El backend
+recupera de PostgreSQL las fichas técnicas más relacionadas con la conversación
+(RAG léxico local, sin embeddings ni un servicio vectorial adicional).

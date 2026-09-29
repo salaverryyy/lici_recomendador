@@ -48,6 +48,19 @@ const fieldLabel = (key: string) =>
 const display = (value: unknown) =>
   typeof value === "boolean" ? (value ? "Sí" : "No") : String(value);
 
+function historyFor(messages: Message[]) {
+  let remaining = 12_000;
+  const selected: Array<Pick<Message, "role" | "text">> = [];
+  for (const item of messages.slice(-12).reverse()) {
+    if (remaining <= 0) break;
+    const text = item.text.slice(0, Math.min(2500, remaining)).trim();
+    if (!text) continue;
+    selected.push({ role: item.role, text });
+    remaining -= text.length;
+  }
+  return selected.reverse();
+}
+
 function cleanChats(value: unknown): Chat[] {
   if (!Array.isArray(value)) return [];
   return value
@@ -178,6 +191,12 @@ function AssistantAnswer({ data }: { data: any }) {
             : ""}
         </p>
       )}
+      {data?.memoria?.mensajes_usados > 0 && (
+        <p className="muted ai-usage">
+          Memoria activa · {data.memoria.mensajes_usados} mensajes anteriores ·{" "}
+          {data.memoria.equipos_recuperados?.length || 0} fichas técnicas recuperadas
+        </p>
+      )}
     </>
   );
 }
@@ -279,6 +298,7 @@ export function AiAdvisor() {
         solo_cotecmi: pending.onlyCotecmi,
         top_n: 5,
         contexto_previo: pending.context || undefined,
+        historial: historyFor(current.messages),
       });
       const assistant: Message = {
         id: id(),
@@ -343,7 +363,7 @@ export function AiAdvisor() {
           </button>
           <p className="muted small-text">
             Se guardan automáticamente las últimas 5 consultas en este
-            navegador.
+            navegador. Lici recuerda el contexto dentro de cada consulta.
           </p>
           <div className="ai-chat-list">
             {chats.map((chat) => (
@@ -463,9 +483,10 @@ export function AiAdvisor() {
           </form>
           <p className="muted small-text">
             La IA interpreta el texto; la puntuación se calcula con los datos
-            técnicos de Licitex. Confirma ficha, accesorios y condiciones de la
-            oferta. No ingreses información confidencial mientras uses el nivel
-            gratuito.
+            técnicos recuperados de Licitex. La memoria del chat permanece en
+            este navegador y sólo se envían los últimos seis turnos al responder.
+            Confirma ficha, accesorios y condiciones de la oferta. No ingreses
+            información confidencial mientras uses el nivel gratuito.
           </p>
           <details className="ai-error-legend">
             <summary>Qué significan los códigos de error de la IA</summary>
