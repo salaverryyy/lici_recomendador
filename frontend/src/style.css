@@ -634,6 +634,29 @@ progress::-webkit-progress-value {
 .admin-nav button {
   margin-left: auto;
 }
+.admin-equipment-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 620px;
+  margin: 0 0 18px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: white;
+  color: var(--muted);
+}
+.admin-equipment-search input {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+.admin-equipment-search span {
+  white-space: nowrap;
+  font-size: 11px;
+}
 .danger {
   background: #fff2f3;
   color: #b7263b;

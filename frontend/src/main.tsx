@@ -1522,6 +1522,22 @@ function AdminTables() {
 }
 function AdminEquipment() {
   const { data, error, reload } = useData("/admin/equipos");
+  const [query, setQuery] = useState("");
+  const normalizedQuery = query
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  const equipment = (data ?? []) as Equipo[];
+  const filteredEquipment = equipment.filter((item) =>
+    [item.marca, item.modelo, item.id_equipo, item.categoria]
+      .filter(Boolean)
+      .join(" ")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .includes(normalizedQuery),
+  );
   return (
     <AdminLayout>
       <div className="page-title">
@@ -1531,6 +1547,21 @@ function AdminEquipment() {
         </Link>
       </div>
       <Feedback error={error} loading={!data && !error} />
+      {data && (
+        <div className="admin-equipment-search">
+          <Search size={18} aria-hidden="true" />
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Buscar por marca, modelo, ID o categoría"
+            aria-label="Buscar equipo"
+          />
+          <span>
+            {filteredEquipment.length} de {equipment.length}
+          </span>
+        </div>
+      )}
       <div className="table-wrap">
         <table>
           <thead>
@@ -1542,7 +1573,7 @@ function AdminEquipment() {
             </tr>
           </thead>
           <tbody>
-            {data?.map((e: Equipo) => (
+            {filteredEquipment.map((e: Equipo) => (
               <tr key={e.id_equipo}>
                 <td>
                   <strong>
@@ -1580,6 +1611,9 @@ function AdminEquipment() {
           </tbody>
         </table>
       </div>
+      {data && !filteredEquipment.length && (
+        <p className="muted">No se encontraron equipos con esa búsqueda.</p>
+      )}
     </AdminLayout>
   );
 }
@@ -1640,7 +1674,6 @@ function Editor() {
     "tiene_camara",
     "sim_4g",
     "laser",
-    "laser_alcance_m",
     "bateria_intercambiable",
     "bateria_caliente",
     "gps",
@@ -1938,7 +1971,8 @@ function Editor() {
                     <h2>Especificaciones técnicas</h2>
                     <p className="muted">
                       Deja vacío si no hay datos. Constelaciones y
-                      disponibilidad PPP se calculan automáticamente.
+                      disponibilidad PPP se calculan automáticamente. Solo se
+                      guardarán los campos que modifiques.
                     </p>
                     <Feedback error={metadata.error} />
                     <Action
@@ -1947,6 +1981,11 @@ function Editor() {
                         const d = fields(form),
                           cambios: Record<string, any> = {};
                         Object.entries(d).forEach(([k, v]) => {
+                          const original =
+                            details.data.evaluacion?.[k] == null
+                              ? ""
+                              : String(details.data.evaluacion[k]);
+                          if (v === original) return;
                           cambios[k] =
                             v === ""
                               ? null
@@ -1956,6 +1995,10 @@ function Editor() {
                                   ? v
                                   : Number(v);
                         });
+                        if (!Object.keys(cambios).length)
+                          throw new Error(
+                            "Modifica al menos una especificación antes de guardar.",
+                          );
                         await api(base + "/especificaciones", "PATCH", {
                           cambios,
                         });
