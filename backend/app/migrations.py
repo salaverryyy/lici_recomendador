@@ -11,7 +11,7 @@ from .db import connect
 def apply_runtime_migrations() -> None:
     if not os.getenv("VERCEL"):
         return
-    version = "19_leica_viva_gs10_gs25"
+    version = "20_sinognss_t20"
     path = Path(__file__).resolve().parents[2] / "sql" / f"{version}.sql"
     try:
         script = path.read_text(encoding="utf-8").strip()

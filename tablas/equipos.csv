@@ -23,3 +23,4 @@ GNSS-SINOGNSS-MARS-PRO;SinoGNSS;Mars Pro Laser RTK;GNSS;China;China;Receptor GNS
 GNSS-SINOGNSS-T300PLUS;SinoGNSS;T300+;GNSS;China;China;Receptor GNSS RTK multibanda con IMU sin calibración para levantamientos topográficos eficientes;2025;;;;;TRUE
 GNSS-SINOGNSS-JUPITER;SinoGNSS;Jupiter Laser RTK;GNSS;China;China;Receptor GNSS RTK avanzado con IMU, cámaras duales y láser para posicionamiento visual;;;;;;TRUE
 GNSS-SINOGNSS-P6H;SinoGNSS;P6H Portátil;GNSS;China;China;Dispositivo GNSS portátil con Android, pantalla integrada y módulo GNSS de alta precisión para aplicaciones GIS;2025;;;;;TRUE
+GNSS-SINOGNSS-T20;SinoGNSS;T20 Palm RTK;GNSS;China;China;Receptor GNSS RTK compacto de 1590 canales con IMU de 60 grados, radio UHF integrada y NFC;2025;;;;;TRUE

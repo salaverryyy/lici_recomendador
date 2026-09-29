@@ -23,3 +23,4 @@ GNSS-SINOGNSS-JUPITER;true;true;1668;4;true;true;true;;2;410-470 MHz;6;16;810;5;
 GNSS-SINOGNSS-P6H;false;true;1590;64;true;false;false;;13;;6;20;310;5;8;15;1;1;2.5;5;1;1;181;83;17.4;true;true;true;true;true;true;true;true;20;
 GNSS-LEICA-GS10;false;false;555;8;false;false;true;;0;UHF/VHF externo;6;15;1200;4;8;15;1;1;3;5;0.5;0.5;212;166;79;true;true;true;true;true;true;true;true;3;
 GNSS-LEICA-GS25;false;false;555;8;false;false;true;;0;403-470 MHz;6;14;1840;4;8;15;1;1;3;5;0.5;0.5;220;200;94;true;true;true;true;true;true;true;true;3;
+GNSS-SINOGNSS-T20;true;false;1590;8;false;false;false;false;0;410-470 MHz;6;20;670;10;8;15;1;1;2.5;5;0.5;0.5;149;149;48;true;true;true;true;true;true;true;false;;
