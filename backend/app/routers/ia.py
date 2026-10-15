@@ -16,6 +16,7 @@ from ..ia import AIProviderError, interpret, probe_status, status
 from ..recomendador import Preferencias
 from .controladoras import Requirements as ControllerRequirements, recommend as recommend_controller
 from .recomendar import recomendar as recommend_gnss
+from .slam import Requirements as SlamRequirements, recommend as recommend_slam
 
 
 router = APIRouter(prefix="/api/ia", tags=["asistente con IA"])
@@ -55,7 +56,7 @@ def _limit(request: Request):
 
 class PreviousContext(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    tipo_equipo: str = Field(pattern=r"^(gnss|controladora)$")
+    tipo_equipo: str = Field(pattern=r"^(gnss|controladora|slam)$")
     requisitos: dict = Field(default_factory=dict)
 
     @model_validator(mode="after")
@@ -76,7 +77,7 @@ class ConversationMessage(BaseModel):
 class AIRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     mensaje: str = Field(min_length=3, max_length=6000)
-    tipo_equipo: str = Field(default="auto", pattern=r"^(auto|gnss|controladora)$")
+    tipo_equipo: str = Field(default="auto", pattern=r"^(auto|gnss|controladora|slam)$")
     solo_cotecmi: bool = True
     top_n: int = Field(default=5, ge=1, le=10)
     contexto_previo: PreviousContext | None = None
@@ -112,13 +113,13 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
     """Contexto compacto, procedente exclusivamente de la base técnica auditada."""
     rows: list[dict] = []
     with connect() as conn, conn.cursor() as cur:
-        if requested_type != "controladora":
+        if requested_type in ("auto", "gnss"):
             cur.execute("""
               SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.descripcion,e.anio_modelo,
                      e.pais_marca,e.pais_fabricacion,e.ficha_pdf_url,e.web_url,
                      to_jsonb(b) AS datos
               FROM equipos e LEFT JOIN base_evaluacion b USING(id_equipo)
-              WHERE e.publicado AND e.categoria <> 'Controladora' ORDER BY e.marca,e.modelo
+              WHERE e.publicado AND e.categoria='GNSS' ORDER BY e.marca,e.modelo
             """)
             allowed = {'canales_gnss','rtk_horizontal_mm','rtk_vertical_mm','rtk_ppm_h','rtk_ppm_v',
                        'red_rtk_horizontal_mm','red_rtk_vertical_mm','red_rtk_ppm_h','red_rtk_ppm_v',
@@ -135,7 +136,7 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
             for row in cur.fetchall():
                 data = row.pop('datos') or {}
                 rows.append({**row, **{key: data.get(key) for key in allowed}})
-        if requested_type != "gnss":
+        if requested_type in ("auto", "controladora"):
             cur.execute("""
               SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.descripcion,e.anio_modelo,
                      e.pais_marca,e.pais_fabricacion,e.ficha_pdf_url,e.web_url,
@@ -145,6 +146,30 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
             """)
             allowed = {'sistema_operativo','android_version','ram_gb','almacenamiento_gb','expansion_gb',
                        'pantalla_pulgadas','teclado_qwerty','autonomia_h','lte_4g','proteccion_ip','caida_m','fuente'}
+            for row in cur.fetchall():
+                data = row.pop('datos') or {}
+                rows.append({**row, **{key: data.get(key) for key in allowed}})
+        if requested_type in ("auto", "slam"):
+            cur.execute("""
+              SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.descripcion,e.anio_modelo,
+                     e.pais_marca,e.pais_fabricacion,e.ficha_pdf_url,e.web_url,
+                     to_jsonb(s) AS datos
+              FROM equipos e LEFT JOIN slam_especificaciones s USING(id_equipo)
+              WHERE e.publicado AND e.categoria='Escáner SLAM' ORDER BY e.marca,e.modelo
+            """)
+            allowed = {
+                'aplicaciones','tecnologia_slam','lineas_lidar','laser_clase_1',
+                'alcance_lidar_m','puntos_por_segundo','fov_horizontal_deg','fov_vertical_deg',
+                'precision_nube_cm','gnss_disponible','gnss_integrado','gnss_opcional',
+                'rtk_disponible','operacion_sin_gnss','tiene_imu','cantidad_camaras',
+                'resolucion_camara_mp','colorizacion_rgb','visualizacion_tiempo_real',
+                'peso_operativo_g','autonomia_h','baterias_incluidas','hot_swap',
+                'proteccion_ip','temperatura_operacion_min_c','temperatura_operacion_max_c',
+                'almacenamiento_gb','almacenamiento_expandible','usb_c','wifi','bluetooth',
+                'software_adquisicion_incluido','software_postproceso_incluido',
+                'exporta_las','exporta_laz','exporta_e57','exporta_ply','exporta_dxf',
+                'formatos_salida','modos_montaje','software','notas','fuente',
+            }
             for row in cur.fetchall():
                 data = row.pop('datos') or {}
                 rows.append({**row, **{key: data.get(key) for key in allowed}})
@@ -272,9 +297,17 @@ def ai_recommend(body: AIRequest, request: Request):
                     **parsed["requisitos"], solo_cotecmi=body.solo_cotecmi, top_n=body.top_n
                 )
             )
-        else:
+        elif parsed["tipo_equipo"] == "controladora":
             ranking = recommend_controller(
                 ControllerRequirements(
+                    requisitos=parsed["requisitos"],
+                    solo_cotecmi=body.solo_cotecmi,
+                    top_n=body.top_n,
+                )
+            )
+        else:
+            ranking = recommend_slam(
+                SlamRequirements(
                     requisitos=parsed["requisitos"],
                     solo_cotecmi=body.solo_cotecmi,
                     top_n=body.top_n,

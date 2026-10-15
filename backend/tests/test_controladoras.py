@@ -44,3 +44,18 @@ class ControllerTests(unittest.TestCase):
     def test_operating_range(self):
         with self.assertRaises(HTTPException):
             validate({'temperatura_operacion_min_c':40,'temperatura_operacion_max_c':20})
+
+    def test_r80_meets_common_field_requirements(self):
+        result = evaluate(
+            {
+                'android_version': 12, 'ram_gb': 4, 'almacenamiento_gb': 64,
+                'pantalla_pulgadas': 6, 'autonomia_h': 16, 'lte_4g': True,
+                'proteccion_ip': 'IP67', 'caida_m': 1.5,
+            },
+            {
+                'android_version': 12, 'ram_gb': 4, 'almacenamiento_gb': 64,
+                'pantalla_pulgadas': 6, 'autonomia_h': 12, 'lte_4g': True,
+                'proteccion_ip': 'IP67', 'caida_m': 1.2,
+            },
+        )
+        self.assertEqual(result['porcentaje'], 100)

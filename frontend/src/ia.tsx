@@ -5,7 +5,7 @@ import { api } from "./api";
 import { usePersistentState } from "./persist";
 
 type Context = {
-  tipo_equipo: "gnss" | "controladora";
+  tipo_equipo: "gnss" | "controladora" | "slam";
   requisitos: Record<string, unknown>;
 };
 type Message = {
@@ -19,7 +19,7 @@ type Chat = {
   title: string;
   createdAt: number;
   updatedAt: number;
-  type: "auto" | "gnss" | "controladora";
+  type: "auto" | "gnss" | "controladora" | "slam";
   onlyCotecmi: boolean;
   context?: Context;
   messages: Message[];
@@ -414,6 +414,7 @@ export function AiAdvisor() {
                 <option value="auto">Detectar automáticamente</option>
                 <option value="gnss">Receptor GNSS</option>
                 <option value="controladora">Controladora</option>
+                <option value="slam">Escáner SLAM</option>
               </select>
             </label>
             <label>
@@ -437,8 +438,8 @@ export function AiAdvisor() {
                 <Bot size={38} />
                 <h2>¿Qué equipo necesitas?</h2>
                 <p>
-                  Por ejemplo: “Busco un GNSS con dos cámaras, láser, radio
-                  interna y al menos 12 horas de autonomía”.
+                  Por ejemplo: “Busco un escáner SLAM para una mina, con 70 m
+                  de alcance, colorización y al menos 200 000 puntos/s”.
                 </p>
               </div>
             )}

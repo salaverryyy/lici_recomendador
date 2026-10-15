@@ -6,7 +6,7 @@ Desde `backend`:
 2. Instalar: `.venv\\Scripts\\python.exe -m pip install -r requirements.txt`
 3. Copiar `.env.example` a `.env` y escribir la contraseña local de PostgreSQL en `DB_PASSWORD`. `.env` está ignorado por Git.
 4. Iniciar: `.venv\\Scripts\\python.exe -m uvicorn app.main:app --reload`
-5. Abrir `http://127.0.0.1:8000/api/equipos`. Deben aparecer los 22 equipos publicados.
+5. Abrir `http://127.0.0.1:8000/api/equipos`. Deben aparecer los equipos publicados.
 
 `http://127.0.0.1:8000/docs` muestra la documentación interactiva de FastAPI.
 
@@ -21,7 +21,7 @@ El acceso y la creación del administrador se describen en `docs/api_acceso.md`.
 ## Asistente con IA
 
 El asistente convierte texto libre en los mismos requisitos validados que usan los
-rankings de GNSS y controladoras. La IA no puntúa equipos ni escribe datos en la BD.
+rankings de GNSS, controladoras y escáneres SLAM. La IA no puntúa equipos ni escribe datos en la BD.
 
 Para probarlo localmente, crear una clave de Gemini en Google AI Studio y agregar a
 `backend/.env`:

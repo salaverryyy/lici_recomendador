@@ -46,9 +46,12 @@ def listar_equipos(
                 SELECT e.id_equipo, e.marca, e.modelo, e.categoria,
                        e.descripcion, e.imagen_url, e.anio_modelo,
                        b.tiene_imu, b.tiene_camara, b.canales_gnss,
-                       b.constelaciones, b.tiene_ppp, b.peso_max
+                       b.constelaciones, b.tiene_ppp, b.peso_max,
+                       s.alcance_lidar_m, s.puntos_por_segundo,
+                       s.precision_nube_cm, s.peso_operativo_g
                 FROM equipos AS e
                 LEFT JOIN base_evaluacion AS b USING (id_equipo)
+                LEFT JOIN slam_especificaciones AS s USING (id_equipo)
                 WHERE {" AND ".join(condiciones)}
                 ORDER BY {orden_sql}
                 """,
@@ -93,9 +96,13 @@ def detalle_equipo(id_equipo: str):
             )
             evaluacion = cur.fetchone()
             controladora = None
+            slam = None
             if equipo['categoria'] == 'Controladora':
                 cur.execute('SELECT * FROM controladora_especificaciones WHERE id_equipo=%s', (id_equipo,))
                 controladora = cur.fetchone()
+            elif equipo['categoria'] == 'Escáner SLAM':
+                cur.execute('SELECT * FROM slam_especificaciones WHERE id_equipo=%s', (id_equipo,))
+                slam = cur.fetchone()
 
             cur.execute(
                 """
@@ -111,6 +118,7 @@ def detalle_equipo(id_equipo: str):
             return {
                 "equipo": equipo,
                 "controladora": controladora,
+                "slam": slam,
                 "evaluacion": evaluacion,
                 "radio_frecuencias": radio_frecuencias,
                 "fotografias": cur.fetchall(),

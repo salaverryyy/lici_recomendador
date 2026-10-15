@@ -1,5 +1,5 @@
 """Marcas comercializadas por Cotecmi, según el catálogo del usuario."""
-COTECMI_MARCAS = ('SingularXYZ', 'SinoGNSS', 'Emlid')
+COTECMI_MARCAS = ('SingularXYZ', 'SinoGNSS', 'Emlid', 'Gexcel')
 
 
 def es_cotecmi(marca: str) -> bool:

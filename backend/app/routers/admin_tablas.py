@@ -6,7 +6,8 @@ from ..db import connect
 router = APIRouter(prefix="/api/admin/tablas", tags=["administración: tablas"])
 TABLAS = {"equipos": "id_equipo", "base_evaluacion": "id_equipo",
           "equipo_radio_frecuencia": "id", "equipo_archivos": "id",
-          "reglas_recomendacion": "criterio", "controladora_especificaciones": "id_equipo"}
+          "reglas_recomendacion": "criterio", "controladora_especificaciones": "id_equipo",
+          "slam_especificaciones": "id_equipo"}
 
 
 @router.get("")

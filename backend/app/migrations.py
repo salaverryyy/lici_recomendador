@@ -11,14 +11,8 @@ from .db import connect
 def apply_runtime_migrations() -> None:
     if not os.getenv("VERCEL"):
         return
-    version = "20_sinognss_t20"
-    path = Path(__file__).resolve().parents[2] / "sql" / f"{version}.sql"
+    versions = ("20_sinognss_t20", "21_slam_scanners", "22_sinognss_r80")
     try:
-        script = path.read_text(encoding="utf-8").strip()
-        if script.startswith("BEGIN;"):
-            script = script[len("BEGIN;"):].lstrip()
-        if script.endswith("COMMIT;"):
-            script = script[:-len("COMMIT;")].rstrip()
         with connect() as conn, conn.cursor() as cur:
             cur.execute("SELECT pg_advisory_xact_lock(hashtext('licitex_runtime_migrations'))")
             cur.execute("""
@@ -27,11 +21,18 @@ def apply_runtime_migrations() -> None:
                     aplicada_en TIMESTAMPTZ NOT NULL DEFAULT NOW()
                 )
             """)
-            cur.execute("SELECT 1 FROM esquema_migraciones WHERE version=%s", (version,))
-            if cur.fetchone():
-                return
-            cur.execute(script)
-            cur.execute("INSERT INTO esquema_migraciones(version) VALUES(%s)", (version,))
+            for version in versions:
+                cur.execute("SELECT 1 FROM esquema_migraciones WHERE version=%s", (version,))
+                if cur.fetchone():
+                    continue
+                path = Path(__file__).resolve().parents[2] / "sql" / f"{version}.sql"
+                script = path.read_text(encoding="utf-8").strip()
+                if script.startswith("BEGIN;"):
+                    script = script[len("BEGIN;"):].lstrip()
+                if script.endswith("COMMIT;"):
+                    script = script[:-len("COMMIT;")].rstrip()
+                cur.execute(script)
+                cur.execute("INSERT INTO esquema_migraciones(version) VALUES(%s)", (version,))
     except (OSError, DatabaseError) as exc:
         # La API conserva disponibilidad para permitir diagnóstico desde Admin.
-        print(f"No se pudo aplicar la migración {version}: {type(exc).__name__}")
+        print(f"No se pudieron aplicar las migraciones de catálogo: {type(exc).__name__}")

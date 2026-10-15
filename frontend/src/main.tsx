@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { api, setCsrf } from "./api";
 import { ControllerSpecs, ControllerRank } from "./controladoras";
+import { SlamSpecs, SlamRank } from "./slam";
 import { StorageUsage, uploadFile } from "./almacenamiento";
 import { readStored, writeStored, usePersistentState } from "./persist";
 import { AiAdvisor } from "./ia";
@@ -234,6 +235,14 @@ function Card({ equipo }: { equipo: Equipo }) {
           )}
           {equipo.tiene_imu === true && <span className="teal">IMU</span>}
           {equipo.peso_max != null && <span>{equipo.peso_max} g</span>}
+          {equipo.alcance_lidar_m != null && (
+            <span>{equipo.alcance_lidar_m} m LiDAR</span>
+          )}
+          {equipo.puntos_por_segundo != null && (
+            <span className="teal">
+              {Number(equipo.puntos_por_segundo).toLocaleString("es-PE")} pts/s
+            </span>
+          )}
         </div>
         <div className="card-actions">
           <CompareButton id={equipo.id_equipo} />
@@ -412,7 +421,7 @@ function Catalog() {
           Solo equipos de Cotecmi
         </label>
         <p className="muted small-text">
-          SingularXYZ, SinoGNSS y Emlid. Desmarca para incluir la competencia.
+          SingularXYZ, SinoGNSS, Emlid y Gexcel. Desmarca para incluir la competencia.
         </p>
         <Feedback error={options.error} />
       </section>
@@ -510,6 +519,8 @@ function Detail() {
           {e.descripcion && <p>{e.descripcion}</p>}
           {e.categoria === "Controladora" ? (
             <ControllerSpecs data={data.controladora} />
+          ) : e.categoria === "Escáner SLAM" ? (
+            <SlamSpecs data={data.slam} />
           ) : (
             <div className="panel">
               <h3>Especificaciones técnicas</h3>
@@ -519,6 +530,7 @@ function Detail() {
                   ?.filter(
                     (c: Columna) =>
                       !c.clave.startsWith("controladora_") &&
+                      !c.clave.startsWith("slam_") &&
                       ![
                         "marca",
                         "modelo",
@@ -728,10 +740,15 @@ function Recommend() {
             "licitex-recomendador-formulario" + removed.id,
             "licitex-recomendador-resultado" + removed.id,
           ]
-        : [
+        : removed.tipo === "Controladora"
+          ? [
             "licitex-controladora-form-" + removed.id,
             "licitex-controladora-resultado-" + removed.id,
-          ];
+            ]
+          : [
+              "licitex-slam-form-" + removed.id,
+              "licitex-slam-resultado-" + removed.id,
+            ];
     try {
       keys.forEach((key) => localStorage.removeItem(key));
     } catch {
@@ -781,6 +798,7 @@ function Recommend() {
           <button onClick={() => add("Controladora")}>
             + Consulta controladoras
           </button>
+          <button onClick={() => add("SLAM")}>+ Consulta SLAM</button>
         </div>
         <div className="ranking-tabs">
           {slots.map((s, i) => (
@@ -811,10 +829,12 @@ function Recommend() {
         <div key={s.id} hidden={active !== i}>
           {s.tipo === "GNSS" ? (
             <GnssRecommend slot={s.id} />
-          ) : (
+          ) : s.tipo === "Controladora" ? (
             <main className="container">
               <ControllerRank slot={s.id} />
             </main>
+          ) : (
+            <SlamRank slot={s.id} />
           )}
         </div>
       ))}
@@ -1126,7 +1146,7 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                 >
                   <option value="false">Cotecmi y competencia</option>
                   <option value="true">
-                    Solo Cotecmi (SingularXYZ, SinoGNSS y Emlid)
+                    Solo Cotecmi (SingularXYZ, SinoGNSS, Emlid y Gexcel)
                   </option>
                 </select>
               </label>
@@ -1964,6 +1984,12 @@ function Editor() {
                   data={details.data.controladora}
                   onSaved={details.reload}
                 />
+              ) : e.categoria === "Escáner SLAM" ? (
+                <SlamSpecs
+                  id={id}
+                  data={details.data.slam}
+                  onSaved={details.reload}
+                />
               ) : (
                 <>
                   {" "}
@@ -2010,6 +2036,7 @@ function Editor() {
                           ?.filter(
                             (c: Columna) =>
                               !c.clave.startsWith("controladora_") &&
+                              !c.clave.startsWith("slam_") &&
                               ![
                                 "marca",
                                 "modelo",
@@ -2527,7 +2554,7 @@ function App() {
             </Link>
             <p>Información para elegir. Herramientas para comparar.</p>
           </div>
-          <span>GNSS hoy. Más posibilidades mañana.</span>
+          <span>GNSS, controladoras y escaneo SLAM.</span>
         </div>
       </footer>
       {ids.length > 0 &&

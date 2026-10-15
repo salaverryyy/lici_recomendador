@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException, Query
 from psycopg import Error as DatabaseError
 
 from ..db import connect
-from ..controladoras import META
+from ..controladoras import META as CONTROLADORA_META
+from ..slam import META as SLAM_META
 
 
 router = APIRouter(prefix="/api", tags=["comparador"])
@@ -120,7 +121,13 @@ def columnas_disponibles():
     return [
         {"clave": clave, "nombre": nombre, "unidad": unidad}
         for clave, (nombre, unidad) in COLUMNAS.items()
-    ] + [{'clave':'controladora_'+k,'nombre':v['nombre']+' · Controladora','unidad':v['unidad']} for k,v in META.items()]
+    ] + [
+        {'clave':'controladora_'+k,'nombre':v['nombre']+' · Controladora','unidad':v['unidad']}
+        for k,v in CONTROLADORA_META.items()
+    ] + [
+        {'clave':'slam_'+k,'nombre':v['nombre']+' · SLAM','unidad':v['unidad']}
+        for k,v in SLAM_META.items()
+    ]
 
 
 @router.get("/comparar")
@@ -136,7 +143,11 @@ def comparar(
         [valor.strip() for valor in columnas.split(",") if valor.strip()]
         if columnas is not None else COLUMNAS_PREDETERMINADAS
     )
-    disponibles = {**COLUMNAS, **{'controladora_'+k:(v['nombre'],v['unidad']) for k,v in META.items()}}
+    disponibles = {
+        **COLUMNAS,
+        **{'controladora_'+k:(v['nombre'],v['unidad']) for k,v in CONTROLADORA_META.items()},
+        **{'slam_'+k:(v['nombre'],v['unidad']) for k,v in SLAM_META.items()},
+    }
     if not claves or len(set(claves)) != len(claves) or any(c not in disponibles for c in claves):
         raise HTTPException(status_code=422, detail="Selecciona columnas válidas y sin repetir.")
 
@@ -160,9 +171,25 @@ def comparar(
             if controllers:
                 cur.execute('SELECT * FROM controladora_especificaciones WHERE id_equipo=ANY(%s)',(controllers,))
                 for row in cur.fetchall():
-                    encontrados[row['id_equipo']].update({'controladora_'+k:v for k,v in row.items() if k in META})
+                    encontrados[row['id_equipo']].update({'controladora_'+k:v for k,v in row.items() if k in CONTROLADORA_META})
             if len(controllers)==len(equipos_ids) and not any(k.startswith('controladora_') for k in claves):
-                claves=['marca','modelo']+['controladora_'+k for k in META]
+                claves=['marca','modelo']+['controladora_'+k for k in CONTROLADORA_META]
+
+            slam_ids = [ident for ident in equipos_ids if encontrados[ident]['categoria']=='Escáner SLAM']
+            if slam_ids:
+                cur.execute('SELECT * FROM slam_especificaciones WHERE id_equipo=ANY(%s)',(slam_ids,))
+                for row in cur.fetchall():
+                    encontrados[row['id_equipo']].update({'slam_'+k:v for k,v in row.items() if k in SLAM_META})
+            if len(slam_ids)==len(equipos_ids) and not any(k.startswith('slam_') for k in claves):
+                claves=['pais_marca','pais_fabricacion']+[
+                    'slam_'+key for key in (
+                        'aplicaciones','alcance_lidar_m','puntos_por_segundo',
+                        'fov_horizontal_deg','fov_vertical_deg','precision_nube_cm',
+                        'gnss_integrado','gnss_opcional','rtk_disponible','cantidad_camaras',
+                        'colorizacion_rgb','visualizacion_tiempo_real','peso_operativo_g',
+                        'autonomia_h','proteccion_ip','almacenamiento_gb','formatos_salida',
+                    )
+                ]
 
             cur.execute(
                 """

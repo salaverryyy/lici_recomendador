@@ -1,7 +1,7 @@
 # Licitex
 
-Catálogo técnico, comparador y recomendador de equipos. Inicialmente GNSS, con categorías
-preparadas para ampliar el catálogo. React/TypeScript/Vite, FastAPI y PostgreSQL.
+Catálogo técnico, comparador y recomendador de receptores GNSS, controladoras y
+escáneres LiDAR con SLAM. React/TypeScript/Vite, FastAPI y PostgreSQL.
 
 ## Probar localmente
 

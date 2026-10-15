@@ -127,12 +127,18 @@ export function ControllerSpecs({
   useEffect(() => setDraft(data || {}), [data]);
   async function save(e: FormEvent) {
     e.preventDefault();
-    setBusy(true);
     setMessage("");
+    const cambios = Object.fromEntries(
+      campos
+        .filter((c) => (draft[c.clave] ?? null) !== (data?.[c.clave] ?? null))
+        .map((c) => [c.clave, draft[c.clave] ?? null]),
+    );
+    if (!Object.keys(cambios).length) {
+      setMessage("Modifica al menos una especificación antes de guardar.");
+      return;
+    }
+    setBusy(true);
     try {
-      const cambios = Object.fromEntries(
-        campos.map((c) => [c.clave, draft[c.clave] ?? null]),
-      );
       await api("/admin/equipos/" + id + "/controladora", "PATCH", { cambios });
       setMessage("Especificaciones guardadas.");
       onSaved?.();
@@ -186,7 +192,7 @@ export function ControllerRank({ slot }: { slot: string }) {
   const { campos, error } = useCampos();
   const [draft, setDraft] = usePersistentState<any>(
     "licitex-controladora-form-" + slot,
-    {},
+    { solo_cotecmi: true },
   );
   const [result, setResult] = usePersistentState<any>(
     "licitex-controladora-resultado-" + slot,
@@ -204,7 +210,7 @@ export function ControllerRank({ slot }: { slot: string }) {
           requisitos: Object.fromEntries(
             Object.entries(draft).filter(([k]) => k !== "solo_cotecmi"),
           ),
-          solo_cotecmi: draft.solo_cotecmi === true,
+          solo_cotecmi: draft.solo_cotecmi !== false,
           top_n: 100,
         }),
       );
@@ -229,13 +235,13 @@ export function ControllerRank({ slot }: { slot: string }) {
           <label>
             Equipos a evaluar
             <select
-              value={String(draft.solo_cotecmi ?? false)}
+              value={String(draft.solo_cotecmi !== false)}
               onChange={(e) =>
                 setDraft({ ...draft, solo_cotecmi: e.target.value === "true" })
               }
             >
-              <option value="false">Cotecmi y competencia</option>
               <option value="true">Solo Cotecmi</option>
+              <option value="false">Cotecmi y competencia</option>
             </select>
           </label>
           <fieldset disabled={busy}>
@@ -259,7 +265,7 @@ export function ControllerRank({ slot }: { slot: string }) {
                 type="button"
                 className="outline"
                 onClick={() => {
-                  setDraft({});
+                  setDraft({ solo_cotecmi: true });
                   setResult(null);
                 }}
               >

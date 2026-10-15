@@ -100,6 +100,22 @@ class AITests(unittest.TestCase):
         retrieved = _retrieve_catalog(catalog, '¿Qué diferencia tiene el Jupiter?', limit=2)
         self.assertEqual(retrieved[0]['id_equipo'], 'B')
 
+    def test_slam_requirements_are_validated(self):
+        provider = ({
+            'tipo_equipo': 'slam',
+            'requisitos': {'aplicaciones': 'Minería', 'alcance_lidar_m': 70,
+                           'puntos_por_segundo': 200000, 'inventado': True},
+            'resumen': 'Escáner SLAM para minería.',
+            'preguntas': [], 'omitidos': [],
+        }, {})
+        with patch.dict(os.environ, {'GEMINI_API_KEY': 'test'}, clear=False), \
+             patch.object(ia, 'quota_until', return_value=None), \
+             patch.object(ia, '_post_gemini', return_value=provider):
+            result = ia.interpret('Necesito un SLAM para mina con 70 metros')
+        self.assertEqual(result['tipo_equipo'], 'slam')
+        self.assertEqual(result['requisitos']['alcance_lidar_m'], 70)
+        self.assertIn('inventado', result['omitidos'])
+
 
 if __name__ == '__main__':
     unittest.main()
