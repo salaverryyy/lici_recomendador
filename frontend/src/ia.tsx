@@ -140,6 +140,7 @@ function AssistantAnswer({ data }: { data: any }) {
   if (data?.estado === "no_disponible") {
     return (
       <div className="notice error">
+        {data.codigo && <strong>Error {data.codigo}: </strong>}
         {data.mensaje}
         {data.reintentar_en && (
           <>
@@ -374,6 +375,9 @@ export function AiAdvisor() {
 
       {!availability?.disponible && availability && (
         <div className="notice error">
+          {availability.codigo && (
+            <strong>Error {availability.codigo}: </strong>
+          )}
           {availability.mensaje}
           {retry ? ` Puedes volver a intentarlo desde ${retry}.` : ""}
         </div>

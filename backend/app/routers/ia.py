@@ -1,12 +1,9 @@
 from datetime import datetime, timedelta, timezone
-import hashlib
 import os
 import re
-from threading import Lock
-from time import monotonic
 import unicodedata
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter
 from psycopg import Error as DatabaseError
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -20,38 +17,6 @@ from .slam import Requirements as SlamRequirements, recommend as recommend_slam
 
 
 router = APIRouter(prefix="/api/ia", tags=["asistente con IA"])
-_rate_lock = Lock()
-_rate_hits: dict[str, list[float]] = {}
-
-
-def _limit(request: Request):
-    forwarded = request.headers.get("x-forwarded-for", "").split(",")[0].strip()
-    client = forwarded or (request.client.host if request.client else "desconocido")
-    maximum = max(1, int(os.getenv("AI_REQUESTS_PER_10_MINUTES", "10")))
-    secret = os.getenv("AI_RATE_LIMIT_SECRET", os.getenv("ADMIN_SESSION_SECRET", "licitex-local"))
-    client_hash = hashlib.sha256(f"{secret}:{client}".encode()).hexdigest()
-    try:
-        with connect() as conn, conn.cursor() as cur:
-            cur.execute("DELETE FROM ia_solicitudes WHERE creada_en < NOW() - INTERVAL '1 day'")
-            cur.execute("SELECT COUNT(*) AS total FROM ia_solicitudes WHERE cliente_hash=%s AND creada_en >= NOW() - INTERVAL '10 minutes'", (client_hash,))
-            if cur.fetchone()["total"] >= maximum:
-                raise HTTPException(status_code=429, detail="Alcanzaste el límite temporal de consultas. Intenta nuevamente en unos minutos.")
-            cur.execute("INSERT INTO ia_solicitudes(cliente_hash) VALUES(%s)", (client_hash,))
-        return
-    except HTTPException:
-        raise
-    except DatabaseError:
-        pass  # Compatibilidad durante una migración: respaldo local del proceso.
-    now = monotonic()
-    with _rate_lock:
-        recent = [instant for instant in _rate_hits.get(client, []) if now - instant < 600]
-        if len(recent) >= maximum:
-            raise HTTPException(
-                status_code=429,
-                detail="Alcanzaste el límite temporal de consultas. Intenta nuevamente en unos minutos.",
-            )
-        recent.append(now)
-        _rate_hits[client] = recent
 
 
 class PreviousContext(BaseModel):
@@ -279,8 +244,7 @@ def _answer(kind: str, ranking: dict, omitted: list[str]) -> str:
 
 
 @router.post("/recomendar")
-def ai_recommend(body: AIRequest, request: Request):
-    _limit(request)
+def ai_recommend(body: AIRequest):
     previous = body.contexto_previo
     try:
         full_catalog = _catalog(body.solo_cotecmi, "auto")

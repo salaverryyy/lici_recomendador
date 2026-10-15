@@ -16,6 +16,7 @@ def apply_runtime_migrations() -> None:
         "21_slam_scanners",
         "22_sinognss_r80",
         "23_sc260_visibility",
+        "24_ia_provider_limits",
     )
     try:
         with connect() as conn, conn.cursor() as cur:

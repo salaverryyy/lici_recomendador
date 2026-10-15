@@ -8,6 +8,71 @@ from pydantic import ValidationError
 
 
 class AITests(unittest.TestCase):
+    def test_model_chain_keeps_order_and_ignores_duplicates(self):
+        with patch.dict(
+            os.environ,
+            {
+                'GEMINI_MODEL': 'gemini-principal',
+                'GEMINI_FALLBACK_MODELS': 'gemini-respaldo, gemini-principal, gemini-respaldo',
+            },
+            clear=False,
+        ):
+            self.assertEqual(
+                ia.model_chain(),
+                ['gemini-principal', 'gemini-respaldo'],
+            )
+
+    def test_quota_error_uses_next_configured_model(self):
+        provider_result = ({'tipo_equipo': 'gnss'}, {'_model': 'gemini-respaldo'})
+        with patch.dict(
+            os.environ,
+            {
+                'GEMINI_MODEL': 'gemini-principal',
+                'GEMINI_FALLBACK_MODELS': 'gemini-respaldo',
+            },
+            clear=False,
+        ), patch.object(
+            ia,
+            '_post_gemini_model',
+            side_effect=[
+                ia.AIProviderError(
+                    'Cuota agotada', code=429, reason='cuota_agotada', quota=True
+                ),
+                provider_result,
+            ],
+        ) as provider:
+            result = ia._post_gemini('Consulta técnica')
+
+        self.assertEqual(result, provider_result)
+        self.assertEqual(
+            [call.args[1] for call in provider.call_args_list],
+            ['gemini-principal', 'gemini-respaldo'],
+        )
+
+    def test_shared_quota_starts_only_after_all_models_are_exhausted(self):
+        retry_at = ia.datetime.now(ia.timezone.utc) + ia.timedelta(minutes=5)
+        with patch.dict(
+            os.environ,
+            {
+                'GEMINI_MODEL': 'gemini-principal',
+                'GEMINI_FALLBACK_MODELS': 'gemini-respaldo',
+            },
+            clear=False,
+        ), patch.object(
+            ia,
+            '_post_gemini_model',
+            side_effect=[
+                ia.AIProviderError('Sin cuota', code=429, quota=True),
+                ia.AIProviderError('Sin cuota', code=429, quota=True),
+            ],
+        ), patch.object(ia, 'mark_quota', return_value=retry_at) as mark_quota:
+            with self.assertRaises(ia.AIProviderError) as caught:
+                ia._post_gemini('Consulta técnica')
+
+        self.assertEqual(caught.exception.code, 429)
+        self.assertEqual(caught.exception.retry_at, retry_at)
+        mark_quota.assert_called_once_with(None)
+
     def test_gnss_output_is_strictly_validated(self):
         provider = ({
             'tipo_equipo': 'gnss',

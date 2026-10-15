@@ -30,6 +30,7 @@ Para probarlo localmente, crear una clave de Gemini en Google AI Studio y agrega
 GEMINI_API_KEY=TU_CLAVE
 AI_PROVIDER=gemini
 GEMINI_MODEL=gemini-3.8-flash
+GEMINI_FALLBACK_MODELS=gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite
 ```
 
 La clave permanece en el backend. `GET /api/ia/estado` indica si el servicio está
@@ -38,3 +39,6 @@ configurado o si la cuota gratuita se agotó. Los últimos cinco chats se guarda
 usa como memoria un máximo de seis turnos anteriores del chat activo. El backend
 recupera de PostgreSQL las fichas técnicas más relacionadas con la conversación
 (RAG léxico local, sin embeddings ni un servicio vectorial adicional).
+Licitex no impone un límite propio de consultas. Si el modelo principal agota su
+cuota o queda temporalmente indisponible, prueba los modelos de respaldo configurados
+antes de mostrar el código de error devuelto por Gemini.

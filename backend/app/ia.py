@@ -41,6 +41,29 @@ def model_name() -> str:
     return os.getenv("GEMINI_MODEL", "gemini-3.8-flash").strip()
 
 
+def fallback_models() -> list[str]:
+    raw = os.getenv("GEMINI_FALLBACK_MODELS", "").strip()
+    if not raw:
+        raw = os.getenv(
+            "GEMINI_FALLBACK_MODEL",
+            "gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite",
+        )
+    primary = model_name()
+    return list(
+        dict.fromkeys(
+            model.strip()
+            for model in raw.split(",")
+            if model.strip() and model.strip() != primary
+        )
+    )
+
+
+def model_chain(requested_model: str | None = None) -> list[str]:
+    if requested_model:
+        return [requested_model]
+    return [model_name(), *fallback_models()]
+
+
 def configured() -> bool:
     return provider_name() == "gemini" and bool(os.getenv("GEMINI_API_KEY", "").strip())
 
@@ -83,6 +106,7 @@ def status() -> dict:
         return {
             "disponible": False,
             "motivo": "cuota_agotada",
+            "codigo": 429,
             "mensaje": "La cuota gratuita de IA se agotó temporalmente.",
             "reintentar_en": until.isoformat(),
         }
@@ -90,6 +114,7 @@ def status() -> dict:
         "disponible": True,
         "proveedor": "Gemini",
         "modelo": model_name(),
+        "modelos_respaldo": fallback_models(),
         "mensaje": "IA disponible.",
     }
 
@@ -142,11 +167,10 @@ def _retry_from_error(body: str, headers) -> datetime | None:
     return datetime.now(timezone.utc) + timedelta(seconds=seconds) if seconds else None
 
 
-def _post_gemini(prompt: str, requested_model: str | None = None) -> tuple[dict, dict]:
+def _post_gemini_model(prompt: str, active_model: str) -> tuple[dict, dict]:
     key = os.getenv("GEMINI_API_KEY", "").strip()
     if not key:
         raise AIProviderError("La IA no está configurada en este entorno.")
-    active_model = requested_model or model_name()
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
         + active_model
@@ -174,14 +198,16 @@ def _post_gemini(prompt: str, requested_model: str | None = None) -> tuple[dict,
         except HTTPError as exc:
             body = exc.read().decode("utf-8", "replace")
             if exc.code == 429:
-                retry_at = mark_quota(_retry_from_error(body, exc.headers))
-                raise AIProviderError(_friendly_error(429), code=429, reason="cuota_agotada", quota=True, retry_at=retry_at) from exc
+                raise AIProviderError(
+                    _friendly_error(429),
+                    code=429,
+                    reason="cuota_agotada",
+                    quota=True,
+                    retry_at=_retry_from_error(body, exc.headers),
+                ) from exc
             if exc.code in (502, 503, 504) and attempt < 2:
                 time.sleep(1.25 * (attempt + 1))
                 continue
-            fallback = os.getenv("GEMINI_FALLBACK_MODEL", "gemini-3.5-flash-lite").strip()
-            if exc.code in (502, 503, 504) and requested_model is None and fallback and fallback != active_model:
-                return _post_gemini(prompt, fallback)
             raise AIProviderError(_friendly_error(exc.code), code=exc.code, reason="proveedor_temporal" if exc.code >= 500 else "configuracion", retryable=exc.code >= 500) from exc
         except (URLError, TimeoutError, ValueError) as exc:
             if attempt < 2:
@@ -197,6 +223,40 @@ def _post_gemini(prompt: str, requested_model: str | None = None) -> tuple[dict,
         return json.loads(text), usage
     except (KeyError, IndexError, TypeError, json.JSONDecodeError) as exc:
         raise AIProviderError("La IA devolvió una respuesta que no se pudo interpretar.") from exc
+
+
+def _post_gemini(prompt: str, requested_model: str | None = None) -> tuple[dict, dict]:
+    failures: list[AIProviderError] = []
+    for active_model in model_chain(requested_model):
+        try:
+            return _post_gemini_model(prompt, active_model)
+        except AIProviderError as exc:
+            if exc.code not in (404, 429, 502, 503, 504):
+                raise
+            failures.append(exc)
+
+    transient_failures = [
+        failure for failure in failures if failure.code in (502, 503, 504)
+    ]
+    if transient_failures:
+        # Si algún respaldo estuvo saturado, no persiste un bloqueo diario: una
+        # consulta posterior todavía puede encontrarlo disponible.
+        raise transient_failures[-1]
+
+    quota_failures = [failure for failure in failures if failure.code == 429]
+    if quota_failures:
+        retry_values = [failure.retry_at for failure in quota_failures if failure.retry_at]
+        retry_at = mark_quota(min(retry_values) if retry_values else None)
+        raise AIProviderError(
+            "Se agotó la cuota de todos los modelos gratuitos configurados.",
+            code=429,
+            reason="cuota_agotada",
+            quota=True,
+            retry_at=retry_at,
+        )
+    if failures:
+        raise failures[-1]
+    raise AIProviderError("No hay modelos de IA configurados.", code=503, retryable=True)
 
 
 def _gnss_catalog() -> dict:
@@ -324,7 +384,11 @@ def interpret(
     until = quota_until()
     if until:
         raise AIProviderError(
-            "La cuota gratuita de IA se agotó temporalmente.", quota=True, retry_at=until
+            "La cuota gratuita de IA se agotó temporalmente.",
+            code=429,
+            reason="cuota_agotada",
+            quota=True,
+            retry_at=until,
         )
     if provider_name() != "gemini":
         raise AIProviderError("El proveedor de IA configurado no está disponible.")
