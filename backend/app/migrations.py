@@ -11,7 +11,12 @@ from .db import connect
 def apply_runtime_migrations() -> None:
     if not os.getenv("VERCEL"):
         return
-    versions = ("20_sinognss_t20", "21_slam_scanners", "22_sinognss_r80")
+    versions = (
+        "20_sinognss_t20",
+        "21_slam_scanners",
+        "22_sinognss_r80",
+        "23_sc260_visibility",
+    )
     try:
         with connect() as conn, conn.cursor() as cur:
             cur.execute("SELECT pg_advisory_xact_lock(hashtext('licitex_runtime_migrations'))")

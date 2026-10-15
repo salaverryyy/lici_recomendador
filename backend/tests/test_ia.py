@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 
 from app import ia
-from app.routers.ia import AIRequest, _retrieve_catalog
+from app.routers.ia import AIRequest, _explicit_catalog_type, _retrieve_catalog
 from pydantic import ValidationError
 
 
@@ -99,6 +99,16 @@ class AITests(unittest.TestCase):
         ]
         retrieved = _retrieve_catalog(catalog, '¿Qué diferencia tiene el Jupiter?', limit=2)
         self.assertEqual(retrieved[0]['id_equipo'], 'B')
+
+    def test_explicit_sc260_switches_a_gnss_chat_to_controllers(self):
+        catalog = [
+            {'marca': 'SingularXYZ', 'modelo': 'SC260', 'categoria': 'Controladora'},
+            {'marca': 'SingularXYZ', 'modelo': 'X1', 'categoria': 'GNSS'},
+        ]
+        self.assertEqual(
+            _explicit_catalog_type(catalog, 'Compara la **SingularXYZ SC260**'),
+            'controladora',
+        )
 
     def test_slam_requirements_are_validated(self):
         provider = ({

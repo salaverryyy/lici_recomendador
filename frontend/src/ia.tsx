@@ -48,6 +48,19 @@ const fieldLabel = (key: string) =>
 const display = (value: unknown) =>
   typeof value === "boolean" ? (value ? "Sí" : "No") : String(value);
 
+function BoldText({ text }: { text: unknown }) {
+  return String(text ?? "")
+    .split(/(\*\*[^*\n]+\*\*)/g)
+    .filter(Boolean)
+    .map((part, index) =>
+      part.startsWith("**") && part.endsWith("**") ? (
+        <strong key={`${index}-${part}`}>{part.slice(2, -2)}</strong>
+      ) : (
+        <span key={`${index}-${part}`}>{part}</span>
+      ),
+    );
+}
+
 function historyFor(messages: Message[]) {
   let remaining = 12_000;
   const selected: Array<Pick<Message, "role" | "text">> = [];
@@ -141,10 +154,12 @@ function AssistantAnswer({ data }: { data: any }) {
   const results = data?.ranking?.resultados || [];
   return (
     <>
-      <p>{data?.respuesta}</p>
+      <p>
+        <BoldText text={data?.respuesta} />
+      </p>
       {data?.resumen && (
         <p className="muted">
-          <strong>Interpretación:</strong> {data.resumen}
+          <strong>Interpretación:</strong> <BoldText text={data.resumen} />
         </p>
       )}
       {data?.requisitos && (
@@ -161,7 +176,9 @@ function AssistantAnswer({ data }: { data: any }) {
           <strong>Para afinar el resultado:</strong>
           <ul>
             {data.preguntas.map((question: string) => (
-              <li key={question}>{question}</li>
+              <li key={question}>
+                <BoldText text={question} />
+              </li>
             ))}
           </ul>
         </div>
@@ -194,7 +211,8 @@ function AssistantAnswer({ data }: { data: any }) {
       {data?.memoria?.mensajes_usados > 0 && (
         <p className="muted ai-usage">
           Memoria activa · {data.memoria.mensajes_usados} mensajes anteriores ·{" "}
-          {data.memoria.equipos_recuperados?.length || 0} fichas técnicas recuperadas
+          {data.memoria.equipos_recuperados?.length || 0} fichas técnicas
+          recuperadas
         </p>
       )}
     </>
@@ -229,7 +247,11 @@ export function AiAdvisor() {
     const check = () =>
       api("/ia/estado?comprobar=true")
         .then((value) => active && setAvailability(value))
-        .catch((e) => active && setAvailability({ disponible: false, mensaje: e.message }));
+        .catch(
+          (e) =>
+            active &&
+            setAvailability({ disponible: false, mensaje: e.message }),
+        );
     check();
     const interval = window.setInterval(check, 60_000);
     window.addEventListener("focus", check);
@@ -345,7 +367,8 @@ export function AiAdvisor() {
         <span
           className={`ai-availability ${availability?.disponible ? "online" : "offline"}`}
         >
-          IA limitada · Capa gratuita · {availability?.disponible ? "Disponible ahora" : "No disponible"}
+          IA limitada · Capa gratuita ·{" "}
+          {availability?.disponible ? "Disponible ahora" : "No disponible"}
         </span>
       </div>
 
@@ -438,8 +461,8 @@ export function AiAdvisor() {
                 <Bot size={38} />
                 <h2>¿Qué equipo necesitas?</h2>
                 <p>
-                  Por ejemplo: “Busco un escáner SLAM para una mina, con 70 m
-                  de alcance, colorización y al menos 200 000 puntos/s”.
+                  Por ejemplo: “Busco un escáner SLAM para una mina, con 70 m de
+                  alcance, colorización y al menos 200 000 puntos/s”.
                 </p>
               </div>
             )}
@@ -451,7 +474,9 @@ export function AiAdvisor() {
                 {item.role === "assistant" ? (
                   <AssistantAnswer data={item.data} />
                 ) : (
-                  <p>{item.text}</p>
+                  <p>
+                    <BoldText text={item.text} />
+                  </p>
                 )}
               </article>
             ))}
@@ -485,19 +510,49 @@ export function AiAdvisor() {
           <p className="muted small-text">
             La IA interpreta el texto; la puntuación se calcula con los datos
             técnicos recuperados de Licitex. La memoria del chat permanece en
-            este navegador y sólo se envían los últimos seis turnos al responder.
-            Confirma ficha, accesorios y condiciones de la oferta. No ingreses
-            información confidencial mientras uses el nivel gratuito.
+            este navegador y sólo se envían los últimos seis turnos al
+            responder. Confirma ficha, accesorios y condiciones de la oferta. No
+            ingreses información confidencial mientras uses el nivel gratuito.
           </p>
           <details className="ai-error-legend">
             <summary>Qué significan los códigos de error de la IA</summary>
             <dl>
-              <div><dt>400</dt><dd>La consulta no tuvo un formato aceptado por el proveedor.</dd></div>
-              <div><dt>401 / 403</dt><dd>La clave no es válida o no tiene permiso para usar el modelo.</dd></div>
-              <div><dt>404</dt><dd>El modelo configurado no existe o dejó de estar disponible.</dd></div>
-              <div><dt>429</dt><dd>Se alcanzó la cuota gratuita o el límite temporal de consultas.</dd></div>
-              <div><dt>500</dt><dd>El proveedor tuvo un error interno.</dd></div>
-              <div><dt>502 / 503 / 504</dt><dd>Falla temporal, saturación o demora del proveedor; Licitex reintenta automáticamente.</dd></div>
+              <div>
+                <dt>400</dt>
+                <dd>
+                  La consulta no tuvo un formato aceptado por el proveedor.
+                </dd>
+              </div>
+              <div>
+                <dt>401 / 403</dt>
+                <dd>
+                  La clave no es válida o no tiene permiso para usar el modelo.
+                </dd>
+              </div>
+              <div>
+                <dt>404</dt>
+                <dd>
+                  El modelo configurado no existe o dejó de estar disponible.
+                </dd>
+              </div>
+              <div>
+                <dt>429</dt>
+                <dd>
+                  Se alcanzó la cuota gratuita o el límite temporal de
+                  consultas.
+                </dd>
+              </div>
+              <div>
+                <dt>500</dt>
+                <dd>El proveedor tuvo un error interno.</dd>
+              </div>
+              <div>
+                <dt>502 / 503 / 504</dt>
+                <dd>
+                  Falla temporal, saturación o demora del proveedor; Licitex
+                  reintenta automáticamente.
+                </dd>
+              </div>
             </dl>
           </details>
         </section>

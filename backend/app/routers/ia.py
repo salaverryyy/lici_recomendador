@@ -214,6 +214,26 @@ def _retrieve_catalog(rows: list[dict], query: str, limit: int | None = None) ->
     return [row for _, row in scored[:maximum]]
 
 
+def _explicit_catalog_type(rows: list[dict], query: str) -> str | None:
+    """Permite cambiar de familia cuando el usuario nombra un modelo inequívoco."""
+    normalized = _search_text(query)
+    category_types = {
+        "GNSS": "gnss",
+        "Controladora": "controladora",
+        "Escáner SLAM": "slam",
+    }
+    matches = set()
+    for row in rows:
+        model = _search_text(row.get("modelo", "")).strip()
+        if not model or (len(model) < 3 and not any(char.isdigit() for char in model)):
+            continue
+        if re.search(rf"(?<![a-z0-9]){re.escape(model)}(?![a-z0-9])", normalized):
+            kind = category_types.get(row.get("categoria"))
+            if kind:
+                matches.add(kind)
+    return next(iter(matches)) if len(matches) == 1 else None
+
+
 def _mark_shared_error(exc: AIProviderError):
     if not (exc.quota or exc.retryable):
         return
@@ -263,16 +283,31 @@ def ai_recommend(body: AIRequest, request: Request):
     _limit(request)
     previous = body.contexto_previo
     try:
-        full_catalog = _catalog(body.solo_cotecmi, body.tipo_equipo)
+        full_catalog = _catalog(body.solo_cotecmi, "auto")
+        explicit_type = _explicit_catalog_type(full_catalog, body.mensaje)
+        requested_type = explicit_type or body.tipo_equipo
+        category_by_type = {
+            "gnss": "GNSS",
+            "controladora": "Controladora",
+            "slam": "Escáner SLAM",
+        }
+        eligible_catalog = (
+            full_catalog
+            if requested_type == "auto"
+            else [
+                row for row in full_catalog
+                if row.get("categoria") == category_by_type[requested_type]
+            ]
+        )
         history = [item.model_dump() for item in body.historial]
         retrieval_query = "\n".join(
             [*(item["text"] for item in history), body.mensaje,
              str(previous.requisitos) if previous else ""]
         )
-        catalog = _retrieve_catalog(full_catalog, retrieval_query)
+        catalog = _retrieve_catalog(eligible_catalog, retrieval_query)
         parsed = interpret(
             body.mensaje,
-            body.tipo_equipo,
+            requested_type,
             previous.tipo_equipo if previous else None,
             previous.requisitos if previous else None,
             catalog,
