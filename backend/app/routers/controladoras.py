@@ -5,7 +5,7 @@ from ..auth import administrador_escritura
 from ..db import connect
 from ..cotecmi import es_cotecmi
 from ..controladoras import META, validate, evaluate, available_options
-from .recomendar import ordenar_resultados
+from .recomendar import ordenar_resultados, limitar_con_empates
 
 router = APIRouter(prefix='/api', tags=['controladoras'])
 
@@ -65,6 +65,7 @@ def recommend(values: Requirements):
                 data=row.pop('datos') or {}
                 results.append({'equipo':row,**evaluate(data,selected)})
         ordenar_resultados(results)
-        return {'resultados':results[:values.top_n],'total_equipos':len(results),'pesos_provisionales':True}
+        shown = limitar_con_empates(results, values.top_n)
+        return {'resultados':shown,'mostrados':len(shown),'total_equipos':len(results),'pesos_provisionales':True}
     except DatabaseError as exc:
         raise HTTPException(503,'No se pudo calcular el ranking de controladoras.') from exc

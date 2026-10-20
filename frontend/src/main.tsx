@@ -421,7 +421,8 @@ function Catalog() {
           Solo equipos de Cotecmi
         </label>
         <p className="muted small-text">
-          SingularXYZ, SinoGNSS, Emlid y Gexcel. Desmarca para incluir la competencia.
+          SingularXYZ, SinoGNSS, Emlid y Gexcel. Desmarca para incluir la
+          competencia.
         </p>
         <Feedback error={options.error} />
       </section>
@@ -518,9 +519,9 @@ function Detail() {
           <h1>{e.modelo}</h1>
           {e.descripcion && <p>{e.descripcion}</p>}
           {e.categoria === "Controladora" ? (
-            <ControllerSpecs data={data.controladora} />
+            <ControllerSpecs data={data.controladora} audit={data.auditoria} />
           ) : e.categoria === "Escáner SLAM" ? (
-            <SlamSpecs data={data.slam} />
+            <SlamSpecs data={data.slam} audit={data.auditoria} />
           ) : (
             <div className="panel">
               <h3>Especificaciones técnicas</h3>
@@ -544,7 +545,14 @@ function Detail() {
                         {c.nombre}
                         {c.unidad ? " (" + c.unidad + ")" : ""}
                       </dt>
-                      <dd>{valor(e[c.clave] ?? data.evaluacion?.[c.clave])}</dd>
+                      <dd>
+                        {valor(
+                          e[c.clave] ??
+                            data.evaluacion?.[c.clave] ??
+                            data.auditoria?.[c.clave]?.etiqueta ??
+                            "No publicado / pendiente de confirmar",
+                        )}
+                      </dd>
                     </div>
                   ))}
                 <div>
@@ -560,6 +568,45 @@ function Detail() {
                 </div>
               </dl>
             </div>
+          )}
+          {!!Object.keys(data.auditoria || {}).length && (
+            <details className="panel">
+              <summary>Fuentes y observaciones de la auditoría</summary>
+              <p className="muted small-text">
+                No publicado no significa que el equipo carezca de la función.
+                No aplica indica que la característica no corresponde al equipo.
+                Las licencias, módulos y accesorios deben confirmarse en la
+                oferta.
+              </p>
+              <dl>
+                {(Object.entries(data.auditoria) as [string, any][]).map(
+                  ([key, evidence]) => (
+                    <div key={key}>
+                      <dt>
+                        {columns.data?.find(
+                          (column: Columna) => column.clave === key,
+                        )?.nombre || key.replaceAll("_", " ")}
+                      </dt>
+                      <dd>
+                        {evidence.valor_declarado} · {evidence.documento}
+                        {evidence.nota && (
+                          <p className="small-text">{evidence.nota}</p>
+                        )}
+                        {evidence.fuente_url && (
+                          <a
+                            href={evidence.fuente_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Fuente del fabricante ↗
+                          </a>
+                        )}
+                      </dd>
+                    </div>
+                  ),
+                )}
+              </dl>
+            </details>
           )}
           {e.modelo_3d_url && (
             <a
@@ -742,8 +789,8 @@ function Recommend() {
           ]
         : removed.tipo === "Controladora"
           ? [
-            "licitex-controladora-form-" + removed.id,
-            "licitex-controladora-resultado-" + removed.id,
+              "licitex-controladora-form-" + removed.id,
+              "licitex-controladora-resultado-" + removed.id,
             ]
           : [
               "licitex-slam-form-" + removed.id,
@@ -1272,7 +1319,7 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                 name="top_n"
                 title="Cantidad de resultados (1–100)"
                 type="number"
-                value={draft.top_n || 3}
+                value={draft.top_n || 20}
                 min={1}
                 max={100}
                 required
@@ -1313,8 +1360,11 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                 oferta.
               </p>
               <p className="muted">
-                El porcentaje indica ajuste a tus requisitos; los pesos aún son
-                provisionales. Todos los equipos permanecen en el ranking.
+                El porcentaje mide cumplimiento verificado de los requisitos
+                indicados, según los pesos configurables. Un mínimo incumplido
+                no recibe puntos parciales. Se incluyen todos los empates en el
+                último puesto mostrado; un puntaje alto no acredita cumplimiento
+                completo de la licitación.
               </p>
               {result.resultados.map((r: any) => (
                 <article className="panel rank-card" key={r.equipo.id_equipo}>

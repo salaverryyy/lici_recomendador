@@ -30,15 +30,22 @@ class MemoriaConstelacionesTests(unittest.TestCase):
         self.assertTrue(ampliada["detalle"][0]["requiere_ampliacion"])
 
     def test_extension_insuficiente_desconocida_o_no_aceptada(self):
-        for datos, esperado in [({"memoria": 4}, 50),
-                                 ({"memoria": 4, "memoria_expandible": True}, 50),
-                                 ({"memoria": 4, "memoria_expandible": False, "memoria_expandida_max_gb": 32}, 50),
-                                 ({"memoria": 4, "memoria_opcional_fabrica_max_gb": 32}, 50)]:
+        for datos, esperado in [({"memoria": 4}, 0),
+                                 ({"memoria": 4, "memoria_expandible": True}, 0),
+                                 ({"memoria": 4, "memoria_expandible": False, "memoria_expandida_max_gb": 32}, 0),
+                                 ({"memoria": 4, "memoria_opcional_fabrica_max_gb": 32}, 0)]:
             self.assertEqual(evaluar(Preferencias(memoria_min_gb=8), datos)["porcentaje"], esperado)
         r = evaluar(Preferencias(memoria_min_gb=64), {"memoria": 4, "memoria_expandible": True, "memoria_expandida_max_gb": 32})
-        self.assertEqual(r["porcentaje"], 50)
+        self.assertEqual(r["porcentaje"], 0)
+        self.assertEqual(r["porcentaje_afinidad"], 50)
         self.assertNotIn("Cumple:", r["explicacion"])
         self.assertEqual(evaluar(Preferencias(memoria_min_gb=8), {})["sin_datos"], 1)
+
+    def test_removable_card_is_not_installed_internal_memory(self):
+        p=Preferencias(memoria_min_gb=8,memoria_solo_fabrica=True)
+        result=evaluar(p,{'memoria':8,'memoria_es_interna':False})
+        self.assertEqual(result['incumplimientos'],1)
+        self.assertIn('tarjeta extraíble',result['detalle'][0]['observacion'])
 
     def test_constelaciones_especificas_y_sbas(self):
         p = Preferencias(gps=True, galileo=True, sbas=True, qzss=False)

@@ -120,10 +120,12 @@ export function SlamSpecs({
   data,
   id,
   onSaved,
+  audit,
 }: {
   data: any;
   id?: string;
   onSaved?: () => void;
+  audit?: Record<string, any>;
 }) {
   const { campos, error } = useCampos();
   const [draft, setDraft] = useState<any>(data || {});
@@ -189,7 +191,10 @@ export function SlamSpecs({
             <div key={field.clave}>
               <dt>{field.nombre}</dt>
               <dd>
-                {show(data?.[field.clave])}
+                {data?.[field.clave] == null
+                  ? audit?.[`slam_${field.clave}`]?.etiqueta ||
+                    "No publicado / pendiente de confirmar"
+                  : show(data[field.clave])}
                 {data?.[field.clave] != null && field.unidad
                   ? ` ${field.unidad}`
                   : ""}

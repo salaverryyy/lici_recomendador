@@ -44,7 +44,7 @@ class AIRequest(BaseModel):
     mensaje: str = Field(min_length=3, max_length=6000)
     tipo_equipo: str = Field(default="auto", pattern=r"^(auto|gnss|controladora|slam)$")
     solo_cotecmi: bool = True
-    top_n: int = Field(default=5, ge=1, le=10)
+    top_n: int = Field(default=20, ge=1, le=100)
     contexto_previo: PreviousContext | None = None
     historial: list[ConversationMessage] = Field(default_factory=list, max_length=12)
 
@@ -91,7 +91,7 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
                        'static_horizontal_mm','static_vertical_mm','static_ppm_h','static_ppm_v',
                        'largo_static_horizontal_mm','largo_static_vertical_mm','largo_static_ppm_h','largo_static_ppm_v',
                        'tiene_imu','inclinacion_imu_deg','tiene_camara','cantidad_camaras','laser',
-                       'laser_alcance_m','autonomia_bateria','memoria','memoria_expandible',
+                       'laser_alcance_m','autonomia_bateria','memoria','memoria_expandible','memoria_es_interna',
                        'memoria_expandida_max_gb','lte_4g','uhf_tx_rx_integrada','proteccion_ip',
                        'radio_frecuencia','radio_potencia_max_w','cantidad_baterias','lemo','lemo_pines',
                        'peso_max','temperatura_operacion_min_c','temperatura_operacion_max_c',

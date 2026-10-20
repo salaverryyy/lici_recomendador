@@ -9,6 +9,13 @@ from ..recomendador import CRITERIOS, Preferencias, criterios_seleccionados, eva
 router = APIRouter(prefix="/api", tags=["recomendador"])
 
 
+def limitar_con_empates(resultados, top_n):
+    if len(resultados) <= top_n:
+        return resultados
+    corte = resultados[top_n - 1]['posicion']
+    return [row for row in resultados if row['posicion'] <= corte]
+
+
 def ordenar_resultados(resultados):
     # Compartir puesto según el porcentaje mostrado; los otros campos solo
     # mantienen un orden estable dentro del empate, no deciden un ganador.
@@ -129,14 +136,16 @@ def recomendar(preferencias: Preferencias):
             })
 
         ordenar_resultados(resultados)
+        mostrados = limitar_con_empates(resultados, preferencias.top_n)
 
         return {
             "total_equipos": len(resultados),
             "top_n_solicitado": preferencias.top_n,
-            "mostrados": min(preferencias.top_n, len(resultados)),
+            "mostrados": len(mostrados),
+            "metodo_puntuacion": "cumplimiento_ponderado",
             "empate_en_primer_puesto": bool(resultados and resultados[0]["empate"]),
             "criterios_seleccionados": [criterio.clave for criterio in elegidos],
-            "resultados": resultados[:preferencias.top_n],
+            "resultados": mostrados,
         }
     except DatabaseError as exc:
         raise HTTPException(status_code=503, detail="No se pudo calcular el ranking desde PostgreSQL.") from exc

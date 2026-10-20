@@ -171,7 +171,8 @@ def main():
             ), 200)
             prueba_canales = next(resultado for resultado in ranking_canales["resultados"] if resultado["equipo"]["id_equipo"] == ID_EQUIPO)
             assert prueba_canales["detalle"][0]["estado"] == "incumple"
-            assert prueba_canales["detalle"][0]["factor"] == 0.5 and prueba_canales["porcentaje"] == 50
+            assert prueba_canales["detalle"][0]["factor"] == 0 and prueba_canales["porcentaje"] == 0
+            assert prueba_canales["detalle"][0]["factor_afinidad"] == 0.5 and prueba_canales["porcentaje_afinidad"] == 50
 
             comprobar(client.put(
                 "/api/admin/reglas/tiene_imu", json={"peso": 7, "activo": True}, headers=headers,

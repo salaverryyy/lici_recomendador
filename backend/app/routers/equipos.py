@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query
+from ..evidencia import etiquetas_auditoria
 from psycopg import Error as DatabaseError
 
 from ..db import connect
@@ -114,9 +115,11 @@ def detalle_equipo(id_equipo: str):
                 (id_equipo,),
             )
             radio_frecuencias = cur.fetchall()
+            auditoria = etiquetas_auditoria(cur, [id_equipo])[id_equipo]
             cur.execute("SELECT id, url, texto_alternativo, orden FROM equipo_archivos WHERE id_equipo=%s AND tipo='foto' ORDER BY orden,id", (id_equipo,))
             return {
                 "equipo": equipo,
+                "auditoria": auditoria,
                 "controladora": controladora,
                 "slam": slam,
                 "evaluacion": evaluacion,

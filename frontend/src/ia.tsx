@@ -111,7 +111,11 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
         {unknown?.length || 0} sin datos
       </p>
       <p className="muted small-text">
-        Porcentaje sobre los criterios evaluados.
+        Cumplimiento verificado de los criterios evaluados.
+        {result.porcentaje_afinidad != null &&
+        result.porcentaje_afinidad !== result.porcentaje
+          ? ` Afinidad técnica: ${result.porcentaje_afinidad}% (incluye cercanía a umbrales incumplidos; no acredita cumplimiento).`
+          : ""}
       </p>
       <details className="score-details">
         <summary>Ver evaluación</summary>
@@ -205,6 +209,10 @@ function AssistantAnswer({ data }: { data: any }) {
       {results.length > 0 && (
         <div className="ai-ranking">
           <h3>Equipos recomendados</h3>
+          <p className="muted small-text">
+            Se muestran hasta 20 equipos, incluyendo todos los empatados en el
+            último puesto. Las funciones no solicitadas no suman puntos.
+          </p>
           {results.map((result: any) => (
             <RankCard
               key={result.equipo.id_equipo}
@@ -332,7 +340,7 @@ export function AiAdvisor() {
         mensaje: text,
         tipo_equipo: pending.type,
         solo_cotecmi: pending.onlyCotecmi,
-        top_n: 5,
+        top_n: 20,
         contexto_previo: pending.context || undefined,
         historial: historyFor(current.messages),
       });

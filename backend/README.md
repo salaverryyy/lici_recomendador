@@ -50,3 +50,13 @@ informa un error 502 sin bloquear globalmente la IA. El porcentaje de ranking
 solo cubre los criterios evaluados; los requisitos no evaluables se conservan
 para revisión manual. Cuando se exige memoria interna instalada, la IA envía
 `memoria_solo_fabrica=true` para que una ampliación no cubra ese mínimo.
+
+La auditoría de catálogo del 2026-10-20 está en `docs/auditoria/2026-10-20/`.
+La migración 25 agrega evidencia por celda para los 33 equipos y distingue
+memoria interna de tarjetas extraíbles. No sustituye datos no publicados por
+ceros ni por `false`. Los límites de resultados conservan empates completos.
+La IA solicita 20 equipos por defecto. El ranking GNSS principal usa cumplimiento
+ponderado estricto (0 puntos para un requisito incumplido o sin prueba); la
+proximidad al umbral se mantiene en `porcentaje_afinidad` solo como dato secundario.
+Los pesos revisados solo reemplazan los pesos anteriores de fábrica: se respetan
+las ponderaciones personalizadas y criterios desactivados desde Admin.

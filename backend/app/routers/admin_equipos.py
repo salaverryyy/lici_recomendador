@@ -81,7 +81,7 @@ NUMERICOS |= {"memoria_expandida_max_gb", "memoria_opcional_fabrica_max_gb", "ra
 TEXTOS |= {"imu_generacion", "imu_tecnologia", "bluetooth_version", "wifi_estandar", "uhf_modo",
            "radio_protocolos", "tipo_bateria", "rinex_versiones", "formato_propietario", "tecnica_notas", "tecnica_fuente"}
 EDITABLES = BOOLEANOS | ENTEROS | NUMERICOS | TEXTOS | TEMPERATURAS
-BOOLEANOS |= {'lemo','usb','usb_c','rs232'}
+BOOLEANOS |= {'lemo','usb','usb_c','rs232','memoria_es_interna'}
 NUMERICOS |= {'actualizacion_hz','inclinacion_imu_deg'}
 NUMERICOS.add('laser_alcance_m')
 ENTEROS.add('baterias_incluidas_por_receptor')

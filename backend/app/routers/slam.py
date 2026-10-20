@@ -6,7 +6,7 @@ from ..auth import administrador_escritura
 from ..cotecmi import es_cotecmi
 from ..db import connect
 from ..slam import META, available_options, evaluate, validate
-from .recomendar import ordenar_resultados
+from .recomendar import ordenar_resultados, limitar_con_empates
 
 
 router = APIRouter(prefix="/api", tags=["escáneres SLAM"])
@@ -85,7 +85,8 @@ def recommend(values: Requirements):
                 results.append({"equipo": row, **evaluate(data, selected)})
         ordenar_resultados(results)
         return {
-            "resultados": results[:values.top_n],
+            "resultados": limitar_con_empates(results, values.top_n),
+            "mostrados": len(limitar_con_empates(results, values.top_n)),
             "total_equipos": len(results),
             "pesos_provisionales": True,
         }

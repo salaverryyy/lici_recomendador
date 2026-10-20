@@ -115,10 +115,12 @@ export function ControllerSpecs({
   data,
   id,
   onSaved,
+  audit,
 }: {
   data: any;
   id?: string;
   onSaved?: () => void;
+  audit?: Record<string, any>;
 }) {
   const { campos, error } = useCampos();
   const [draft, setDraft] = useState<any>(data || {}),
@@ -178,7 +180,10 @@ export function ControllerSpecs({
             <div key={c.clave}>
               <dt>{c.nombre}</dt>
               <dd>
-                {value(data?.[c.clave])}
+                {data?.[c.clave] == null
+                  ? audit?.[`controladora_${c.clave}`]?.etiqueta ||
+                    "No publicado / pendiente de confirmar"
+                  : value(data[c.clave])}
                 {data?.[c.clave] != null && c.unidad ? " " + c.unidad : ""}
               </dd>
             </div>

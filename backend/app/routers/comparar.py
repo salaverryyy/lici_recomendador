@@ -4,6 +4,7 @@ from psycopg import Error as DatabaseError
 from ..db import connect
 from ..controladoras import META as CONTROLADORA_META
 from ..slam import META as SLAM_META
+from ..evidencia import etiquetas_auditoria, etiqueta_sin_valor
 
 
 router = APIRouter(prefix="/api", tags=["comparador"])
@@ -17,6 +18,7 @@ COLUMNAS = {
     "imu_generacion": ("Generación de IMU declarada", None),
     "imu_tecnologia": ("Tecnología de IMU", None),
     "memoria_expandible": ("Memoria ampliable", None),
+    "memoria_es_interna": ("Memoria instalada interna (no tarjeta extraíble)", None),
     "memoria_expandida_max_gb": ("Capacidad con ampliación declarada", "GB"),
     "memoria_opcional_fabrica_max_gb": ("Capacidad opcional de fábrica", "GB"),
     "bluetooth": ("Bluetooth", None),
@@ -207,6 +209,19 @@ def comparar(
                     "max_mhz": fila["frecuencia_max_mhz"],
                 })
 
+            auditoria = etiquetas_auditoria(cur, equipos_ids)
+
+            def comparable(ident, key):
+                if key == 'radio_rangos':
+                    return rangos[ident] or etiqueta_sin_valor(auditoria[ident], key)
+                value = encontrados[ident].get(key, (encontrados[ident]['evaluacion'] or {}).get(key))
+                if value is not None:
+                    return value
+                category = encontrados[ident]['categoria']
+                if (key.startswith('controladora_') and category != 'Controladora') or (key.startswith('slam_') and category != 'Escáner SLAM'):
+                    return 'No aplica a esta categoría'
+                return etiqueta_sin_valor(auditoria[ident], key)
+
             return {
                 "equipos": [
                     {"id_equipo": valor, "marca": encontrados[valor]["marca"], "modelo": encontrados[valor]["modelo"]}
@@ -218,10 +233,7 @@ def comparar(
                         "nombre": disponibles[clave][0],
                         "unidad": disponibles[clave][1],
                         "valores": {
-                            valor: (
-                                rangos[valor] if clave == "radio_rangos"
-                                else encontrados[valor].get(clave, (encontrados[valor]["evaluacion"] or {}).get(clave))
-                            )
+                            valor: comparable(valor, clave)
                             for valor in equipos_ids
                         },
                     }

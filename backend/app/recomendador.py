@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import re
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -7,7 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 class Preferencias(BaseModel):
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
     solo_cotecmi: bool = False
-    top_n: int = Field(default=3, ge=1, le=100)
+    top_n: int = Field(default=20, ge=1, le=100)
     cantidad_baterias_min: int | None = Field(default=None, ge=1, le=20)
     baterias_incluidas_por_receptor_min: int | None = Field(default=None, ge=1, le=20)
     inclinacion_imu_min_deg: float | None = Field(default=None, ge=0, le=180)
@@ -182,6 +182,16 @@ CRITERIOS = (
     Criterio("tiempo_inicializacion", "tiempo_inicializacion_max_s", "tiempo_inicializacion", "Inicialización RTK", "s", "maximo", 2),
 )
 
+# Pesos para requisitos seleccionados, nunca bonificaciones por funciones no pedidas.
+# La precisión y conectividad operativa prevalecen sobre comodidad o mercadeo.
+PESOS_AUDITADOS = {
+    'tiene_imu': 4, 'tiene_camara': 3, 'cantidad_camaras': 3,
+    'laser': 4, 'canales_gnss': 3, 'memoria': 5,
+    'usb_c': 4, 'uhf_tx_rx_integrada': 5,
+    'gps': 2, 'glonass': 2, 'galileo': 2, 'beidou': 2, 'qzss': 2,
+}
+PESOS_ANTERIORES = {c.clave: c.peso for c in CRITERIOS}
+CRITERIOS = tuple(replace(c, peso=PESOS_AUDITADOS.get(c.clave, c.peso)) for c in CRITERIOS)
 CRITERIOS_POR_CLAVE = {criterio.clave: criterio for criterio in CRITERIOS}
 
 
@@ -218,6 +228,7 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
             if preferencias.static_modo == 'largo': valor = datos.get('largo_'+criterio.clave)
             observacion = modo
         memoria_fabrica = None
+        memoria_no_interna = False
         requiere_ampliacion = False
 
         # Los límites térmicos se evalúan por cumplimiento, sin dividir valores
@@ -263,9 +274,12 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
                         observacion = f"Memoria de fábrica: {memoria_fabrica if memoria_fabrica is not None else 'sin datos'} GB; capacidad ampliada declarada: {ampliada} GB."
                 if preferencias.memoria_solo_fabrica:
                     observacion = "Se evalúa solo la memoria declarada de fábrica; no se acepta ampliación para cubrir el mínimo interno exigido."
+                    memoria_no_interna = datos.get('memoria_es_interna') is False
+                    if memoria_no_interna:
+                        observacion = "La capacidad declarada corresponde a tarjeta extraíble, no a memoria interna instalada."
             if valor is not None:
                 estado = "cumple" if (
-                    valor >= pedido if criterio.modo == "minimo" else valor <= pedido
+                    not memoria_no_interna and (valor >= pedido if criterio.modo == "minimo" else valor <= pedido)
                 ) else "incumple"
                 if estado == "cumple":
                     factor = 1.0
@@ -302,6 +316,14 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
                     for campo, maximo in pedido.items()
                 ) / len(pedido)
 
+        required_feature = {
+            'inclinacion_imu_deg':'tiene_imu', 'imu_generacion':'tiene_imu',
+            'mp_camara':'tiene_camara', 'cantidad_camaras':'tiene_camara',
+            'laser_alcance_m':'laser', 'lemo_pines':'lemo',
+        }.get(criterio.clave)
+        if estado == 'sin_datos' and required_feature and datos.get(required_feature) is False:
+            estado = 'incumple'
+            observacion = 'No aplica: el equipo no incorpora la función requerida.'
         factor = max(0.0, min(1.0, factor))
         peso = pesos[criterio.clave]
         detalle.append({
@@ -320,6 +342,11 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
         })
 
     peso_total = sum(item["peso"] for item in detalle)
+    puntos_afinidad = sum(item["puntos"] for item in detalle)
+    for item in detalle:
+        item['factor_afinidad'] = item['factor']
+        item['factor'] = 1.0 if item['estado'] == 'cumple' else 0.0
+        item['puntos'] = item['peso'] * item['factor']
     puntos = sum(item["puntos"] for item in detalle)
     porcentaje = round(100 * puntos / peso_total, 2) if peso_total else None
     cumplidos = [item["nombre"] + (" ("+item['unidad']+")" if item['unidad'] else '') + (" (con memoria extendida)" if item["requiere_ampliacion"] else "")
@@ -335,11 +362,15 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
         partes.append("Sin datos: " + ", ".join(desconocidos) + ".")
     return {
         "porcentaje": porcentaje,
+        "porcentaje_afinidad": round(100 * puntos_afinidad / peso_total, 2) if peso_total else None,
+        "metodo_puntuacion": "cumplimiento_ponderado",
+        "aptitud": "no_cumple" if incumplidos else "pendiente_verificacion" if desconocidos else "cumple_criterios_evaluados",
         "puntos": puntos,
         "peso_total": peso_total,
         "cumplimientos": len(cumplidos),
         "incumplimientos": len(incumplidos),
         "sin_datos": len(desconocidos),
+        "cobertura_datos_pct": round(100 * (len(detalle)-len(desconocidos))/len(detalle), 2) if detalle else None,
         "detalle": detalle,
         "explicacion": " ".join(partes),
     }
