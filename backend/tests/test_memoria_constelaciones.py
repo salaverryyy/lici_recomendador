@@ -9,6 +9,15 @@ def evaluar(preferencias, datos):
 
 
 class MemoriaConstelacionesTests(unittest.TestCase):
+    def test_internal_minimum_cannot_be_met_with_an_external_expansion(self):
+        p = Preferencias(memoria_min_gb=8, memoria_solo_fabrica=True)
+        datos = {"memoria": 4, "memoria_expandible": True, "memoria_expandida_max_gb": 32}
+        result = evaluar(p, datos)
+        self.assertEqual(result['incumplimientos'], 1)
+        self.assertFalse(result['detalle'][0]['requiere_ampliacion'])
+        self.assertEqual(result['detalle'][0]['valor_equipo'], 4)
+        self.assertEqual(evaluar(p, {"memoria": 8})['porcentaje'], 100)
+
     def test_memoria_fabrica_y_extension(self):
         p = Preferencias(memoria_min_gb=8)
         original = evaluar(p, {"memoria": 8})

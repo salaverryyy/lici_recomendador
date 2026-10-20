@@ -1,13 +1,99 @@
+import io
+import json
 import os
 import unittest
 from unittest.mock import patch
 
 from app import ia
-from app.routers.ia import AIRequest, _explicit_catalog_type, _retrieve_catalog
+from app.routers.ia import AIRequest, _answer, _explicit_catalog_type, _mark_shared_error, _retrieve_catalog
 from pydantic import ValidationError
 
 
 class AITests(unittest.TestCase):
+    def test_response_error_does_not_write_global_unavailability(self):
+        with patch('app.routers.ia.connect') as connect:
+            _mark_shared_error(ia.AIProviderError(
+                'Respuesta inválida', code=502, reason='respuesta_invalida'
+            ))
+        connect.assert_not_called()
+
+    def test_perfect_partial_match_is_not_presented_as_full_tender_compliance(self):
+        ranking = {'empate_en_primer_puesto': True, 'resultados': [{
+            'equipo': {'marca': 'SingularXYZ', 'modelo': 'X1'},
+            'porcentaje': 100, 'explicacion': 'Cumple los criterios evaluados.',
+        }]}
+        answer = _answer('gnss', ranking, ['RTCM/CMR: pendiente de comprobar'])
+        self.assertIn('Una de las mejores coincidencias', answer)
+        self.assertIn('no acredita el cumplimiento total', answer)
+
+    def test_provider_reads_all_text_parts_and_ignores_thoughts(self):
+        data = {'candidates': [{'finishReason': 'STOP', 'content': {'parts': [
+            {'thought': True, 'text': 'Razonamiento privado, no es JSON'},
+            {'text': '{"tipo_equipo":"gnss",'},
+            {'text': '"requisitos":{"canales_min":220}}'},
+        ]}}]}
+        raw, usage = ia._decode_gemini(data, 'test-model')
+        self.assertEqual(raw['requisitos'], {'canales_min': 220})
+        self.assertEqual(usage['_model'], 'test-model')
+
+    def test_truncated_json_is_never_used_as_a_partial_ranking(self):
+        data = {'candidates': [{'finishReason': 'MAX_TOKENS', 'content': {'parts': [
+            {'text': '{"tipo_equipo":"gnss","requisitos":{}}'},
+        ]}}]}
+        with self.assertRaises(ia.AIProviderError) as caught:
+            ia._decode_gemini(data, 'test-model')
+        self.assertEqual(caught.exception.reason, 'respuesta_truncada')
+        self.assertEqual(caught.exception.code, 502)
+        self.assertFalse(caught.exception.quota)
+        self.assertFalse(caught.exception.retryable)
+
+    def test_invalid_response_shapes_have_a_specific_error(self):
+        for data in ({}, {'candidates': []}, {'candidates': [{'content': {'parts': [
+            {'text': '[]'},
+        ]}}]}):
+            with self.subTest(data=data), self.assertRaises(ia.AIProviderError) as caught:
+                ia._decode_gemini(data, 'test-model')
+            self.assertEqual(caught.exception.reason, 'respuesta_invalida')
+
+    def test_truncation_retries_with_more_output_budget(self):
+        responses = [
+            {'candidates': [{'finishReason': 'MAX_TOKENS'}]},
+            {'candidates': [{'finishReason': 'STOP', 'content': {'parts': [
+                {'text': '{"tipo_equipo":"gnss","requisitos":{"canales_min":220}}'},
+            ]}}]},
+        ]
+        requests = []
+
+        def provider(request, **kwargs):
+            requests.append(json.loads(request.data))
+            return io.BytesIO(json.dumps(responses.pop(0)).encode())
+
+        with patch.dict(os.environ, {'GEMINI_API_KEY': 'test'}), \
+             patch.object(ia, 'urlopen', side_effect=provider):
+            raw, _ = ia._post_gemini_model('Licitación extensa', 'test-model')
+        self.assertEqual(raw['requisitos']['canales_min'], 220)
+        self.assertEqual(requests[0]['generationConfig']['maxOutputTokens'], 8192)
+        self.assertEqual(requests[1]['generationConfig']['maxOutputTokens'], 16384)
+        self.assertIn('responseJsonSchema', requests[0]['generationConfig'])
+
+    def test_invalid_output_can_use_a_model_fallback_without_global_downtime(self):
+        result = ({'tipo_equipo': 'gnss', 'requisitos': {}}, {})
+        with patch.object(ia, 'model_chain', return_value=['first', 'second']), \
+             patch.object(ia, '_post_gemini_model', side_effect=[
+                 ia.AIProviderError('Inválida', code=502, reason='respuesta_invalida'), result,
+             ]), patch.object(ia, 'mark_quota') as mark_quota:
+            self.assertEqual(ia._post_gemini('Consulta'), result)
+        mark_quota.assert_not_called()
+
+    def test_omitted_tender_conditions_are_not_silently_cut_at_twelve(self):
+        omitted = [f'Condición contractual {number}' for number in range(18)]
+        provider = ({'tipo_equipo': 'gnss', 'requisitos': {'canales_min': 220},
+                     'omitidos': omitted}, {})
+        with patch.object(ia, 'quota_until', return_value=None), \
+             patch.object(ia, '_post_gemini', return_value=provider):
+            result = ia.interpret('Licitación con varios requisitos adicionales')
+        self.assertEqual(result['omitidos'], omitted)
+
     def test_model_chain_keeps_order_and_ignores_duplicates(self):
         with patch.dict(
             os.environ,

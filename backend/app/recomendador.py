@@ -61,6 +61,7 @@ class Preferencias(BaseModel):
     constelaciones_min: int | None = Field(default=None, ge=1, le=6)
     autonomia_min_h: float | None = Field(default=None, ge=0)
     memoria_min_gb: float | None = Field(default=None, ge=0)
+    memoria_solo_fabrica: bool = False
     sim_4g: bool | None = None
     laser: bool | None = None
     laser_alcance_min_m: float | None = Field(default=None, ge=0)
@@ -255,11 +256,13 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
             if criterio.clave == "memoria":
                 memoria_fabrica = valor
                 ampliada = datos.get("memoria_expandida_max_gb")
-                if datos.get("memoria_expandible") is True and ampliada is not None and (valor is None or ampliada > valor):
+                if not preferencias.memoria_solo_fabrica and datos.get("memoria_expandible") is True and ampliada is not None and (valor is None or ampliada > valor):
                     if valor is None or valor < pedido:
                         valor = ampliada
                         requiere_ampliacion = True
                         observacion = f"Memoria de fábrica: {memoria_fabrica if memoria_fabrica is not None else 'sin datos'} GB; capacidad ampliada declarada: {ampliada} GB."
+                if preferencias.memoria_solo_fabrica:
+                    observacion = "Se evalúa solo la memoria declarada de fábrica; no se acepta ampliación para cubrir el mínimo interno exigido."
             if valor is not None:
                 estado = "cumple" if (
                     valor >= pedido if criterio.modo == "minimo" else valor <= pedido

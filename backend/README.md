@@ -42,3 +42,11 @@ recupera de PostgreSQL las fichas técnicas más relacionadas con la conversaci�
 Licitex no impone un límite propio de consultas. Si el modelo principal agota su
 cuota o queda temporalmente indisponible, prueba los modelos de respaldo configurados
 antes de mostrar el código de error devuelto por Gemini.
+
+Las respuestas se solicitan con un esquema JSON y se leen todos los fragmentos
+de texto de salida. Si Gemini trunca una respuesta, se reintenta con mayor
+presupuesto de salida; si sigue siendo inválida, se prueban los respaldos y se
+informa un error 502 sin bloquear globalmente la IA. El porcentaje de ranking
+solo cubre los criterios evaluados; los requisitos no evaluables se conservan
+para revisión manual. Cuando se exige memoria interna instalada, la IA envía
+`memoria_solo_fabrica=true` para que una ampliación no cubra ese mínimo.

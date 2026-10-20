@@ -167,6 +167,60 @@ def _retry_from_error(body: str, headers) -> datetime | None:
     return datetime.now(timezone.utc) + timedelta(seconds=seconds) if seconds else None
 
 
+def _response_schema() -> dict:
+    """Contrato de transporte; interpret valida después los requisitos por familia."""
+    return {
+        "type": "object",
+        "properties": {
+            "tipo_equipo": {"type": "string", "enum": ["gnss", "controladora", "slam"]},
+            "intencion": {"type": "string", "enum": [
+                "recomendacion", "consulta_catalogo", "comparacion", "explicacion",
+            ]},
+            "requisitos": {"type": "object", "additionalProperties": True},
+            "resumen": {"type": "string"},
+            "respuesta_general": {"type": "string"},
+            "preguntas": {"type": "array", "items": {"type": "string"}, "maxItems": 4},
+            "omitidos": {"type": "array", "items": {"type": "string"}},
+        },
+        "required": ["tipo_equipo", "requisitos", "resumen", "preguntas", "omitidos"],
+        "additionalProperties": False,
+    }
+
+
+def _decode_gemini(data: dict, active_model: str) -> tuple[dict, dict]:
+    """Une todos los fragmentos de salida sin confundir razonamiento con JSON."""
+    try:
+        candidate = data["candidates"][0]
+        finish = candidate.get("finishReason")
+        if finish == "MAX_TOKENS":
+            raise AIProviderError(
+                "La respuesta de IA quedó incompleta. Intenta nuevamente; no se calculó un ranking parcial.",
+                code=502, reason="respuesta_truncada",
+            )
+        if finish not in (None, "STOP"):
+            raise ValueError("La generación no terminó normalmente")
+        parts = candidate.get("content", {}).get("parts", [])
+        text = "".join(
+            part["text"] for part in parts
+            if not part.get("thought") and isinstance(part.get("text"), str)
+        )
+        text = re.sub(r"^\s*```(?:json)?\s*|\s*```\s*$", "", text, flags=re.IGNORECASE)
+        raw = json.loads(text)
+        if not isinstance(raw, dict) or raw.get("tipo_equipo") not in ("gnss", "controladora", "slam"):
+            raise ValueError("Falta el tipo de equipo")
+        if not isinstance(raw.get("requisitos"), dict):
+            raise ValueError("Requisitos inválidos")
+        usage = dict(data.get("usageMetadata") or {})
+        usage["_model"] = active_model
+        return raw, usage
+    except (KeyError, IndexError, TypeError, ValueError, AttributeError) as exc:
+        # Es un fallo de esta respuesta, no una caída global ni una cuota agotada.
+        raise AIProviderError(
+            "La IA devolvió una respuesta inválida o vacía. Intenta nuevamente.",
+            code=502, reason="respuesta_invalida",
+        ) from exc
+
+
 def _post_gemini_model(prompt: str, active_model: str) -> tuple[dict, dict]:
     key = os.getenv("GEMINI_API_KEY", "").strip()
     if not key:
@@ -180,7 +234,8 @@ def _post_gemini_model(prompt: str, active_model: str) -> tuple[dict, dict]:
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
             "responseMimeType": "application/json",
-            "maxOutputTokens": 2500,
+            "responseJsonSchema": _response_schema(),
+            "maxOutputTokens": 8192,
         },
     }
     request = Request(
@@ -189,12 +244,18 @@ def _post_gemini_model(prompt: str, active_model: str) -> tuple[dict, dict]:
         headers={"Content-Type": "application/json", "x-goog-api-key": key},
         method="POST",
     )
-    data = None
     for attempt in range(3):
         try:
             with urlopen(request, timeout=float(os.getenv("AI_TIMEOUT_SECONDS", "25"))) as response:
                 data = json.load(response)
-            break
+            return _decode_gemini(data, active_model)
+        except AIProviderError as exc:
+            if exc.reason in ("respuesta_truncada", "respuesta_invalida") and attempt < 1:
+                if exc.reason == "respuesta_truncada":
+                    payload["generationConfig"]["maxOutputTokens"] = 16384
+                    request.data = json.dumps(payload).encode("utf-8")
+                continue
+            raise
         except HTTPError as exc:
             body = exc.read().decode("utf-8", "replace")
             if exc.code == 429:
@@ -214,15 +275,6 @@ def _post_gemini_model(prompt: str, active_model: str) -> tuple[dict, dict]:
                 time.sleep(1.25 * (attempt + 1))
                 continue
             raise AIProviderError("No se pudo contactar al proveedor de IA.", code=503, reason="conexion", retryable=True) from exc
-
-    try:
-        text = data["candidates"][0]["content"]["parts"][0]["text"]
-        text = re.sub(r"^\s*```(?:json)?\s*|\s*```\s*$", "", text, flags=re.IGNORECASE)
-        usage = data.get("usageMetadata", {})
-        usage["_model"] = active_model
-        return json.loads(text), usage
-    except (KeyError, IndexError, TypeError, json.JSONDecodeError) as exc:
-        raise AIProviderError("La IA devolvió una respuesta que no se pudo interpretar.") from exc
 
 
 def _post_gemini(prompt: str, requested_model: str | None = None) -> tuple[dict, dict]:
@@ -262,7 +314,7 @@ def _post_gemini(prompt: str, requested_model: str | None = None) -> tuple[dict,
 def _gnss_catalog() -> dict:
     properties = Preferencias.model_json_schema()["properties"]
     allowed = {c.campo_input for c in CRITERIOS}
-    allowed.update({"ancho_max_mm", "alto_max_mm", "radio_max_mhz"})
+    allowed.update({"ancho_max_mm", "alto_max_mm", "radio_max_mhz", "memoria_solo_fabrica"})
     return {key: properties[key] for key in sorted(allowed) if key in properties}
 
 
@@ -339,12 +391,29 @@ Reglas:
   respondidas y reconoce comparaciones o modelos mencionados en turnos anteriores.
 - No incluyas solo_cotecmi ni top_n: la aplicación los controla aparte.
 - Si algo no tiene campo compatible, colócalo en omitidos y no improvises una clave.
+- En textos de licitaciones con OCR ignora sellos, firmas y palabras corruptas,
+  sin descartar requisitos técnicos legibles. Extrae todos los requisitos, no solo
+  los que favorecen a un candidato. No recomiendes un modelo antes del ranking.
+- Separa requisitos del receptor, colectora y kit. En una consulta GNSS, las
+  condiciones de colectoras y cantidades/accesorios del kit van en omitidos.
+- No equipares soporte de una constelación con sus frecuencias específicas, USB-C
+  con carga por USB-C, RINEX 3 con RINEX 2, ni protocolos de radio con RTCM/CMR.
+  Las condiciones sin campo exacto deben figurar en omitidos para revisión manual.
+- Si el módem puede ser integrado O compartido, no exijas lte_4g integrado como
+  condición exclusiva. Si hay alternativas ambiguas como +60/+65 °C, conserva
+  la alternativa menos restrictiva explícita y pregunta cuál se exige.
+- Nunca afirmes cumplimiento total de la licitación. El porcentaje posterior
+  solo cubre los criterios extraídos que el sistema puede evaluar.
+- Para una licitación, respuesta_general debe ser breve o vacía. Resume omitidos
+  por requisito sin copiar el documento entero; no elimines condiciones relevantes.
 - Ante preguntas como «cuál es el mejor», responde de forma útil y condicional:
   explica que depende del uso, destaca 1 a 3 candidatos del catálogo y por qué.
 - Si faltan requisitos, puedes orientar con los datos disponibles; las preguntas
   de seguimiento ayudan a afinar y no deben impedir una respuesta útil.
 - Distingue capacidad instalada, expansión y opción de fábrica. Distingue 4G LTE
   de 3G/3.5G. No conviertas un barrido total de inclinación en inclinación por lado.
+- Si exige un mínimo de memoria interna instalada, usa memoria_min_gb junto con
+  memoria_solo_fabrica=true: una tarjeta externa ampliada no cubre ese requisito.
 - Para SLAM distingue GNSS integrado de un módulo opcional, precisión local de
   precisión absoluta y autonomía por batería de autonomía total con repuestos.
 - Usa el campo aplicaciones para representar el uso principal con una de sus
@@ -452,7 +521,7 @@ def interpret(
         "preguntas": [str(item) for item in raw.get("preguntas", []) if str(item).strip()][:4]
         if isinstance(raw.get("preguntas"), list)
         else [],
-        "omitidos": list(dict.fromkeys(str(item) for item in omitted if str(item).strip()))[:12],
+        "omitidos": list(dict.fromkeys(str(item) for item in omitted if str(item).strip())),
         "tiene_criterios": selected,
         "uso": {
             "proveedor": "Gemini",

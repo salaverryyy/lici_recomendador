@@ -110,6 +110,9 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
         {result.cumplimientos} cumple · {failed?.length || 0} no cumple ·{" "}
         {unknown?.length || 0} sin datos
       </p>
+      <p className="muted small-text">
+        Porcentaje sobre los criterios evaluados.
+      </p>
       <details className="score-details">
         <summary>Ver evaluación</summary>
         <dl>
@@ -185,9 +188,19 @@ function AssistantAnswer({ data }: { data: any }) {
         </div>
       )}
       {!!data?.omitidos?.length && (
-        <p className="muted small-text">
-          Revisión manual pendiente: {data.omitidos.join(", ")}.
-        </p>
+        <div className="notice">
+          <strong>Evaluación parcial: quedan requisitos por verificar.</strong>
+          <p>
+            El porcentaje no acredita el cumplimiento total de la licitación.
+          </p>
+          <ul>
+            {data.omitidos.map((item: string, index: number) => (
+              <li key={`${index}-${item}`}>
+                <BoldText text={item} />
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
       {results.length > 0 && (
         <div className="ai-ranking">
@@ -341,7 +354,10 @@ export function AiAdvisor() {
         messages: [...pending.messages, assistant].slice(-20),
       };
       updateChat(completed);
-      if (data.estado === "no_disponible")
+      if (data.estado === "ok") setAvailability({ disponible: true });
+      else if (
+        !["respuesta_invalida", "respuesta_truncada"].includes(data.motivo)
+      )
         setAvailability({ disponible: false, ...data });
     } catch (e) {
       setError((e as Error).message);
@@ -549,6 +565,13 @@ export function AiAdvisor() {
               <div>
                 <dt>500</dt>
                 <dd>El proveedor tuvo un error interno.</dd>
+              </div>
+              <div>
+                <dt>502 · respuesta inválida o incompleta</dt>
+                <dd>
+                  La IA no entregó una respuesta completa y válida. Puedes
+                  reenviar la consulta; esto no indica que se agotó la cuota.
+                </dd>
               </div>
               <div>
                 <dt>502 / 503 / 504</dt>

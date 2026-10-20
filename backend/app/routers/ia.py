@@ -219,7 +219,8 @@ def _answer(kind: str, ranking: dict, omitted: list[str]) -> str:
     first = results[0]
     equipment = first["equipo"]
     percent = first.get("porcentaje")
-    intro = f"La mejor coincidencia es {equipment['marca']} {equipment['modelo']}"
+    lead = "Una de las mejores coincidencias es" if ranking.get("empate_en_primer_puesto") else "La mejor coincidencia es"
+    intro = f"{lead} {equipment['marca']} {equipment['modelo']}"
     if percent is not None:
         intro += f", con {percent}% de ajuste a los requisitos evaluados"
     intro += "."
@@ -239,7 +240,10 @@ def _answer(kind: str, ranking: dict, omitted: list[str]) -> str:
         detail = " ".join(parts)
     closing = " Revisa la ficha técnica y las condiciones de la oferta antes de decidir."
     if omitted:
-        closing = " Algunos requisitos no pudieron evaluarse automáticamente. " + closing.strip()
+        closing = (
+            f" Hay {len(omitted)} requisitos pendientes de revisión manual: este porcentaje "
+            "no acredita el cumplimiento total de la licitación. " + closing.strip()
+        )
     return " ".join(part for part in (intro, detail, closing) if part)
 
 
@@ -280,7 +284,7 @@ def ai_recommend(body: AIRequest):
     except AIProviderError as exc:
         _mark_shared_error(exc)
         return {"estado": "no_disponible", "motivo": exc.reason, "codigo": exc.code or 503,
-                "reintentable": exc.retryable or exc.quota, "mensaje": str(exc),
+                "reintentable": exc.retryable or exc.quota or exc.reason in ("respuesta_invalida", "respuesta_truncada"), "mensaje": str(exc),
                 "reintentar_en": exc.retry_at.isoformat() if exc.retry_at else None}
     except DatabaseError:
         return {"estado": "no_disponible", "motivo": "catalogo", "codigo": 503,

@@ -87,7 +87,7 @@ def recomendar(preferencias: Preferencias):
                        to_jsonb(b) AS evaluacion
                 FROM equipos AS e
                 LEFT JOIN base_evaluacion AS b USING (id_equipo)
-                WHERE e.publicado = TRUE AND e.categoria <> 'Controladora'
+                WHERE e.publicado = TRUE AND e.categoria = 'GNSS'
                 """
             )
             equipos = [e for e in cur.fetchall() if not preferencias.solo_cotecmi or es_cotecmi(e["marca"])]
