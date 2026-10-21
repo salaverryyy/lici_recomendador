@@ -33,9 +33,9 @@ Top N incluye todos los equipos empatados en el puesto de corte.
 ## Orden de presentación — 21 de octubre de 2026
 
 Primero se ordena por porcentaje de cumplimiento y cobertura de los criterios
-solicitados. Dentro de la igualdad técnica se usa `equipos.anio_modelo`
-descendente; los años desconocidos quedan al final. A igual año se aplica la
-preferencia comercial SinoGNSS solicitada por Cotecmi y finalmente el ID estable.
+solicitados. Dentro de la igualdad técnica se aplica la preferencia comercial
+SinoGNSS solicitada por Cotecmi; luego el menor precio público comparable en USD,
+el año de modelo descendente y el ID estable. Un precio sin confirmar nunca es cero.
 Esta preferencia no implica superioridad técnica ni concede puntos. Los equipos
 empatados siguen compartiendo puesto. Un modelo anterior que cumple más queda
 por encima de uno reciente que cumple menos.
@@ -50,4 +50,6 @@ configuración opcional de fábrica cuando el mínimo es genérico. Las tarjetas
 opciones y ampliaciones no se suman entre sí ni se presumen instaladas/incluidas.
 La condición aparece sin tener que abrir los detalles, además del valor de
 fábrica y la capacidad evaluada. Una exigencia explícita de memoria instalada
-mantiene `memoria_solo_fabrica=true` y no se cubre con estas opciones.
+mantiene `memoria_solo_fabrica=true`: acepta una opción interna de fábrica
+documentada bajo pedido, pero no tarjetas externas. Ver [configuraciones y
+auditoría SIM/LTE](comercial/README.md).

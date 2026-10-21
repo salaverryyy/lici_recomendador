@@ -46,6 +46,7 @@ import {
   ModelYear,
   ExpansionNotice,
   complianceLabel,
+  PriceReference,
 } from "./ranking-notes";
 import "./style.css";
 
@@ -1401,6 +1402,7 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                     </strong>
                   </div>
                   <ModelYear equipment={r.equipo} />
+                  <PriceReference equipment={r.equipo} />
                   {r.porcentaje != null && (
                     <progress max={100} value={r.porcentaje} />
                   )}
@@ -1713,6 +1715,7 @@ function Editor() {
     );
   const e = isNew ? {} : details.data?.equipo;
   const textSpecs = new Set([
+    "conectividad_nota",
     "auditoria_fuente",
     "auditoria_notas",
     "baterias_conectores_fuente",
@@ -1738,6 +1741,8 @@ function Editor() {
     "ambiental_fuente",
   ]);
   const bools = new Set([
+    "sim_fisica",
+    "usb_c_con_adaptador",
     "usb",
     "usb_c",
     "rs232",

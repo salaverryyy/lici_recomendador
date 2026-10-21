@@ -50,6 +50,7 @@ class ControllerTests(unittest.TestCase):
             {
                 'android_version': 12, 'ram_gb': 4, 'almacenamiento_gb': 64,
                 'pantalla_pulgadas': 6, 'autonomia_h': 16, 'lte_4g': True,
+                'sim_fisica': True,
                 'proteccion_ip': 'IP67', 'caida_m': 1.5,
             },
             {

@@ -4,6 +4,7 @@ from psycopg import Error as DatabaseError
 from ..db import connect
 from ..cotecmi import es_cotecmi
 from ..orden_presentacion import clave_presentacion, NOTA_ORDEN
+from ..comercial import enriquecer
 from ..recomendador import CRITERIOS, Preferencias, criterios_seleccionados, evaluar_equipo
 
 
@@ -91,7 +92,8 @@ def recomendar(preferencias: Preferencias):
 
             cur.execute(
                 """
-                SELECT e.id_equipo, e.marca, e.modelo, e.categoria, e.imagen_url, e.anio_modelo,
+                SELECT e.id_equipo, e.marca, e.modelo, e.categoria,
+                       COALESCE(NULLIF(e.imagen_url,''),(SELECT a.url FROM equipo_archivos a WHERE a.id_equipo=e.id_equipo AND a.tipo='foto' ORDER BY a.orden,a.id LIMIT 1)) AS imagen_url, e.anio_modelo,
                        to_jsonb(b) AS evaluacion
                 FROM equipos AS e
                 LEFT JOIN base_evaluacion AS b USING (id_equipo)
@@ -126,14 +128,14 @@ def recomendar(preferencias: Preferencias):
                 radio[equipo["id_equipo"]],
             )
             resultados.append({
-                "equipo": {
+                "equipo": enriquecer({
                     "id_equipo": equipo["id_equipo"],
                     "marca": equipo["marca"],
                     "modelo": equipo["modelo"],
                     "categoria": equipo["categoria"],
                     "imagen_url": equipo["imagen_url"],
                     "anio_modelo": equipo["anio_modelo"],
-                },
+                }),
                 **puntuacion,
             })
 

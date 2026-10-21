@@ -18,6 +18,8 @@ from .slam import Requirements as SlamRequirements, recommend as recommend_slam
 from .software import catalogo as software_catalog
 from ..software import rank as recommend_software, comparison_advice
 from ..soluciones import assemble, unscored
+from ..imagenes_ia import ImageInput, MAX_TOTAL
+from ..comercial import enriquecer
 
 
 router = APIRouter(prefix="/api/ia", tags=["asistente con IA"])
@@ -57,11 +59,14 @@ class AIRequest(BaseModel):
     top_n: int = Field(default=20, ge=1, le=100)
     contexto_previo: PreviousContext | None = None
     historial: list[ConversationMessage] = Field(default_factory=list, max_length=12)
+    imagenes: list[ImageInput] = Field(default_factory=list, max_length=3)
 
     @model_validator(mode="after")
     def limit_history(self):
         if sum(len(item.text) for item in self.historial) > 12_000:
             raise ValueError("El historial de conversación es demasiado grande.")
+        if sum(len(item.data)*3//4 for item in self.imagenes)>MAX_TOTAL:
+            raise ValueError('Las imágenes superan el límite total de 2.4 MB.')
         return self
 
 
@@ -90,7 +95,7 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
     with connect() as conn, conn.cursor() as cur:
         if requested_type in ("auto", "gnss"):
             cur.execute("""
-              SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.descripcion,e.anio_modelo,
+              SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.descripcion,e.anio_modelo,e.imagen_url,
                      e.pais_marca,e.pais_fabricacion,e.ficha_pdf_url,e.web_url,
                      to_jsonb(b) AS datos
               FROM equipos e LEFT JOIN base_evaluacion b USING(id_equipo)
@@ -102,7 +107,7 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
                        'largo_static_horizontal_mm','largo_static_vertical_mm','largo_static_ppm_h','largo_static_ppm_v',
                        'tiene_imu','inclinacion_imu_deg','tiene_camara','cantidad_camaras','laser',
                        'laser_alcance_m','autonomia_bateria','memoria','memoria_expandible','memoria_es_interna',
-                       'memoria_expandida_max_gb','memoria_opcional_fabrica_max_gb','lte_4g','uhf_tx_rx_integrada','proteccion_ip',
+                       'memoria_expandida_max_gb','memoria_opcional_fabrica_max_gb','memoria_interna_opcional_max_gb','memoria_interna_opciones_gb','usb_c_con_adaptador','sim_fisica','conectividad_nota','lte_4g','uhf_tx_rx_integrada','proteccion_ip',
                        'radio_frecuencia','radio_potencia_max_w','cantidad_baterias','lemo','lemo_pines',
                        'peso_max','temperatura_operacion_min_c','temperatura_operacion_max_c',
                        'gps','glonass','galileo','beidou','qzss','navic_irnss','sbas',
@@ -116,20 +121,20 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
             rows.extend(cur.fetchall())
         if requested_type in ("auto", "controladora"):
             cur.execute("""
-              SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.descripcion,e.anio_modelo,
+              SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.descripcion,e.anio_modelo,e.imagen_url,
                      e.pais_marca,e.pais_fabricacion,e.ficha_pdf_url,e.web_url,
                      to_jsonb(c) AS datos
               FROM equipos e LEFT JOIN controladora_especificaciones c USING(id_equipo)
               WHERE e.publicado AND e.categoria='Controladora' ORDER BY e.marca,e.modelo
             """)
             allowed = {'sistema_operativo','android_version','ram_gb','almacenamiento_gb','expansion_gb',
-                       'pantalla_pulgadas','teclado_qwerty','autonomia_h','lte_4g','proteccion_ip','caida_m','fuente'}
+                       'pantalla_pulgadas','teclado_qwerty','autonomia_h','lte_4g','sim_fisica','conectividad_nota','proteccion_ip','caida_m','fuente'}
             for row in cur.fetchall():
                 data = row.pop('datos') or {}
                 rows.append({**row, **{key: data.get(key) for key in allowed}})
         if requested_type in ("auto", "slam"):
             cur.execute("""
-              SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.descripcion,e.anio_modelo,
+              SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.descripcion,e.anio_modelo,e.imagen_url,
                      e.pais_marca,e.pais_fabricacion,e.ficha_pdf_url,e.web_url,
                      to_jsonb(s) AS datos
               FROM equipos e LEFT JOIN slam_especificaciones s USING(id_equipo)
@@ -144,6 +149,7 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
                 'peso_operativo_g','autonomia_h','baterias_incluidas','hot_swap',
                 'proteccion_ip','temperatura_operacion_min_c','temperatura_operacion_max_c',
                 'almacenamiento_gb','almacenamiento_expandible','usb_c','wifi','bluetooth',
+                'lte_4g','sim_fisica','conectividad_nota',
                 'software_adquisicion_incluido','software_postproceso_incluido',
                 'exporta_las','exporta_laz','exporta_e57','exporta_ply','exporta_dxf',
                 'formatos_salida','modos_montaje','software','notas','fuente',
@@ -152,7 +158,7 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
                 data = row.pop('datos') or {}
                 rows.append({**row, **{key: data.get(key) for key in allowed}})
     selected = [dict(row) for row in rows if not solo_cotecmi or es_cotecmi(row["marca"])]
-    return [{key: value for key, value in row.items() if value is not None and value != ""} for row in selected]
+    return [enriquecer({key: value for key, value in row.items() if value is not None and value != ""}) for row in selected]
 
 
 _RAG_STOPWORDS = {
@@ -287,6 +293,7 @@ def ai_recommend(body: AIRequest):
             catalog,
             history,
             previous.model_dump() if previous else None,
+            imagenes=body.imagenes,
         )
     except AIProviderError as exc:
         _mark_shared_error(exc)
@@ -393,7 +400,8 @@ def _recommend_workflow(parsed, body, catalog):
     if ranking and 'mostrados' in ranking:
         ranking = {**ranking, 'resultados':limitar_con_empates(ranking['resultados'],body.top_n)}
         ranking['mostrados'] = len(ranking['resultados'])
-    usb_list = kind == 'gnss' and components.get('gnss') == {'usb_c': True} and re.search(r'lista|todos|cu[aá]les', body.mensaje, re.I)
+    gnss_requirements=components.get('gnss', {})
+    usb_list = kind == 'gnss' and gnss_requirements.get('usb_c') is True and set(gnss_requirements)<={'usb_c','usb_c_nativo'} and re.search(r'lista|todos|cu[aá]les', body.mensaje, re.I)
     if usb_list and ranking:
         matches = [r for r in ranks['gnss']['resultados'] if any(d.get('clave') == 'usb_c' and d['estado'] == 'cumple' for d in r.get('detalle', []))]
         ranking = {**ranking, 'resultados':matches, 'mostrados':len(matches)}
@@ -410,7 +418,7 @@ def _recommend_workflow(parsed, body, catalog):
     else:
         answer = _answer(kind, ranking, parsed['omitidos']) if ranking else parsed['respuesta_general'] or 'Indica el receptor o sus requisitos para construir el conjunto GNSS, controladora y software.'
     if usb_list and ranking:
-        answer = f"Hay **{len(ranking['resultados'])} modelos con USB-C confirmado** en el catálogo permitido. Se listan solo los confirmados; los equipos sin datos o sin ese puerto quedan fuera. Tener USB-C no acredita carga ni una modalidad de transferencia concreta."
+        answer = f"Hay **{len(ranking['resultados'])} modelos que cumplen USB-C** en el catálogo permitido. El detalle distingue puerto nativo y cumplimiento con adaptador de carga y datos, cuando se admite. Se excluyen casos sin respaldo; confirma el accesorio y la función exigida en la oferta."
     if solution['opciones'] and not selected.get('gnss'):
         answer += ' El GNSS mostrado es una referencia provisional; puedes elegir otra opción.'
     if kind == 'software' and solution['opciones']:

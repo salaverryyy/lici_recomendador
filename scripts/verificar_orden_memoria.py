@@ -40,8 +40,8 @@ def main():
         response=client.post('/api/recomendar',json={'memoria_min_gb':32,'memoria_solo_fabrica':True,'top_n':100})
         response.raise_for_status()
         strict=response.json()['resultados']
-        for ident in ('GNSS-SINOGNSS-JUPITER','GNSS-SINOGNSS-T20'):
-            assert next(r for r in strict if r['equipo']['id_equipo']==ident)['porcentaje']==0
+        assert next(r for r in strict if r['equipo']['id_equipo']=='GNSS-SINOGNSS-JUPITER')['porcentaje']==100
+        assert next(r for r in strict if r['equipo']['id_equipo']=='GNSS-SINOGNSS-T20')['porcentaje']==100
         print('OK: RS3 antes de RS2+, Jupiter 4 a 32 GB con puntos completos, T20 opcional y mínimo instalado estricto. Chat y API coherentes.')
 
 

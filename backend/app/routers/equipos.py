@@ -3,6 +3,7 @@ from ..evidencia import etiquetas_auditoria
 from psycopg import Error as DatabaseError
 
 from ..db import connect
+from ..comercial import enriquecer
 from ..cotecmi import COTECMI_MARCAS
 
 
@@ -118,7 +119,7 @@ def detalle_equipo(id_equipo: str):
             auditoria = etiquetas_auditoria(cur, [id_equipo])[id_equipo]
             cur.execute("SELECT id, url, texto_alternativo, orden FROM equipo_archivos WHERE id_equipo=%s AND tipo='foto' ORDER BY orden,id", (id_equipo,))
             return {
-                "equipo": equipo,
+                "equipo": enriquecer(equipo),
                 "auditoria": auditoria,
                 "controladora": controladora,
                 "slam": slam,

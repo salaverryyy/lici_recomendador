@@ -82,10 +82,13 @@ TEXTOS |= {"imu_generacion", "imu_tecnologia", "bluetooth_version", "wifi_estand
            "radio_protocolos", "tipo_bateria", "rinex_versiones", "formato_propietario", "tecnica_notas", "tecnica_fuente"}
 EDITABLES = BOOLEANOS | ENTEROS | NUMERICOS | TEXTOS | TEMPERATURAS
 BOOLEANOS |= {'lemo','usb','usb_c','rs232','memoria_es_interna'}
+BOOLEANOS |= {'sim_fisica','usb_c_con_adaptador'}
+NUMERICOS |= {'memoria_interna_opcional_max_gb'}
 NUMERICOS |= {'actualizacion_hz','inclinacion_imu_deg'}
 NUMERICOS.add('laser_alcance_m')
 ENTEROS.add('baterias_incluidas_por_receptor')
 TEXTOS |= {'auditoria_fuente','auditoria_notas'}
+TEXTOS |= {'conectividad_nota'}
 ENTEROS |= {'cantidad_baterias','cantidad_baterias_kit','lemo_pines'}
 TEXTOS |= {'baterias_conectores_fuente','baterias_conectores_notas'}
 NUMERICOS |= {'red_'+k for k in ('rtk_horizontal_mm','rtk_vertical_mm','rtk_ppm_h','rtk_ppm_v')}

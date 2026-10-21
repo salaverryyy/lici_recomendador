@@ -95,7 +95,7 @@ class SolucionesTests(unittest.TestCase):
         with patch('app.routers.ia.recommend_gnss',return_value={'resultados':results}), patch('app.routers.ia.software_catalog',return_value=ROWS):
             result=_recommend_workflow(parsed,AIRequest(mensaje='Lista de todos los GNSS con USB C'),[r['equipo'] for r in results])
         self.assertEqual([r['equipo']['id_equipo'] for r in result['ranking']['resultados']],['USB'])
-        self.assertIn('1 modelos con USB-C confirmado',result['respuesta'])
+        self.assertIn('1 modelos que cumplen USB-C',result['respuesta'])
 
     def test_controller_failure_affects_complete_proposal(self):
         ctrl=self.equipment('SC260',category='Controladora')

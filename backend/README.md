@@ -46,6 +46,13 @@ Licitex no impone un límite propio de consultas. Si el modelo principal agota s
 cuota o queda temporalmente indisponible, prueba los modelos de respaldo configurados
 antes de mostrar el código de error devuelto por Gemini.
 
+El asistente acepta `imagenes` (máximo tres JPG/PNG/WebP estáticas, 1 MB cada una
+y 2.4 MB combinadas) con `nombre`, `mime_type` y `data` Base64. El contenido se
+valida y se envía a Gemini como imagen, sin almacenar archivos. La respuesta
+incluye `lectura_imagenes` con transcripción y dudas por página. Consultar
+`docs/comercial/README.md` para configuraciones bajo pedido, adaptador USB-C,
+auditoría de módem/SIM y precios orientativos.
+
 Las respuestas se solicitan con un esquema JSON y se leen todos los fragmentos
 de texto de salida. Si Gemini trunca una respuesta, se reintenta con mayor
 presupuesto de salida; si sigue siendo inválida, se prueban los respaldos y se

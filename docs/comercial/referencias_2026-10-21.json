@@ -1,0 +1,340 @@
+[
+  {
+    "id_equipo": "GNSS-CHCNAV-I73PLUS",
+    "modelo": "i73+",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://chcnav.com/dam/jcr%3A00ee4b28-4f64-49a8-8eaa-14cdc03ff129/i73%2B_DS_EN.pdf",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2PLUS",
+    "modelo": "Reach RS2+",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://emlid.com/reachrs2plus/",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I50",
+    "modelo": "i50",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://chcnav.com/uploads/i50_DS_EN.pdf",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2",
+    "modelo": "Reach RS2",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://docs.emlid.com/reachrs2/specifications/specs/",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS16",
+    "modelo": "GS16",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://leica-geosystems.com/products/gnss-systems/smart-antennas/leica-viva-gs16",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-SFAIRA-ONE-PLUS",
+    "modelo": "Sfaira ONE Plus",
+    "precio_usd": 1871.99,
+    "comparable": true,
+    "fuente_url": "https://checkout.metricop.com/products/sfaira-one-plus-gnss-receiver",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Referencia minorista de un receptor nuevo, precio público USD del distribuidor Metricop. No es cotización Cotecmi ni costo puesto en Perú. Confirmar versión, impuestos, envío, garantía, licencias y accesorios; no incluye adaptador ni ampliación de memoria.",
+    "estado": "referencia_publica"
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T300PLUS",
+    "modelo": "T300+",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://www.geo-st.ru/catalogue/gps_glonass_oborudovanie/",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Referencia publicada en rublos por GeoStandard; no se convierte a USD ni participa en desempates de precio. Revisiones, impuestos y configuración regional pueden variar. No es cotización Cotecmi ni costo importado a Perú.",
+    "estado": "otra_moneda",
+    "precio_origen": 180000,
+    "moneda_origen": "RUB"
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I73",
+    "modelo": "i73",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://geospatial.chcnav.com/",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-Z1",
+    "modelo": "Z1",
+    "precio_usd": 1708,
+    "comparable": true,
+    "fuente_url": "https://www.gnss-vevo.hu/en/page/gnss-land-surveying-solution",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Precio neto publicado en USD por GNSS-vevo de un receptor Z1. No es cotización Cotecmi; confirmar impuestos, configuración, envío y garantía.",
+    "estado": "referencia_publica"
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R8S",
+    "modelo": "R8s",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://help.fieldsystems.trimble.com/trimble-access/latest/en/equipment-supported.htm",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18T",
+    "modelo": "GS18 T",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://leica-geosystems.com/products/gnss-systems/smart-antennas/leica-gs18-t",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18",
+    "modelo": "GS18I",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://leica-geosystems.com/products/gnss-systems/smart-antennas/leica-gs18-i",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS10",
+    "modelo": "Viva GS10",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://leica-geosystems.com/-/media/files/leicageosystems/products/brochures/leica_viva_gs10_25_bro.ashx?la=en",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-ORION-ONE",
+    "modelo": "Orion ONE",
+    "precio_usd": 3528.99,
+    "comparable": true,
+    "fuente_url": "https://checkout.metricop.com/products/singular-orion-one-visual-laser-gnss-receiver",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Referencia minorista de un receptor nuevo, precio público USD del distribuidor Metricop. No es cotización Cotecmi ni costo puesto en Perú. Confirmar versión, impuestos, envío, garantía, licencias y accesorios; no incluye adaptador ni ampliación de memoria.",
+    "estado": "referencia_publica"
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-P6H",
+    "modelo": "P6H Portátil",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://www.geo-st.ru/catalogue/gps_glonass_oborudovanie/",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Referencia publicada en rublos por GeoStandard; no se convierte a USD ni participa en desempates de precio. Revisiones, impuestos y configuración regional pueden variar. No es cotización Cotecmi ni costo importado a Perú.",
+    "estado": "otra_moneda",
+    "precio_origen": 141000,
+    "moneda_origen": "RUB"
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-X1",
+    "modelo": "X1",
+    "precio_usd": 2897.99,
+    "comparable": true,
+    "fuente_url": "https://checkout.metricop.com/products/singular-x1-gnss-receiver",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Referencia minorista de un receptor nuevo, precio público USD del distribuidor Metricop. No es cotización Cotecmi ni costo puesto en Perú. Confirmar versión, impuestos, envío, garantía, licencias y accesorios; no incluye adaptador ni ampliación de memoria.",
+    "estado": "referencia_publica"
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-JUPITER",
+    "modelo": "Jupiter Laser RTK",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://www.geo-st.ru/catalogue/gps_glonass_oborudovanie/",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Referencia publicada en rublos por GeoStandard; no se convierte a USD ni participa en desempates de precio. Revisiones, impuestos y configuración regional pueden variar. No es cotización Cotecmi ni costo importado a Perú.",
+    "estado": "otra_moneda",
+    "precio_origen": 420000,
+    "moneda_origen": "RUB"
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-MARS-PRO",
+    "modelo": "Mars Pro Laser RTK",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://www.comnavtech.com/product/receiver/marpro.html",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I93",
+    "modelo": "i93",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://geospatial.chcnav.com/",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS3",
+    "modelo": "Reach RS3",
+    "precio_usd": 2999,
+    "comparable": true,
+    "fuente_url": "https://emlid.com/reachrs3/",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Precio oficial publicado en USD de un receptor RS3 nuevo con accesorios estándar. No es cotización Cotecmi ni costo final en Perú; confirmar impuestos, envío, servicios y alcance de garantía.",
+    "estado": "referencia_publica"
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T20",
+    "modelo": "T20 Palm RTK",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://comnavtech.com/product/receiver/t20.html",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-SOUTH-G1",
+    "modelo": "Galaxy G1",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://www.southinstrument.com/company/details/id/77.html",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS25",
+    "modelo": "Viva GS25",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://leica-geosystems.com/-/media/files/leicageosystems/products/brochures/leica_viva_gs10_25_bro.ashx?la=en",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R12I",
+    "modelo": "R12i",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://help.fieldsystems.trimble.com/trimble-access/latest/en/equipment-supported.htm",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-X1-LITE",
+    "modelo": "X1 Lite",
+    "precio_usd": 2014.99,
+    "comparable": true,
+    "fuente_url": "https://checkout.metricop.com/products/singular-x1-lite-gnss-receiver",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Referencia minorista de un receptor nuevo, precio público USD del distribuidor Metricop. No es cotización Cotecmi ni costo puesto en Perú. Confirmar versión, impuestos, envío, garantía, licencias y accesorios; no incluye adaptador ni ampliación de memoria.",
+    "estado": "referencia_publica"
+  },
+  {
+    "id_equipo": "GNSS-SOUTH-G6",
+    "modelo": "Galaxy G6",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://www.southinstrument.com/company/details/id/77.html",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "SINOGNSS-R80",
+    "modelo": "R80",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://www.comnavtech.com/fr/product/handhold/R80.html",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "SLAM-GEXCEL-HERON-LITE",
+    "modelo": "HERON LITE",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://heron.gexcel.it/en/gexcel-solutions-for-3d-surveying/heron-portable-3d-mapping-systems/heron-lite/",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "SLAM-SINGULARXYZ-H2",
+    "modelo": "H2",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://singularxyz.com/product_detail/H2_Scanner",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "SINOGNSS-R60",
+    "modelo": "R60",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://www.comnavtech.com/fr/product/handhold/R60.html",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "SLAM-SINOGNSS-LS600",
+    "modelo": "LS600",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://www.comnavtech.com/product/3d/LS600.html",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "SINGULARXYZ-SC260",
+    "modelo": "SC260",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://www.singularxyz.com/product_detail/SC260",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
+    "estado": "cotizar"
+  },
+  {
+    "id_equipo": "SLAM-SINGULARXYZ-H1",
+    "modelo": "H1",
+    "precio_usd": null,
+    "comparable": false,
+    "fuente_url": "https://singularxyz.it/",
+    "fecha_consulta": "2026-10-21",
+    "alcance": "Referencia minorista H1 de SingularXYZ Italia en EUR. No se convierte a USD ni se mezcla con precios de kits o equipos usados; configuración, software e impuestos por confirmar.",
+    "estado": "otra_moneda",
+    "precio_origen": 8400,
+    "moneda_origen": "EUR"
+  }
+]

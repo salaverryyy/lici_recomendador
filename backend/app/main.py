@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.responses import JSONResponse
 import os
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles
@@ -21,6 +24,14 @@ from .routers.software import router as software_router
 
 
 app = FastAPI(title="Licitex API")
+
+
+@app.exception_handler(RequestValidationError)
+async def request_validation(request, exc):
+    if request.url.path == '/api/ia/recomendar':
+        # No devolver Base64 de documentos en los errores de validación.
+        return JSONResponse(status_code=422,content={'detail':[{'loc':list(error['loc']),'msg':error['msg'],'type':error['type']} for error in exc.errors()]})
+    return await request_validation_exception_handler(request,exc)
 app.include_router(software_router)
 
 

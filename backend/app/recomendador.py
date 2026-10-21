@@ -14,6 +14,7 @@ class Preferencias(BaseModel):
     actualizacion_min_hz: float | None = Field(default=None, ge=0)
     usb: bool | None = None
     usb_c: bool | None = None
+    usb_c_nativo: bool = False
     rs232: bool | None = None
     red_rtk_horizontal_max_mm: float | None = Field(default=None, ge=0)
     red_rtk_vertical_max_mm: float | None = Field(default=None, ge=0)
@@ -231,6 +232,8 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
         memoria_no_interna = False
         requiere_ampliacion = False
         tipo_ampliacion = None
+        opcion_interna = False
+        requiere_adaptador = False
 
         # Los límites térmicos se evalúan por cumplimiento, sin dividir valores
         # Celsius negativos. Si se necesita cámara, aplicar su rango restringido.
@@ -261,6 +264,14 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
                 factor = float(cumple)
 
         elif criterio.modo == "booleano":
+            if criterio.clave == 'usb_c' and valor is not True and not preferencias.usb_c_nativo and datos.get('usb_c_con_adaptador') is True:
+                valor = True
+                requiere_adaptador = True
+                observacion = 'Cumple con adaptador LEMO de 7 pines a USB-C de carga y datos declarado por Cotecmi. Debe incluirse y verificarse para el modelo ofertado; no es un puerto USB-C nativo.'
+            if criterio.clave == 'lte_4g':
+                if valor is True and datos.get('sim_fisica') is not True:
+                    valor = False if datos.get('sim_fisica') is False else None
+                observacion = datos.get('conectividad_nota') or 'Se exige módem LTE propio y ranura física SIM en este equipo; no basta el internet compartido.'
             if valor is not None:
                 estado = "cumple" if valor is True else "incumple"
                 factor = 1.0 if estado == "cumple" else 0.0
@@ -271,18 +282,29 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
                 if datos.get('memoria_expandible') is True and datos.get('memoria_expandida_max_gb') is not None:
                     opciones.append((datos['memoria_expandida_max_gb'], 'extension'))
                 if datos.get('memoria_opcional_fabrica_max_gb') is not None:
-                    opciones.append((datos['memoria_opcional_fabrica_max_gb'], 'opcion_fabrica'))
-                if not preferencias.memoria_solo_fabrica and opciones and (valor is None or valor < pedido):
+                    opciones.insert(0,(datos['memoria_opcional_fabrica_max_gb'], 'opcion_fabrica'))
+                if preferencias.memoria_solo_fabrica:
+                    opciones = [(datos['memoria_interna_opcional_max_gb'], 'opcion_fabrica')] if datos.get('memoria_interna_opcional_max_gb') is not None else []
+                internas=datos.get('memoria_interna_opciones_gb')
+                if isinstance(internas,list) and internas:
+                    validas=[v for v in internas if isinstance(v,(int,float)) and not isinstance(v,bool) and v>=pedido]
+                    if validas:
+                        # Elegir la configuración mínima suficiente publicada,
+                        # en lugar de pedir 32 GB cuando bastan los 8 GB ofrecidos.
+                        opciones=[(min(validas),'opcion_fabrica')]
+                if opciones and (valor is None or valor < pedido):
                     ampliada, tipo = max(opciones, key=lambda item: item[0])
                     if valor is None or ampliada > valor:
                         valor = ampliada
                         requiere_ampliacion = True
                         tipo_ampliacion = tipo
-                        condicion = 'configuración opcional de fábrica' if tipo == 'opcion_fabrica' else 'ampliación'
+                        opcion_interna = tipo == 'opcion_fabrica' and datos.get('memoria_interna_opcional_max_gb') is not None and ampliada <= datos['memoria_interna_opcional_max_gb']
+                        condicion = ('configuración interna de fábrica bajo pedido' if opcion_interna else 'configuración opcional de fábrica') if tipo == 'opcion_fabrica' else 'ampliación'
                         observacion = f"Memoria estándar: {memoria_fabrica if memoria_fabrica is not None else 'sin datos'} GB; con {condicion}: {ampliada} GB. Debe incluirse y verificarse en la oferta; no se presume instalada."
                 if preferencias.memoria_solo_fabrica:
-                    observacion = "Se evalúa solo la memoria declarada de fábrica; no se acepta ampliación para cubrir el mínimo interno exigido."
-                    memoria_no_interna = datos.get('memoria_es_interna') is False
+                    if not requiere_ampliacion:
+                        observacion = "Se evalúa memoria interna, incluida configuración interna de fábrica bajo pedido cuando está documentada. Las tarjetas externas no cubren el mínimo."
+                    memoria_no_interna = datos.get('memoria_es_interna') is False and not requiere_ampliacion
                     if memoria_no_interna:
                         observacion = "La capacidad declarada corresponde a tarjeta extraíble, no a memoria interna instalada."
             if valor is not None:
@@ -344,6 +366,8 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
             "observacion": observacion,
             "requiere_ampliacion": requiere_ampliacion,
             "tipo_ampliacion": tipo_ampliacion,
+            "opcion_interna": opcion_interna,
+            "requiere_adaptador": requiere_adaptador,
             "memoria_fabrica_gb": memoria_fabrica if criterio.clave == "memoria" else None,
             "factor": round(factor, 4),
             "peso": peso,

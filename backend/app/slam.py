@@ -40,6 +40,9 @@ FIELDS = [
     ("almacenamiento_gb", "Almacenamiento interno", "number", "GB", "min"),
     ("almacenamiento_expandible", "Almacenamiento ampliable por el usuario", "boolean", "", "yes"),
     ("usb_c", "USB-C", "boolean", "", "yes"),
+    ("lte_4g", "4G LTE integrado con SIM", "boolean", "", "yes"),
+    ("sim_fisica", "Ranura SIM física", "boolean", "", "yes"),
+    ("conectividad_nota", "Condiciones LTE/SIM", "text", "", None),
     ("wifi", "Wi-Fi", "boolean", "", "yes"),
     ("bluetooth", "Bluetooth", "boolean", "", "yes"),
     ("software_adquisicion_incluido", "Software de adquisición incluido", "boolean", "", "yes"),
@@ -152,6 +155,8 @@ def evaluate(data: dict, requirements: dict) -> dict:
             continue
         meta = META[key]
         actual = data.get(key)
+        if key=='lte_4g' and actual is True and data.get('sim_fisica') is not True:
+            actual = False if data.get('sim_fisica') is False else None
         if actual is None:
             state = "sin_datos"
         else:

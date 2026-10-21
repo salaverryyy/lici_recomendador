@@ -31,6 +31,8 @@ FIELDS = [
     ('camara_mp','Cámara trasera','number','MP', 'min'),
     ('autofocus','Autoenfoque','boolean','', 'yes'),
     ('lte_4g','4G LTE','boolean','', 'yes'),
+    ('sim_fisica','Ranura SIM física','boolean','', 'yes'),
+    ('conectividad_nota','Condiciones LTE/SIM','text','', None),
     ('bluetooth','Bluetooth','boolean','', 'yes'),
     ('bluetooth_version','Versión Bluetooth','text','', 'exact'),
     ('wifi','Wi-Fi','boolean','', 'yes'),
@@ -113,6 +115,8 @@ def evaluate(data, requirements):
         if requested is None or requested == '' or requested is False:
             continue
         meta, actual = META[key], data.get(key)
+        if key=='lte_4g' and actual is True and data.get('sim_fisica') is not True:
+            actual = False if data.get('sim_fisica') is False else None
         if actual is None:
             state = 'sin_datos'
         else:
@@ -121,7 +125,7 @@ def evaluate(data, requirements):
                      else actual is True if mode == 'yes' else canonical(key, actual) == canonical(key, requested))
             state = 'cumple' if meets else 'no_cumple'
         detail.append({'clave':key,'nombre':meta['nombre'],'unidad':meta['unidad'],
-                       'requerido':requested,'valor':actual,'estado':state})
+                       'requerido':requested,'valor':actual,'estado':state,'observacion':data.get('conectividad_nota') if key=='lte_4g' else None})
     count = sum(d['estado']=='cumple' for d in detail)
     return {'porcentaje':round(100*count/len(detail),2) if detail else None,
             'cumplimientos':count,'sin_datos':sum(d['estado']=='sin_datos' for d in detail),'detalle':detail}

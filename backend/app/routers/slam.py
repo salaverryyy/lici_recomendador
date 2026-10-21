@@ -7,6 +7,7 @@ from ..cotecmi import es_cotecmi
 from ..db import connect
 from ..slam import META, available_options, evaluate, validate
 from .recomendar import ordenar_resultados, limitar_con_empates
+from ..comercial import enriquecer
 
 
 router = APIRouter(prefix="/api", tags=["escáneres SLAM"])
@@ -73,7 +74,7 @@ def recommend(values: Requirements):
     try:
         with connect() as conn, conn.cursor() as cur:
             cur.execute("""
-                SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.imagen_url,e.anio_modelo,to_jsonb(s) AS datos
+                SELECT e.id_equipo,e.marca,e.modelo,e.categoria,COALESCE(NULLIF(e.imagen_url,''),(SELECT a.url FROM equipo_archivos a WHERE a.id_equipo=e.id_equipo AND a.tipo='foto' ORDER BY a.orden,a.id LIMIT 1)) AS imagen_url,e.anio_modelo,to_jsonb(s) AS datos
                 FROM equipos e LEFT JOIN slam_especificaciones s USING(id_equipo)
                 WHERE e.publicado AND e.categoria='Escáner SLAM'
             """)
@@ -82,7 +83,7 @@ def recommend(values: Requirements):
                 if values.solo_cotecmi and not es_cotecmi(row["marca"]):
                     continue
                 data = row.pop("datos") or {}
-                results.append({"equipo": row, **evaluate(data, selected)})
+                results.append({"equipo": enriquecer(row), **evaluate(data, selected)})
         ordenar_resultados(results)
         return {
             "resultados": limitar_con_empates(results, values.top_n),

@@ -27,7 +27,9 @@ Capacidades opcionales de fábrica (`memoria_opcional_fabrica_max_gb`) se muestr
 separadas de una expansión posterior. Para un mínimo genérico también pueden
 dar todos los puntos, con la condición visible «Cumple con configuración opcional
 de fábrica»: la oferta debe incluir esa configuración. No se presume instalada
-ni se permite con `memoria_solo_fabrica=true`. T300+: 8 GB estándar y
+ni cubre `memoria_solo_fabrica=true` salvo que la opción interna de fábrica esté
+documentada por separado. Jupiter dispone de ese dato; ver auditoría comercial
+del 21-10-2026. T300+: 8 GB estándar y
 16/32 GB al ordenar. P6H: ROM opcional y MicroSD son dos vías diferentes.
 Jupiter: 4 GB estándar y ampliable hasta 32 GB. Orion/X1/X1 Lite: 8 GB y hasta 32 GB.
 i93 revisión March 2026: 32 GB y expansión externa 128 GB.
@@ -55,8 +57,10 @@ RS3 tiene LoRa 868/915 MHz Tx/Rx y UHF 410–470 MHz solo Rx con antena opcional
 Se añadió ese rango al catálogo; el criterio Tx/Rx puede cumplirse mediante LoRa,
 por lo que debe revisarse el modo por banda para una licitación específica.
 i73 revisión August 2020 declara UHF interna solo Rx. i73+ declara Tx/Rx con 0.5/1 W.
-Jupiter no declara LTE integrado en el brochure aportado; no se asigna el 4G de la
-controladora al receptor. Las licencias, versiones regionales y actualizaciones de
+El brochure aportado de Jupiter no declara LTE del receptor; la revisión del
+manual oficial incorporada el 21-10-2026 sí describe SIM y red 4G internas, sin
+atribuirle el módem de la controladora. Ver `comercial/lte_sim_2026-10-21.json`.
+Las licencias, versiones regionales y actualizaciones de
 firmware indicadas en las fichas se conservan en las notas y necesitan verificación.
 
 Los nuevos pesos son provisionales y se ajustan desde administración.

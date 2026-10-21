@@ -1,14 +1,25 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { Bot, MessageSquareText, Plus, Send, Trash2 } from "lucide-react";
+import {
+  Bot,
+  MessageSquareText,
+  Plus,
+  Send,
+  Trash2,
+  Paperclip,
+  X,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { api } from "./api";
 import { usePersistentState } from "./persist";
 import { SoftwareCard } from "./software";
+import { prepareImage, type AiImage } from "./ai-images";
+import { nextExamples } from "./ai-examples";
 import {
   ORDER_NOTE,
   ModelYear,
   ExpansionNotice,
   complianceLabel,
+  PriceReference,
 } from "./ranking-notes";
 
 type Context = {
@@ -24,6 +35,7 @@ type Message = {
   role: "user" | "assistant";
   text: string;
   data?: any;
+  adjuntos?: string[];
 };
 type Chat = {
   id: string;
@@ -111,6 +123,17 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
             : "Opción"}
         </span>
         <Link to={`/equipos/${result.equipo.id_equipo}`}>
+          {result.equipo.imagen_url && (
+            <img
+              className="ai-equipment-thumb"
+              src={result.equipo.imagen_url}
+              alt=""
+              loading="lazy"
+              onError={(event) => {
+                event.currentTarget.style.display = "none";
+              }}
+            />
+          )}
           <h3>
             {result.equipo.marca} {result.equipo.modelo}
           </h3>
@@ -122,6 +145,7 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
         </strong>
       </div>
       <ModelYear equipment={result.equipo} />
+      <PriceReference equipment={result.equipo} />
       {result.porcentaje != null && (
         <progress max={100} value={result.porcentaje} />
       )}
@@ -197,6 +221,29 @@ function AssistantAnswer({
           <strong>Interpretación:</strong> <BoldText text={data.resumen} />
         </p>
       )}
+      {!!data?.lectura_imagenes?.length && (
+        <details className="notice">
+          <summary>
+            Texto leído de las imágenes · revisar antes de ofertar
+          </summary>
+          {data.lectura_imagenes.map((reading: any) => (
+            <section key={reading.indice}>
+              <strong>Imagen {reading.indice}</strong>
+              <p style={{ whiteSpace: "pre-wrap" }}>
+                {reading.texto ||
+                  "No se pudo leer texto con suficiente claridad."}
+              </p>
+              {reading.dudas?.length > 0 && (
+                <ul>
+                  {reading.dudas.map((d: string, i: number) => (
+                    <li key={i}>Verificar: {d}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </details>
+      )}
       {data?.requisitos && (
         <div className="ai-requirements">
           {Object.entries(data.requisitos).map(([key, value]) => (
@@ -234,8 +281,10 @@ function AssistantAnswer({
         </div>
       )}
       {!!data?.solucion?.opciones?.length && (
-        <section className="ai-ranking">
-          <h3>Propuestas del conjunto</h3>
+        <details className="ai-ranking ai-result-group" open>
+          <summary>
+            Propuestas del conjunto · {data.solucion.opciones.length} opciones
+          </summary>
           <p className="muted small-text">{data.solucion.nota}</p>
           {data.solucion.opciones.map((option: any, index: number) => (
             <details
@@ -319,20 +368,26 @@ function AssistantAnswer({
               </ul>
             </details>
           ))}
-        </section>
+        </details>
       )}
-      {data.tipo_equipo === "software" &&
-        !data?.solucion?.opciones?.length &&
-        data?.rankings?.software?.resultados?.map((r: any) => (
-          <SoftwareCard
-            key={r.software.id_software}
-            software={r.software}
-            evaluation={r}
-          />
-        ))}
+      {data.tipo_equipo === "software" && !data?.solucion?.opciones?.length && (
+        <details className="ai-result-group" open>
+          <summary>
+            Software de procesamiento ·{" "}
+            {data?.rankings?.software?.resultados?.length || 0} opciones
+          </summary>
+          {data?.rankings?.software?.resultados?.map((r: any) => (
+            <SoftwareCard
+              key={r.software.id_software}
+              software={r.software}
+              evaluation={r}
+            />
+          ))}
+        </details>
+      )}
       {results.length > 0 && !data?.solucion?.opciones?.length && (
-        <div className="ai-ranking">
-          <h3>Equipos recomendados</h3>
+        <details className="ai-ranking ai-result-group" open>
+          <summary>Equipos recomendados · {results.length} opciones</summary>
           <p className="muted small-text">
             Se muestran hasta 20 equipos, incluyendo todos los empatados en el
             último puesto. Las funciones no solicitadas no suman puntos.
@@ -354,7 +409,7 @@ function AssistantAnswer({
               )}
             </div>
           ))}
-        </div>
+        </details>
       )}
       {data?.uso && (
         <p className="muted ai-usage">
@@ -463,11 +518,18 @@ export function AiAdvisor() {
   const chats = useMemo(() => cleanChats(storedChats), [storedChats]);
   const [activeId, setActiveId] = usePersistentState<string>(ACTIVE_KEY, "");
   const [message, setMessage] = useState("");
+  const [examples, setExamples] = useState<string[]>([]);
+  const [images, setImages] = useState<AiImage[]>([]);
+  const [preparingImages, setPreparingImages] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [availability, setAvailability] = useState<any>(null);
   const initializedEmptyHistory = useRef(false);
   const active = chats.find((chat) => chat.id === activeId) || chats[0];
+  useEffect(() => {
+    if (active && !active.messages.length) setExamples(nextExamples());
+  }, [active?.id]);
 
   useEffect(() => {
     if (!chats.length && !initializedEmptyHistory.current) {
@@ -504,6 +566,7 @@ export function AiAdvisor() {
     setChats((previous) => [chat, ...cleanChats(previous)]);
     setActiveId(chat.id);
     setMessage("");
+    setImages([]);
     setError("");
     return chat;
   }
@@ -532,12 +595,48 @@ export function AiAdvisor() {
     }
   }
 
+  async function addImages(files: File[]) {
+    if (busy || preparingImages) return;
+    if (images.length + files.length > 3) {
+      setError("Puedes adjuntar hasta 3 imágenes por mensaje.");
+      return;
+    }
+    setPreparingImages(true);
+    setError("");
+    try {
+      const next = [...images, ...(await Promise.all(files.map(prepareImage)))];
+      if (
+        next.reduce((sum, image) => sum + (image.data.length * 3) / 4, 0) >
+        2_400_000
+      )
+        throw new Error(
+          "Las imágenes superan 2.4 MB en total. Envía menos páginas por mensaje.",
+        );
+      setImages(next);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setPreparingImages(false);
+      if (fileInput.current) fileInput.current.value = "";
+    }
+  }
+
   async function send(event: FormEvent) {
     event.preventDefault();
-    const text = message.trim();
-    if (!text || busy) return;
+    const text =
+      message.trim() ||
+      (images.length
+        ? "Interpreta los requisitos técnicos de estas imágenes y recomienda con el catálogo. Señala todo dato dudoso para verificar."
+        : "");
+    if (!text || busy || preparingImages) return;
+    const attachments = images;
     const current = active || createChat();
-    const userMessage: Message = { id: id(), role: "user", text };
+    const userMessage: Message = {
+      id: id(),
+      role: "user",
+      text,
+      adjuntos: attachments.map((image) => image.nombre),
+    };
     const pending: Chat = {
       ...current,
       title: current.messages.length ? current.title : titleFor(text),
@@ -546,6 +645,7 @@ export function AiAdvisor() {
     };
     updateChat(pending);
     setMessage("");
+    setImages([]);
     setBusy(true);
     setError("");
     try {
@@ -556,11 +656,15 @@ export function AiAdvisor() {
         top_n: 20,
         contexto_previo: pending.context || undefined,
         historial: historyFor(current.messages),
+        imagenes: attachments,
       });
       const assistant: Message = {
         id: id(),
         role: "assistant",
-        text: data.respuesta || data.mensaje,
+        text: [
+          data.respuesta || data.mensaje,
+          ...(data.lectura_imagenes || []).map((reading: any) => reading.texto),
+        ].join("\n"),
         data,
       };
       const completed: Chat = {
@@ -577,6 +681,7 @@ export function AiAdvisor() {
         messages: [...pending.messages, assistant],
       };
       updateChat(completed);
+      if (data.estado !== "ok") setImages(attachments);
       if (data.estado === "ok") setAvailability({ disponible: true });
       else if (
         !["respuesta_invalida", "respuesta_truncada"].includes(data.motivo)
@@ -584,6 +689,7 @@ export function AiAdvisor() {
         setAvailability({ disponible: false, ...data });
     } catch (e) {
       setError((e as Error).message);
+      setImages(attachments);
     } finally {
       setBusy(false);
     }
@@ -624,7 +730,12 @@ export function AiAdvisor() {
 
       <div className="ai-shell">
         <aside className="ai-history panel">
-          <button type="button" className="full" onClick={createChat}>
+          <button
+            type="button"
+            className="full"
+            onClick={createChat}
+            disabled={busy || preparingImages}
+          >
             <Plus size={16} /> Nueva consulta
           </button>
           <p className="muted small-text">
@@ -654,6 +765,7 @@ export function AiAdvisor() {
                 <button
                   type="button"
                   className="ai-chat-select"
+                  disabled={busy || preparingImages}
                   onClick={() => setActiveId(chat.id)}
                 >
                   <MessageSquareText size={15} />
@@ -663,6 +775,7 @@ export function AiAdvisor() {
                   type="button"
                   className="icon"
                   aria-label={`Eliminar ${chat.title}`}
+                  disabled={busy || preparingImages}
                   onClick={() => removeChat(chat.id)}
                 >
                   <Trash2 size={14} />
@@ -730,9 +843,28 @@ export function AiAdvisor() {
                 <Bot size={38} />
                 <h2>¿Qué equipo necesitas?</h2>
                 <p>
-                  Por ejemplo: “Busco un escáner SLAM para una mina, con 70 m de
-                  alcance, colorización y al menos 200 000 puntos/s”.
+                  Puedes describir tu trabajo, comparar opciones o adjuntar una
+                  licitación.
                 </p>
+                <div className="ai-examples">
+                  {examples.map((example) => (
+                    <button
+                      key={example}
+                      type="button"
+                      className="outline"
+                      onClick={() => setMessage(example)}
+                    >
+                      {example}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className="outline"
+                  onClick={() => setExamples(nextExamples())}
+                >
+                  Ver otros ejemplos
+                </button>
               </div>
             )}
             {active?.messages.map((item) => (
@@ -762,6 +894,12 @@ export function AiAdvisor() {
                 ) : (
                   <p>
                     <BoldText text={item.text} />
+                    {!!item.adjuntos?.length && (
+                      <small className="muted">
+                        {" "}
+                        · Adjuntos: {item.adjuntos.join(", ")}
+                      </small>
+                    )}
                   </p>
                 )}
               </article>
@@ -782,7 +920,62 @@ export function AiAdvisor() {
               {error}
             </div>
           )}
-          <form className="ai-composer" onSubmit={send}>
+          <form
+            className="ai-composer"
+            onSubmit={send}
+            onPaste={(event) => {
+              const files = Array.from(event.clipboardData.files).filter(
+                (file) => file.type.startsWith("image/"),
+              );
+              if (files.length) {
+                event.preventDefault();
+                void addImages(files);
+              }
+            }}
+          >
+            <input
+              ref={fileInput}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              hidden
+              aria-label="Adjuntar imágenes de licitación"
+              onChange={(event) =>
+                void addImages(Array.from(event.target.files || []))
+              }
+            />
+            <button
+              type="button"
+              className="outline"
+              disabled={busy || preparingImages || images.length >= 3}
+              onClick={() => fileInput.current?.click()}
+            >
+              <Paperclip size={16} />{" "}
+              {preparingImages ? "Preparando imágenes…" : "Adjuntar imágenes"}
+            </button>
+            {!!images.length && (
+              <div className="ai-attachments">
+                {images.map((image, index) => (
+                  <div key={index}>
+                    <img
+                      src={`data:${image.mime_type};base64,${image.data}`}
+                      alt={`Vista previa de ${image.nombre}`}
+                    />
+                    <span>{image.nombre}</span>
+                    <button
+                      type="button"
+                      className="icon"
+                      aria-label={`Quitar imagen ${index + 1}`}
+                      onClick={() =>
+                        setImages(images.filter((_, i) => i !== index))
+                      }
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
             <textarea
               value={message}
               maxLength={6000}
@@ -791,11 +984,22 @@ export function AiAdvisor() {
               aria-label="Consulta para Lici"
             />
             <button
-              disabled={busy || !message.trim() || !availability?.disponible}
+              disabled={
+                busy ||
+                preparingImages ||
+                (!message.trim() && !images.length) ||
+                !availability?.disponible
+              }
             >
               <Send size={16} /> Enviar
             </button>
           </form>
+          <p className="muted small-text">
+            Puedes adjuntar o pegar hasta 3 imágenes JPG, PNG o WebP. Revisa la
+            transcripción y los datos dudosos. Las imágenes se envían al
+            proveedor de IA para interpretarlas; en el historial quedan sus
+            nombres y la lectura obtenida.
+          </p>
           <p className="muted small-text">
             La IA interpreta el texto; la puntuación se calcula con los datos
             técnicos recuperados de Licitex. La memoria del chat permanece en

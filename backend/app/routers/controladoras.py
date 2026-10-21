@@ -6,6 +6,7 @@ from ..db import connect
 from ..cotecmi import es_cotecmi
 from ..controladoras import META, validate, evaluate, available_options
 from .recomendar import ordenar_resultados, limitar_con_empates
+from ..comercial import enriquecer
 
 router = APIRouter(prefix='/api', tags=['controladoras'])
 
@@ -57,13 +58,13 @@ def recommend(values: Requirements):
         raise HTTPException(422,'Completa al menos un requisito; No significa que no se necesita.')
     try:
         with connect() as conn, conn.cursor() as cur:
-            cur.execute("SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.imagen_url,e.anio_modelo,to_jsonb(c) AS datos FROM equipos e LEFT JOIN controladora_especificaciones c USING(id_equipo) WHERE e.publicado AND e.categoria='Controladora'")
+            cur.execute("SELECT e.id_equipo,e.marca,e.modelo,e.categoria,COALESCE(NULLIF(e.imagen_url,''),(SELECT a.url FROM equipo_archivos a WHERE a.id_equipo=e.id_equipo AND a.tipo='foto' ORDER BY a.orden,a.id LIMIT 1)) AS imagen_url,e.anio_modelo,to_jsonb(c) AS datos FROM equipos e LEFT JOIN controladora_especificaciones c USING(id_equipo) WHERE e.publicado AND e.categoria='Controladora'")
             results=[]
             for row in cur.fetchall():
                 if values.solo_cotecmi and not es_cotecmi(row['marca']):
                     continue
                 data=row.pop('datos') or {}
-                results.append({'equipo':row,**evaluate(data,selected)})
+                results.append({'equipo':enriquecer(row),**evaluate(data,selected)})
         ordenar_resultados(results)
         shown = limitar_con_empates(results, values.top_n)
         return {'resultados':shown,'mostrados':len(shown),'total_equipos':len(results),'pesos_provisionales':True}

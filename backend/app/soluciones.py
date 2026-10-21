@@ -4,7 +4,7 @@ from .orden_presentacion import clave_presentacion, NOTA_ORDEN
 
 
 def unscored(row):
-    return {'equipo': {k: row.get(k) for k in ('id_equipo','marca','modelo','categoria','anio_modelo')},
+    return {'equipo': {k: row.get(k) for k in ('id_equipo','marca','modelo','categoria','anio_modelo','imagen_url','referencia_precio')},
             'porcentaje': None, 'detalle': [], 'sin_datos': 0}
 
 
