@@ -1741,6 +1741,9 @@ function Editor() {
   const bools = new Set([
     "sim_fisica",
     "usb_c_con_adaptador",
+    "carga_usb_c",
+    "lemo_solo_datos",
+    "internet_compartido",
     "usb",
     "usb_c",
     "rs232",

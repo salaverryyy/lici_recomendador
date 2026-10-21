@@ -70,3 +70,22 @@ fábrica y la capacidad evaluada. Una exigencia explícita de memoria instalada
 mantiene `memoria_solo_fabrica=true`: acepta una opción interna de fábrica
 documentada bajo pedido, pero no tarjetas externas. Ver [configuraciones y
 auditoría SIM/LTE](comercial/README.md).
+
+## Corrección de carga y cobertura de requisitos
+
+LEMO y el adaptador USB-C ofrecido por Cotecmi son solo de archivos. USB-C para
+datos y carga por USB-C son criterios separados: el adaptador no satisface carga.
+La migración 29 guarda la corrección y sus fuentes. No se presume carga por tener
+un conector USB-C nativo.
+
+Si se permite LTE integrado o compartido, ambas vías se representan en un único
+criterio explícito, con condición visible cuando se depende de un enlace externo.
+Este flujo debe estar documentado; Bluetooth/Wi-Fi no lo acreditan solos. Exigir
+LTE integrado conserva la validación de módem y SIM propios.
+
+El respaldo de extracción cubre condiciones explícitas de carga, LTE, caída,
+vibración y RINEX 3.x. La aplicación común a receptores/colectoras se conserva
+cuando el documento lo dice, aceptando las alternativas IP expresas. Las señales,
+protocolos y certificaciones que aún no tienen evaluación suficiente quedan en
+revisión manual. Una familia requerida ausente cuenta como cero en el promedio del
+conjunto: no se elimina del denominador para favorecer una propuesta incompleta.

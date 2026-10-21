@@ -15,6 +15,7 @@ class Preferencias(BaseModel):
     usb: bool | None = None
     usb_c: bool | None = None
     usb_c_nativo: bool = False
+    carga_usb_c: bool | None = None
     rs232: bool | None = None
     red_rtk_horizontal_max_mm: float | None = Field(default=None, ge=0)
     red_rtk_vertical_max_mm: float | None = Field(default=None, ge=0)
@@ -37,6 +38,7 @@ class Preferencias(BaseModel):
     wifi: bool | None = None
     uhf_tx_rx_integrada: bool | None = None
     lte_4g: bool | None = None
+    lte_permite_compartido: bool = False
     radio_potencia_ajustable: bool | None = None
     radio_potencia_min_w: float | None = Field(default=None, ge=0)
     protocolo_multimarca: bool | None = None
@@ -127,6 +129,7 @@ CRITERIOS = (
     Criterio('inclinacion_imu_deg','inclinacion_imu_min_deg','inclinacion_imu_deg','Inclinación IMU admitida','°','minimo',4),
     Criterio('actualizacion_hz','actualizacion_min_hz','actualizacion_hz','Salida de posición GNSS','Hz','minimo',3),
     *(Criterio(k,k,k,n,None,'booleano',2) for k,n in [('usb','USB'),('usb_c','USB-C'),('rs232','RS-232')]),
+    Criterio('carga_usb_c','carga_usb_c','carga_usb_c','Carga de energía por USB-C',None,'booleano',4),
     Criterio('red_rtk_horizontal_mm','red_rtk_horizontal_max_mm','red_rtk_horizontal_mm','RTK en red horizontal','mm','maximo',6),
     Criterio('red_rtk_vertical_mm','red_rtk_vertical_max_mm','red_rtk_vertical_mm','RTK en red vertical','mm','maximo',6),
     Criterio('red_rtk_ppm_h','red_rtk_ppm_h_max','red_rtk_ppm_h','RTK en red horizontal','ppm','maximo',2),
@@ -234,6 +237,7 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
         tipo_ampliacion = None
         opcion_interna = False
         requiere_adaptador = False
+        requiere_enlace_compartido = False
 
         # Los límites térmicos se evalúan por cumplimiento, sin dividir valores
         # Celsius negativos. Si se necesita cámara, aplicar su rango restringido.
@@ -267,11 +271,26 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
             if criterio.clave == 'usb_c' and valor is not True and not preferencias.usb_c_nativo and datos.get('usb_c_con_adaptador') is True:
                 valor = True
                 requiere_adaptador = True
-                observacion = 'Cumple con adaptador LEMO de 7 pines a USB-C de carga y datos declarado por Cotecmi. Debe incluirse y verificarse para el modelo ofertado; no es un puerto USB-C nativo.'
+                observacion = 'Cumple transferencia de archivos con adaptador LEMO de 7 pines a USB-C. El conector LEMO y este adaptador son solo de datos: no cargan la batería. No es USB-C nativo; incluir el adaptador en la oferta.'
+            if criterio.clave == 'carga_usb_c':
+                if datos.get('lemo_solo_datos') is True and datos.get('usb_c') is not True:
+                    valor = False
+                observacion = ('El LEMO y su adaptador USB-C solo transfieren archivos; la batería extraíble se recarga por separado. No cumplen carga de energía por USB-C.'
+                               if valor is False and datos.get('lemo_solo_datos') is True else
+                               'La carga por USB-C se evalúa por separado del conector y la transferencia de datos; requiere respaldo específico.')
             if criterio.clave == 'lte_4g':
                 if valor is True and datos.get('sim_fisica') is not True:
                     valor = False if datos.get('sim_fisica') is False else None
                 observacion = datos.get('conectividad_nota') or 'Se exige módem LTE propio y ranura física SIM en este equipo; no basta el internet compartido.'
+                if preferencias.lte_permite_compartido:
+                    if valor is not True:
+                        shared = datos.get('internet_compartido')
+                        valor = True if shared is True else False if valor is False and shared is False else None
+                        requiere_enlace_compartido = valor is True
+                    observacion = ('Cumple mediante enlace compartido documentado: requiere teléfono/controladora con 4G/LTE y servicio de datos. No equivale a módem ni SIM propios del receptor.'
+                                   if requiere_enlace_compartido else 'Cumple por módem LTE y SIM propios del receptor; el pliego también admite enlace compartido documentado.' if valor is True else
+                                   'Se admite LTE integrado o enlace compartido. Falta confirmar una vía compatible; Bluetooth/Wi-Fi por sí solos no acreditan ese flujo.' if valor is None else
+                                   'No cumple ninguna de las vías admitidas: LTE integrado o enlace compartido.')
             if valor is not None:
                 estado = "cumple" if valor is True else "incumple"
                 factor = 1.0 if estado == "cumple" else 0.0
@@ -358,7 +377,7 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
         peso = pesos[criterio.clave]
         detalle.append({
             "clave": criterio.clave,
-            "nombre": criterio.nombre,
+            "nombre": '4G/LTE integrado o enlace compartido' if criterio.clave=='lte_4g' and preferencias.lte_permite_compartido else criterio.nombre,
             "unidad": criterio.unidad,
             "pedido": pedido,
             "valor_equipo": valor,
@@ -368,6 +387,7 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
             "tipo_ampliacion": tipo_ampliacion,
             "opcion_interna": opcion_interna,
             "requiere_adaptador": requiere_adaptador,
+            "requiere_enlace_compartido": requiere_enlace_compartido,
             "memoria_fabrica_gb": memoria_fabrica if criterio.clave == "memoria" else None,
             "factor": round(factor, 4),
             "peso": peso,

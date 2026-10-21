@@ -19,6 +19,7 @@ from .recomendador import CRITERIOS, Preferencias, criterios_seleccionados
 from .slam import META as SLAM_META, validate as validar_slam
 from .software import FIELDS as SOFTWARE_FIELDS, validate as validar_software
 from .comercial import sin_precios
+from .cobertura_texto import completar_explicitos
 
 
 def es_dialogo(message, intention):
@@ -332,7 +333,7 @@ def _post_gemini(prompt: str, requested_model: str | None = None, imagenes=None)
 def _gnss_catalog() -> dict:
     properties = Preferencias.model_json_schema()["properties"]
     allowed = {c.campo_input for c in CRITERIOS}
-    allowed.update({"ancho_max_mm", "alto_max_mm", "radio_max_mhz", "memoria_solo_fabrica", "usb_c_nativo"})
+    allowed.update({"ancho_max_mm", "alto_max_mm", "radio_max_mhz", "memoria_solo_fabrica", "usb_c_nativo", "lte_permite_compartido"})
     return {key: properties[key] for key in sorted(allowed) if key in properties}
 
 
@@ -467,8 +468,10 @@ Reglas:
 - No equipares soporte de una constelación con sus frecuencias específicas, USB-C
   con carga por USB-C, RINEX 3 con RINEX 2, ni protocolos de radio con RTCM/CMR.
   Las condiciones sin campo exacto deben figurar en omitidos para revisión manual.
-- Si el módem puede ser integrado O compartido, no exijas lte_4g integrado como
-  condición exclusiva. Si hay alternativas ambiguas como +60/+65 °C, conserva
+- Si el módem puede ser integrado O compartido, incluye lte_4g=true y
+  lte_permite_compartido=true. No omitas LTE ni preguntes de nuevo por esa alternativa
+  cuando ya está explícita. Si exige integrado, lte_permite_compartido=false.
+  Si hay alternativas ambiguas como +60/+65 °C, conserva
   la alternativa menos restrictiva explícita y pregunta cuál se exige.
 - Nunca afirmes cumplimiento total de la licitación. El porcentaje posterior
   solo cubre los criterios extraídos que el sistema puede evaluar.
@@ -495,12 +498,21 @@ Reglas:
 - Si exige un mínimo de memoria interna, aunque no diga «instalada», usa memoria_min_gb junto con
   memoria_solo_fabrica=true: una tarjeta externa no lo cubre, pero sí una
   configuración interna de fábrica bajo pedido documentada, indicando la condición.
-- USB-C genérico admite el adaptador de carga y datos confirmado en el catálogo,
-  con condición visible. Si exige expresamente puerto USB-C nativo/directo en el
+- USB-C para datos admite el adaptador LEMO de 7 pines, SOLO para archivos.
+  Ni el LEMO ni este adaptador cargan la batería: ésta se recarga por separado.
+  Si pide carga por USB-C, agrega carga_usb_c=true además de usb_c=true;
+  no equipares conector o transferencia de archivos con carga de energía.
+  Si exige expresamente puerto USB-C nativo/directo en el
   cuerpo del receptor, usa usb_c_nativo=true y no lo cubras con adaptadores.
 - LTE integrado requiere módem propio y ranura física SIM del equipo evaluado.
   No transfieras el LTE del teléfono/controladora al receptor ni confíes en la
   palabra «Leica 4G» de formatos RTK: no acredita un módem celular.
+- Extrae también caida_min_m, vibracion_norma y registro_rinex_3 cuando se exigen:
+  son campos GNSS disponibles. Para colectoras usa caida_m y sus campos de IP y
+  temperatura cuando el texto diga que se aplican a receptores Y colectoras.
+  No los omitas por no conocer el modelo ni copies automáticamente requisitos
+  exclusivos del receptor. Las condiciones de ensayo y normas sin campo de cada
+  familia deben quedar explícitas para revisión manual.
 - El servidor ordena primero por cumplimiento técnico. En igualdad técnica prioriza
   SinoGNSS y luego el costo comparable interno dentro de la marca. Otra marca que
   cumple más debe ir antes. No inventes costos ni superioridad técnica por marca.
@@ -651,6 +663,10 @@ def interpret(
             components['gnss']['memoria_solo_fabrica']=True
         if kind=='gnss' and requirements.get('memoria_min_gb') is not None:
             requirements['memoria_solo_fabrica']=True
+    if kind in ('gnss','kit') and not es_dialogo(message,raw.get('intencion')):
+        completar_explicitos(source_text,components,omitted)
+        if kind=='gnss':requirements=components.get('gnss',{})
+        selected=any(components.values())
     selections = dict((workflow_context or {}).get('selecciones') or {})
     incoming_selections = raw.get('selecciones') or {}
     if not isinstance(incoming_selections, dict):
@@ -676,7 +692,7 @@ def interpret(
         "resumen": str(raw.get("resumen") or "Interpreté tus requisitos técnicos."),
         "intencion": raw.get("intencion") if raw.get("intencion") in ("recomendacion", "consulta_catalogo", "comparacion", "explicacion") else "recomendacion",
         "respuesta_general": str(raw.get("respuesta_general") or "").strip(),
-        "preguntas": [str(item) for item in raw.get("preguntas", []) if str(item).strip()][:4]
+        "preguntas": [str(item) for item in raw.get("preguntas", []) if str(item).strip() and not (components.get('gnss',{}).get('lte_permite_compartido') and re.search(r'LTE|4G|m[oó]dem',str(item),re.I))][:4]
         if isinstance(raw.get("preguntas"), list)
         else [],
         "omitidos": list(dict.fromkeys(str(item) for item in omitted if str(item).strip())),

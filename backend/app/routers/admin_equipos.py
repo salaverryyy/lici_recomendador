@@ -83,6 +83,7 @@ TEXTOS |= {"imu_generacion", "imu_tecnologia", "bluetooth_version", "wifi_estand
 EDITABLES = BOOLEANOS | ENTEROS | NUMERICOS | TEXTOS | TEMPERATURAS
 BOOLEANOS |= {'lemo','usb','usb_c','rs232','memoria_es_interna'}
 BOOLEANOS |= {'sim_fisica','usb_c_con_adaptador'}
+BOOLEANOS |= {'carga_usb_c','lemo_solo_datos','internet_compartido'}
 NUMERICOS |= {'memoria_interna_opcional_max_gb'}
 NUMERICOS |= {'actualizacion_hz','inclinacion_imu_deg'}
 NUMERICOS.add('laser_alcance_m')

@@ -158,9 +158,10 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
                        'largo_static_horizontal_mm','largo_static_vertical_mm','largo_static_ppm_h','largo_static_ppm_v',
                        'tiene_imu','inclinacion_imu_deg','tiene_camara','cantidad_camaras','laser',
                        'laser_alcance_m','autonomia_bateria','memoria','memoria_expandible','memoria_es_interna',
-                       'memoria_expandida_max_gb','memoria_opcional_fabrica_max_gb','memoria_interna_opcional_max_gb','memoria_interna_opciones_gb','usb_c_con_adaptador','sim_fisica','conectividad_nota','lte_4g','uhf_tx_rx_integrada','proteccion_ip',
+                       'memoria_expandida_max_gb','memoria_opcional_fabrica_max_gb','memoria_interna_opcional_max_gb','memoria_interna_opciones_gb','usb_c_con_adaptador','carga_usb_c','lemo_solo_datos','internet_compartido','sim_fisica','conectividad_nota','lte_4g','uhf_tx_rx_integrada','proteccion_ip',
                        'radio_frecuencia','radio_potencia_max_w','cantidad_baterias','lemo','lemo_pines',
-                       'peso_max','temperatura_operacion_min_c','temperatura_operacion_max_c',
+                       'peso_max','temperatura_operacion_min_c','temperatura_operacion_max_c','caida_m','caida_condiciones','vibracion_norma','choque_condiciones',
+                       'registro_rinex','registro_rinex_3','rinex_versiones','registro_propietario','formato_propietario',
                        'gps','glonass','galileo','beidou','qzss','navic_irnss','sbas',
                        'tiene_ppp','ppp_h_cm','ppp_v_cm','bluetooth','wifi','usb','usb_c','rs232',
                        'auditoria_fuente','auditoria_notas','tecnica_fuente','tecnica_notas'}
@@ -488,7 +489,7 @@ def _recommend_workflow(parsed, body, catalog):
     else:
         answer = _answer(kind, ranking, parsed['omitidos']) if ranking else parsed['respuesta_general'] or 'Indica el receptor o sus requisitos para construir el conjunto GNSS, controladora y software.'
     if usb_list and ranking:
-        answer = f"Hay **{len(ranking['resultados'])} modelos que cumplen USB-C** en el catálogo permitido. El detalle distingue puerto nativo y cumplimiento con adaptador de carga y datos, cuando se admite. Se excluyen casos sin respaldo; confirma el accesorio y la función exigida en la oferta."
+        answer = f"Hay **{len(ranking['resultados'])} modelos que cumplen USB-C** en el catálogo permitido. El detalle distingue puerto nativo y transferencia de archivos con adaptador solo de datos, cuando se admite. La carga de energía se evalúa por separado; confirma el accesorio y la función exigida en la oferta."
     if solution['opciones'] and not selected.get('gnss'):
         answer += ' El GNSS mostrado es una referencia provisional; puedes elegir otra opción.'
     if kind == 'software' and solution['opciones']:

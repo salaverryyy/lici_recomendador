@@ -123,6 +123,9 @@ def evaluate(data, requirements):
             mode = meta['modo']
             meets = (actual >= requested if mode == 'min' else actual <= requested if mode == 'max'
                      else actual is True if mode == 'yes' else canonical(key, actual) == canonical(key, requested))
+            if key == 'proteccion_ip':
+                alternatives = re.findall(r'IP\d{2}',str(requested).upper())
+                if alternatives:meets=canonical(key,actual).upper() in alternatives
             state = 'cumple' if meets else 'no_cumple'
         detail.append({'clave':key,'nombre':meta['nombre'],'unidad':meta['unidad'],
                        'requerido':requested,'valor':actual,'estado':state,'observacion':data.get('conectividad_nota') if key=='lte_4g' else None})

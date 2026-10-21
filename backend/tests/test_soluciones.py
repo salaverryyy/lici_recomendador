@@ -74,6 +74,13 @@ class SolucionesTests(unittest.TestCase):
         option=assemble([self.equipment('RS3','Emlid')],[],ROWS,{'controladora':{'ram_gb':8}}, {})['opciones'][0]
         self.assertEqual(option['estado'],'no_cumple')
 
+    def test_missing_required_controller_counts_in_partial_kit_score(self):
+        receiver=self.equipment('RS3','Emlid')
+        receiver.update(porcentaje=100,detalle=[{'estado':'cumple'}])
+        option=assemble([receiver],[],ROWS,{'controladora':{'ram_gb':8},'software':{'estatico':True}}, {})['opciones'][0]
+        self.assertEqual(option['porcentaje'],66.67)
+        self.assertEqual(option['incumplimientos'],1)
+
     def test_gnss_list_after_software_does_not_assemble_unsolicited_kit(self):
         gnss=self.equipment()
         gnss.update(porcentaje=100,detalle=[{'clave':'usb_c','estado':'cumple'}])

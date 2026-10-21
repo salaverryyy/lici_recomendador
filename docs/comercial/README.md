@@ -18,7 +18,9 @@ La memoria interna opcional de fábrica puede cubrir un mínimo interno, con tod
 
 Se verificaron también las opciones internas de T20 (16/32 GB, nota 1 de su ficha), T300+ (16/32 GB, nota 5) y P6H (ROM 128 GB opcional, separado de MicroSD). Se elige la configuración publicada más pequeña que cubra el mínimo, por ejemplo 8 GB de Jupiter cuando se exigen 8 GB.
 
-Cotecmi confirma disponibilidad de adaptador LEMO de 7 pines a USB-C **para carga y datos**. El catálogo marca esa alternativa comercial en los modelos con ese conector; no cambia el puerto nativo del fabricante. Cuenta todos los puntos para USB-C genérico y muestra el adaptador como condición. La compatibilidad y funciones para el modelo ofertado deben verificarse e incluirse. Una exigencia explícita de puerto USB-C nativo/directo usa `usb_c_nativo=true` y no se cubre con adaptación.
+Cotecmi corrigió expresamente su declaración anterior: el conector LEMO de 7 pines y su adaptador USB-C son **solo para transferencia de archivos, sin carga**. Las baterías extraíbles se recargan por separado. La migración 29 deja constancia de que sustituye la afirmación anterior. El adaptador puede cubrir datos por USB-C, sujeto a incluirlo y validar compatibilidad; nunca cubre `carga_usb_c=true`. Un USB-C nativo tampoco demuestra carga si no existe evidencia específica. Jupiter declara carga Type-C en su manual 2.5.2; T20 en la ficha suministrada. La exigencia de USB-C nativo mantiene su distinción.
+
+LTE se evalúa siempre que se pide. Si el pliego admite integrado o compartido, `lte_4g=true, lte_permite_compartido=true` acepta cualquiera de esas dos vías documentadas; compartir exige un teléfono/controladora con LTE y datos, no se deduce por Bluetooth/Wi-Fi. Jupiter documenta PDA CORS en 5.5.3; el [manual Mars Pro del fabricante](https://fcc.report/FCC-ID/2ACHBMARSPRO/6887371.pdf) lo documenta en 5.7. Si se exige LTE propio, sigue siendo necesario módem y SIM del receptor. Las vías no documentadas quedan pendientes.
 
 ## Costos orientativos
 

@@ -51,6 +51,13 @@ def assemble(gnss, controllers, software, requirements, selections, reference=No
             pending.append('Verificar registro de observaciones brutas del receptor y un archivo de prueba base/rover.')
         not_evaluated = [family for family in ('gnss','controladora','software') if not requirements.get(family)]
         missing_controller = not controller and (not mobile or bool(requirements.get('controladora')) or bool(selections.get('controladora')))
+        missing_scored = [(family, requirements.get(family, {}))
+                          for family, item in (('controladora',controller),('software',processing))
+                          if item is None and requirements.get(family)]
+        if missing_scored:
+            # Una familia exigida que no existe no puede desaparecer del denominador.
+            failures += sum(len(req) for _,req in missing_scored)
+            score = round(sum(r['porcentaje'] for r in configured)/(len(configured)+len(missing_scored)),2)
         options.append({'gnss': receiver, 'controladora': controller, 'app_campo': mobile, 'software': processing,
                         'alternativas_controladora': [r['equipo'] for r in candidates[1:]],
                         'porcentaje': score, 'incumplimientos': failures, 'sin_datos': unknown,
