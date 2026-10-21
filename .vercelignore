@@ -5,5 +5,8 @@ backend/tests
 tmp
 frontend/node_modules
 frontend/.env*
-docs
+docs/*
+!docs/comercial/
+docs/comercial/*
+!docs/comercial/referencias_2026-10-21.json
 .git
