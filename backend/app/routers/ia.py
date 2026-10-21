@@ -3,7 +3,7 @@ import os
 import re
 import unicodedata
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from psycopg import Error as DatabaseError
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -13,7 +13,11 @@ from ..ia import AIProviderError, interpret, probe_status, status
 from ..recomendador import Preferencias
 from .controladoras import Requirements as ControllerRequirements, recommend as recommend_controller
 from .recomendar import recomendar as recommend_gnss
+from .recomendar import limitar_con_empates
 from .slam import Requirements as SlamRequirements, recommend as recommend_slam
+from .software import catalogo as software_catalog
+from ..software import rank as recommend_software
+from ..soluciones import assemble, unscored
 
 
 router = APIRouter(prefix="/api/ia", tags=["asistente con IA"])
@@ -21,8 +25,12 @@ router = APIRouter(prefix="/api/ia", tags=["asistente con IA"])
 
 class PreviousContext(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    tipo_equipo: str = Field(pattern=r"^(gnss|controladora|slam)$")
+    tipo_equipo: str = Field(pattern=r"^(gnss|controladora|slam|software|kit)$")
     requisitos: dict = Field(default_factory=dict)
+    componentes: dict = Field(default_factory=dict)
+    selecciones: dict[str, str] = Field(default_factory=dict)
+    referencia_gnss: str | None = Field(default=None, max_length=100)
+    misma_marca: bool = False
 
     @model_validator(mode="after")
     def limit_context(self):
@@ -30,6 +38,8 @@ class PreviousContext(BaseModel):
         # y evitar que se use como una segunda entrada sin restricciones.
         if len(self.requisitos) > 80 or len(str(self.requisitos)) > 20_000:
             raise ValueError("El contexto previo es demasiado grande.")
+        if set(self.componentes)-{'gnss','controladora','software'} or set(self.selecciones)-{'gnss','controladora','software'} or len(str(self.componentes))>20_000 or any(not isinstance(v,dict) or len(v)>80 for v in self.componentes.values()) or any(len(v)>100 for v in self.selecciones.values()):
+            raise ValueError('Contexto de conjunto inválido.')
         return self
 
 
@@ -42,7 +52,7 @@ class ConversationMessage(BaseModel):
 class AIRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     mensaje: str = Field(min_length=3, max_length=6000)
-    tipo_equipo: str = Field(default="auto", pattern=r"^(auto|gnss|controladora|slam)$")
+    tipo_equipo: str = Field(default="auto", pattern=r"^(auto|gnss|controladora|slam|software|kit)$")
     solo_cotecmi: bool = True
     top_n: int = Field(default=20, ge=1, le=100)
     contexto_previo: PreviousContext | None = None
@@ -101,6 +111,9 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
             for row in cur.fetchall():
                 data = row.pop('datos') or {}
                 rows.append({**row, **{key: data.get(key) for key in allowed}})
+        if requested_type in ('auto','software','kit'):
+            cur.execute("SELECT id_software AS id_equipo,marca,nombre AS modelo,'Software de procesamiento' AS categoria,descripcion,funciones,licencia,formatos,compatibilidad,fuentes FROM software_procesamiento WHERE publicado ORDER BY marca,nombre")
+            rows.extend(cur.fetchall())
         if requested_type in ("auto", "controladora"):
             cur.execute("""
               SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.descripcion,e.anio_modelo,
@@ -186,6 +199,7 @@ def _explicit_catalog_type(rows: list[dict], query: str) -> str | None:
         "GNSS": "gnss",
         "Controladora": "controladora",
         "Escáner SLAM": "slam",
+        "Software de procesamiento": "software",
     }
     matches = set()
     for row in rows:
@@ -252,27 +266,19 @@ def ai_recommend(body: AIRequest):
     previous = body.contexto_previo
     try:
         full_catalog = _catalog(body.solo_cotecmi, "auto")
-        explicit_type = _explicit_catalog_type(full_catalog, body.mensaje)
-        requested_type = explicit_type or body.tipo_equipo
-        category_by_type = {
-            "gnss": "GNSS",
-            "controladora": "Controladora",
-            "slam": "Escáner SLAM",
-        }
-        eligible_catalog = (
-            full_catalog
-            if requested_type == "auto"
-            else [
-                row for row in full_catalog
-                if row.get("categoria") == category_by_type[requested_type]
-            ]
-        )
+        requested_type = body.tipo_equipo
+        eligible_catalog = full_catalog
         history = [item.model_dump() for item in body.historial]
         retrieval_query = "\n".join(
             [*(item["text"] for item in history), body.mensaje,
              str(previous.requisitos) if previous else ""]
         )
-        catalog = _retrieve_catalog(eligible_catalog, retrieval_query)
+        # Cada familia conserva espacio: los receptores no desplazan todo el software/colectoras.
+        catalog = []
+        for category in ('GNSS','Controladora','Software de procesamiento','Escáner SLAM'):
+            catalog.extend(_retrieve_catalog([r for r in eligible_catalog if r.get('categoria')==category], retrieval_query, limit=8 if category=='GNSS' else 4))
+        preserved = ({*previous.selecciones.values(), previous.referencia_gnss} if previous else set())
+        catalog.extend(r for r in full_catalog if r['id_equipo'] in preserved and r not in catalog)
         parsed = interpret(
             body.mensaje,
             requested_type,
@@ -280,6 +286,7 @@ def ai_recommend(body: AIRequest):
             previous.requisitos if previous else None,
             catalog,
             history,
+            previous.model_dump() if previous else None,
         )
     except AIProviderError as exc:
         _mark_shared_error(exc)
@@ -291,6 +298,18 @@ def ai_recommend(body: AIRequest):
                 "reintentable": True,
                 "mensaje": "No se pudo consultar el catálogo técnico en este momento.",
                 "reintentar_en": None}
+
+    if parsed['tipo_equipo'] != 'slam':
+        try:
+            workflow = _recommend_workflow(parsed, body, full_catalog)
+        except (DatabaseError, HTTPException) as exc:
+            return {'estado':'no_disponible','motivo':'catalogo','codigo':503,'reintentable':True,'mensaje':'No se pudo calcular el conjunto con el catálogo. Intenta nuevamente.'}
+        except ValueError as exc:
+            return {'estado':'no_disponible','motivo':'seleccion_invalida','codigo':422,'reintentable':True,'mensaje':str(exc)}
+        return {'estado':'ok', **parsed, **workflow, 'solo_cotecmi':body.solo_cotecmi,
+                'memoria':{'mensajes_usados':len(body.historial),'turnos_usados':len(body.historial)//2,
+                           'equipos_recuperados':[r['id_equipo'] for r in catalog],'persistencia':'navegador'},
+                'generado_en':datetime.now().astimezone().isoformat()}
 
     ranking = None
     if parsed["tiene_criterios"]:
@@ -332,3 +351,60 @@ def ai_recommend(body: AIRequest):
         if ranking else (parsed["respuesta_general"] or "Puedo orientarte con el catálogo disponible. Cuéntame el tipo de trabajo o las condiciones que más te importan."),
         "generado_en": datetime.now().astimezone().isoformat(),
     }
+
+
+def _recommend_workflow(parsed, body, catalog):
+    components = parsed['componentes']
+    selected = parsed['selecciones']
+    categories = {'gnss':'GNSS','controladora':'Controladora','software':'Software de procesamiento'}
+    for family, ident in selected.items():
+        if not any(r['id_equipo']==ident and r['categoria']==categories[family] for r in catalog):
+            raise ValueError('La selección no está publicada o no pertenece al catálogo permitido. Vuelve a elegir el modelo.')
+    previous = body.contexto_previo
+    # El filtro Cotecmi se aplica de nuevo a cada turno, incluso a IDs enviados por el navegador.
+    reference = previous.referencia_gnss if previous and not components.get('gnss') and parsed['tipo_equipo']!='gnss' else None
+    if previous and parsed['tipo_equipo'] in ('controladora','software'):
+        reference = previous.referencia_gnss
+    if reference and not any(r['id_equipo']==reference and r['categoria']=='GNSS' for r in catalog):
+        reference = None
+    ranks = {}
+    for family in ('gnss','controladora'):
+        requirements = components.get(family, {})
+        if requirements:
+            ranks[family] = recommend_gnss(Preferencias(**requirements, solo_cotecmi=body.solo_cotecmi, top_n=100)) if family=='gnss' else recommend_controller(ControllerRequirements(requisitos=requirements,solo_cotecmi=body.solo_cotecmi,top_n=100))
+        else:
+            ranks[family] = {'resultados':[unscored(r) for r in catalog if r['categoria']==categories[family]]}
+    software = software_catalog(body.solo_cotecmi)
+    gnss_results = ranks['gnss']['resultados']
+    anchor = selected.get('gnss') or reference
+    if not anchor and components.get('gnss') and gnss_results:
+        anchor = gnss_results[0]['equipo']['id_equipo']
+    brand = next((r['marca'] for r in catalog if r['id_equipo']==anchor), None)
+    ranks['software'] = recommend_software(software, components.get('software', {}), brand, parsed['misma_marca'])
+    # Sin requisitos/selección GNSS no se inventa un receptor ganador.
+    eligible_gnss = gnss_results if components.get('gnss') or selected.get('gnss') or reference else []
+    solution = assemble(eligible_gnss, ranks['controladora']['resultados'], software, components, selected,
+                        reference, parsed['misma_marca'], body.top_n)
+    kind = parsed['tipo_equipo']
+    ranking = ranks.get(kind) if kind in ('gnss','controladora') and components.get(kind) else None
+    if ranking and 'mostrados' in ranking:
+        ranking = {**ranking, 'resultados':limitar_con_empates(ranking['resultados'],body.top_n)}
+        ranking['mostrados'] = len(ranking['resultados'])
+    if solution['opciones']:
+        first = solution['opciones'][0]
+        names = [first['gnss']['equipo']['marca']+' '+first['gnss']['equipo']['modelo'],
+                 first['controladora']['equipo']['modelo'] if first['controladora'] else 'controladora pendiente',
+                 first['software']['software']['nombre'] if first['software'] else 'software pendiente']
+        answer = 'Propuesta en orden GNSS → controladora → software de oficina: **'+' → '.join(names)+'**. '
+        answer += ('El conjunto tiene incumplimientos documentados. ' if first['estado']=='no_cumple' else '')
+        answer += 'Es una propuesta parcial: verifica cada bloque, compatibilidad, archivos y licencias; no acredita cumplimiento total.'
+    elif kind=='software':
+        answer = parsed['respuesta_general'] or 'Estos son los softwares de oficina auditados. Elige el GNSS para asociar el programa de su marca y revisar el conjunto.'
+    else:
+        answer = _answer(kind, ranking, parsed['omitidos']) if ranking else parsed['respuesta_general'] or 'Indica el receptor o sus requisitos para construir el conjunto GNSS, controladora y software.'
+    if solution['opciones'] and not selected.get('gnss'):
+        answer += ' El GNSS mostrado es una referencia provisional; puedes elegir otra opción.'
+    reference = selected.get('gnss') or (solution['opciones'][0]['gnss']['equipo']['id_equipo'] if solution['opciones'] else reference)
+    return {'ranking':ranking,'rankings':ranks,'solucion':solution,'respuesta':answer,
+            'contexto':{'tipo_equipo':kind,'requisitos':parsed['requisitos'],'componentes':components,
+                        'selecciones':selected,'misma_marca':parsed['misma_marca'],'referencia_gnss':reference}}

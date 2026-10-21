@@ -1,0 +1,38 @@
+[
+  {
+    "id_software": "SW-SINGULARXYZ-PPROCESSING", "marca": "SingularXYZ", "nombre": "PProcessing",
+    "descripcion": "Posprocesamiento de observaciones GNSS estáticas y cinemáticas, líneas base y ajuste de redes. Software de oficina, distinto de SingularPad de campo.",
+    "licencia": "Precio, activación, modalidad y licencia incluida: confirmar con el proveedor. No se presume gratuito ni incluido en cada receptor.",
+    "formatos": "Entrada: datos binarios, RINEX 2.x/3.x y RTCM32. Salida: DXF, TXT, KML, CSV e informes HTML.",
+    "funciones": {"estatico": true, "cinematico": true, "ajuste_red": true, "rinex": true, "rinex_2": true, "rinex_3": true, "informes": true, "geotag": null, "gratuito": null, "windows": null, "macos": null, "exporta_dxf": true, "exporta_csv": true},
+    "compatibilidad": "Opción del ecosistema SingularXYZ. Verificar registro bruto, formato y configuración de cada receptor. Admitir RINEX no garantiza toda combinación de marcas ni todas las versiones.",
+    "fuentes": [
+      {"url": "https://www.singularxyz.com/product_detail/PProcessing", "alcance": "Funciones, formatos, líneas base, ajuste de redes e informes.", "fecha_consulta": "2026-10-21"},
+      {"url": "https://www.singularxyz.com/blog_detail/100", "alcance": "Flujo oficial PPK con datos de base y rover.", "fecha_consulta": "2026-10-21"}
+    ]
+  },
+  {
+    "id_software": "SW-SINOGNSS-COMPASS", "marca": "SinoGNSS", "nombre": "Compass Solution",
+    "descripcion": "Software de oficina de ComNav para posprocesamiento estático, estático rápido y cinemático. Procesa GPS, GLONASS, BeiDou y Galileo; genera informes de líneas base, ajuste, red y cierres.",
+    "licencia": "Precio, activación, modalidad y licencia incluida: confirmar con el proveedor. No confundir con Compass Receiver Utility (CRU) ni Survey Master.",
+    "formatos": "Observaciones RINEX y ComNav Raw Binary, según ficha oficial N3. Versiones RINEX y formatos de exportación no verificados en las fuentes revisadas.",
+    "funciones": {"estatico": true, "cinematico": true, "ajuste_red": null, "rinex": true, "rinex_2": null, "rinex_3": null, "informes": true, "geotag": null, "gratuito": null, "windows": null, "macos": null, "exporta_dxf": null, "exporta_csv": null},
+    "compatibilidad": "Opción del ecosistema SinoGNSS/ComNav. Confirmar registro bruto del receptor y versión de Compass. La presencia de informes de ajuste no acredita por sí sola un método específico de ajuste de redes o una certificación.",
+    "fuentes": [
+      {"url": "https://www.comnavtech.com/sp/product/software/Compass%20Solution.html", "alcance": "Modos de procesamiento, constelaciones e informes. Método concreto de ajuste de redes pendiente.", "fecha_consulta": "2026-10-21"},
+      {"url": "https://www.comnavtech.com/uploads/soft/20250606/4cf6ea262b3d28e11c75a61c53fc2eb6.pdf", "alcance": "Ficha N3, revisión 2025.05.26: observaciones RINEX y ComNav Raw Binary para Compass.", "fecha_consulta": "2026-10-21"}
+    ]
+  },
+  {
+    "id_software": "SW-EMLID-STUDIO", "marca": "Emlid", "nombre": "Emlid Studio",
+    "descripcion": "Aplicación de escritorio gratuita para procesamiento estático, cinemático/PPK, datos de drones y Stop & Go con Emlid Flow, además de conversión de registros a RINEX.",
+    "licencia": "Descarga gratuita según Emlid. No equivale a una licencia comercial perpetua exigida por una licitación ni acredita licencia de Emlid Flow o Flow 360.",
+    "formatos": "Importación de registros RINEX y UBX. Drones RTK con marcas temporales MRK. Versiones RINEX de entrada no confirmadas por separado en esta auditoría.",
+    "funciones": {"estatico": true, "cinematico": true, "ajuste_red": null, "rinex": true, "rinex_2": null, "rinex_3": null, "informes": null, "geotag": true, "gratuito": true, "windows": true, "macos": true, "exporta_dxf": null, "exporta_csv": null},
+    "compatibilidad": "Opción del ecosistema Emlid Reach con registro de datos. No sustituye software de ajuste de redes sin evidencia ni funciona como app de campo en Android. Verificar logs de base/rover y flujo concreto; no afirmar compatibilidad universal.",
+    "fuentes": [
+      {"url": "https://emlid.com/emlid-studio/", "alcance": "Gratuidad, RINEX/UBX, procesamiento estático/cinemático y geotag de drones.", "fecha_consulta": "2026-10-21"},
+      {"url": "https://docs.emlid.com/emlid-studio/", "alcance": "Cinco flujos de trabajo y plataformas Windows 10 de 64 bits o posterior y macOS 10.14 o posterior.", "fecha_consulta": "2026-10-21"}
+    ]
+  }
+]

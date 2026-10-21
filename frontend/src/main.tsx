@@ -40,6 +40,7 @@ import { SlamSpecs, SlamRank } from "./slam";
 import { StorageUsage, uploadFile } from "./almacenamiento";
 import { readStored, writeStored, usePersistentState } from "./persist";
 import { AiAdvisor } from "./ia";
+import { SoftwareCatalog } from "./software";
 import "./style.css";
 
 type Equipo = {
@@ -291,7 +292,7 @@ function Home() {
       </section>
       <section className="container home-tools">
         <span className="eyebrow">DEL DATO A LA DECISIÓN</span>
-        <h2>Cuatro formas de encontrar tu equipo</h2>
+        <h2>Encuentra los equipos y el software para tu trabajo</h2>
         <p className="muted">Explora a tu ritmo. Compara lo que importa.</p>
         <div className="grid four">
           {[
@@ -318,6 +319,12 @@ function Home() {
               "Asistente con IA",
               "Describe lo que necesitas y recibe una recomendación explicada.",
               Sparkles,
+            ],
+            [
+              "/software",
+              "Software de oficina",
+              "PProcessing, Compass Solution y Emlid Studio: funciones y fuentes verificadas.",
+              SlidersHorizontal,
             ],
           ].map(([url, title, text, Icon]: any) => (
             <Link className="tool-card" to={url} key={url}>
@@ -2563,6 +2570,7 @@ function App() {
             <NavLink to="/comparar">Comparador</NavLink>
             <NavLink to="/recomendador">Recomendador</NavLink>
             <NavLink to="/asistente-ia">Asistente IA</NavLink>
+            <NavLink to="/software">Software</NavLink>
           </nav>
           <Link className="admin-link" to="/admin">
             <LockKeyhole size={14} /> Admin
@@ -2576,6 +2584,7 @@ function App() {
         <Route path="/comparar" element={<Compare />} />
         <Route path="/recomendador" element={<Recommend />} />
         <Route path="/asistente-ia" element={<AiAdvisor />} />
+        <Route path="/software" element={<SoftwareCatalog />} />
         <Route path="/admin" element={<Login />} />
         <Route path="/admin/equipos" element={<AdminEquipment />} />
         <Route path="/admin/equipos/:id" element={<Editor />} />

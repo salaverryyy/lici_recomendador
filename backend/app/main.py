@@ -17,9 +17,11 @@ from .routers.admin_correos import router as admin_correos_router
 from .routers.ia import router as ia_router
 from .routers.slam import router as slam_router
 from .migrations import apply_runtime_migrations
+from .routers.software import router as software_router
 
 
 app = FastAPI(title="Licitex API")
+app.include_router(software_router)
 
 
 @app.on_event("startup")

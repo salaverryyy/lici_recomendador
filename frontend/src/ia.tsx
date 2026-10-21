@@ -3,10 +3,15 @@ import { Bot, MessageSquareText, Plus, Send, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { api } from "./api";
 import { usePersistentState } from "./persist";
+import { SoftwareCard } from "./software";
 
 type Context = {
-  tipo_equipo: "gnss" | "controladora" | "slam";
+  tipo_equipo: "gnss" | "controladora" | "slam" | "software" | "kit";
   requisitos: Record<string, unknown>;
+  componentes?: Record<string, Record<string, unknown>>;
+  selecciones?: Record<string, string>;
+  referencia_gnss?: string;
+  misma_marca?: boolean;
 };
 type Message = {
   id: string;
@@ -19,7 +24,7 @@ type Chat = {
   title: string;
   createdAt: number;
   updatedAt: number;
-  type: "auto" | "gnss" | "controladora" | "slam";
+  type: "auto" | "gnss" | "controladora" | "slam" | "software" | "kit";
   onlyCotecmi: boolean;
   context?: Context;
   messages: Message[];
@@ -95,19 +100,25 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
   return (
     <article className="ai-rank-card">
       <div className="rank-heading">
-        <span className="rank-number">#{result.posicion}</span>
+        <span className="rank-number">
+          {result.posicion ? `#${result.posicion}` : "Opción"}
+        </span>
         <Link to={`/equipos/${result.equipo.id_equipo}`}>
           <h3>
             {result.equipo.marca} {result.equipo.modelo}
           </h3>
         </Link>
-        <strong>{result.porcentaje ?? "—"}%</strong>
+        <strong>
+          {result.porcentaje != null
+            ? `${result.porcentaje}%`
+            : "Sin requisitos para puntuar"}
+        </strong>
       </div>
       {result.porcentaje != null && (
         <progress max={100} value={result.porcentaje} />
       )}
       <p className="small-text">
-        {result.cumplimientos} cumple · {failed?.length || 0} no cumple ·{" "}
+        {result.cumplimientos ?? 0} cumple · {failed?.length || 0} no cumple ·{" "}
         {unknown?.length || 0} sin datos
       </p>
       <p className="muted small-text">
@@ -143,7 +154,13 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
   );
 }
 
-function AssistantAnswer({ data }: { data: any }) {
+function AssistantAnswer({
+  data,
+  onSelect,
+}: {
+  data: any;
+  onSelect?: (id: string) => void;
+}) {
   if (data?.estado === "no_disponible") {
     return (
       <div className="notice error">
@@ -206,7 +223,91 @@ function AssistantAnswer({ data }: { data: any }) {
           </ul>
         </div>
       )}
-      {results.length > 0 && (
+      {!!data?.solucion?.opciones?.length && (
+        <section className="ai-ranking">
+          <h3>Propuestas del conjunto</h3>
+          <p className="muted small-text">{data.solucion.nota}</p>
+          {data.solucion.opciones.map((option: any, index: number) => (
+            <details
+              className="panel solution-option"
+              key={option.gnss.equipo.id_equipo}
+              open={index === 0}
+            >
+              <summary>
+                {option.gnss.equipo.marca} {option.gnss.equipo.modelo} →{" "}
+                {option.controladora?.equipo.modelo || "Controladora pendiente"}{" "}
+                → {option.software?.software.nombre || "Software pendiente"} ·{" "}
+                {option.estado === "no_cumple"
+                  ? "Tiene incumplimientos"
+                  : "Requiere validación"}
+              </summary>
+              {option.porcentaje != null && (
+                <p>
+                  <strong>{option.porcentaje}%</strong> de cumplimiento parcial
+                  del conjunto. {option.incumplimientos} incumplimientos ·{" "}
+                  {option.sin_datos} datos pendientes.
+                </p>
+              )}
+              {!!option.familias_sin_requisitos.length && (
+                <p className="notice">
+                  Sin requisitos técnicos para puntuar:{" "}
+                  {option.familias_sin_requisitos.join(", ")}.
+                </p>
+              )}
+              <h4>1. Receptor GNSS</h4>
+              <RankCard result={option.gnss} kind="gnss" />
+              {onSelect && (
+                <button
+                  type="button"
+                  className="outline"
+                  onClick={() => onSelect(option.gnss.equipo.id_equipo)}
+                >
+                  Elegir este GNSS para continuar
+                </button>
+              )}
+              <h4>2. Controladora</h4>
+              {option.controladora ? (
+                <RankCard result={option.controladora} kind="controladora" />
+              ) : (
+                <p>No se encontró una controladora que respete la selección.</p>
+              )}
+              {!!option.alternativas_controladora?.length && (
+                <p className="small-text">
+                  Otras controladoras a revisar:{" "}
+                  {option.alternativas_controladora
+                    .map((e: any) => `${e.marca} ${e.modelo}`)
+                    .join(", ")}
+                  .
+                </p>
+              )}
+              <h4>3. Software de procesamiento de oficina</h4>
+              {option.software ? (
+                <SoftwareCard
+                  software={option.software.software}
+                  evaluation={option.software}
+                />
+              ) : (
+                <p>No hay software de esta marca auditado para la selección.</p>
+              )}
+              <ul className="small-text">
+                {option.pendientes.map((p: string) => (
+                  <li key={p}>{p}</li>
+                ))}
+              </ul>
+            </details>
+          ))}
+        </section>
+      )}
+      {data.tipo_equipo === "software" &&
+        !data?.solucion?.opciones?.length &&
+        data?.rankings?.software?.resultados?.map((r: any) => (
+          <SoftwareCard
+            key={r.software.id_software}
+            software={r.software}
+            evaluation={r}
+          />
+        ))}
+      {results.length > 0 && !data?.solucion?.opciones?.length && (
         <div className="ai-ranking">
           <h3>Equipos recomendados</h3>
           <p className="muted small-text">
@@ -238,6 +339,43 @@ function AssistantAnswer({ data }: { data: any }) {
         </p>
       )}
     </>
+  );
+}
+
+function WaitingResponse() {
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    const start = Date.now();
+    const timer = setInterval(
+      () => setSeconds(Math.floor((Date.now() - start) / 1000)),
+      1000,
+    );
+    return () => clearInterval(timer);
+  }, []);
+  const messages = [
+    "Tu consulta está en proceso.",
+    "La evaluación distingue GNSS, controladora y software de oficina.",
+    "Los datos sin confirmar se mostrarán como pendientes.",
+    "Las licencias y la compatibilidad del conjunto requieren verificación.",
+  ];
+  return (
+    <div className="ai-message assistant" role="status">
+      <div className="ai-message-label">Lici</div>
+      <p>
+        Preparando la respuesta
+        <span className="thinking-dots" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </span>
+      </p>
+      <p className="muted small-text">
+        {messages[Math.floor(seconds / 7) % messages.length]}
+      </p>
+      <small className="muted">
+        {seconds} s de espera · El tiempo depende del proveedor de IA.
+      </small>
+    </div>
   );
 }
 
@@ -355,7 +493,10 @@ export function AiAdvisor() {
         updatedAt: Date.now(),
         context:
           data.estado === "ok"
-            ? { tipo_equipo: data.tipo_equipo, requisitos: data.requisitos }
+            ? data.contexto || {
+                tipo_equipo: data.tipo_equipo,
+                requisitos: data.requisitos,
+              }
             : pending.context,
         // Diez turnos por consulta mantienen el historial útil sin agotar
         // el almacenamiento local con respuestas técnicas extensas.
@@ -458,7 +599,6 @@ export function AiAdvisor() {
                 onChange={(e) =>
                   patchActive({
                     type: e.target.value as Chat["type"],
-                    context: undefined,
                   })
                 }
               >
@@ -466,6 +606,10 @@ export function AiAdvisor() {
                 <option value="gnss">Receptor GNSS</option>
                 <option value="controladora">Controladora</option>
                 <option value="slam">Escáner SLAM</option>
+                <option value="software">Software de procesamiento</option>
+                <option value="kit">
+                  Conjunto GNSS + controladora + software
+                </option>
               </select>
             </label>
             <label>
@@ -482,6 +626,15 @@ export function AiAdvisor() {
               </select>
             </label>
           </div>
+
+          {active?.context?.selecciones?.gnss && (
+            <p className="notice">
+              GNSS elegido para continuar esta consulta.{" "}
+              <Link to={`/equipos/${active.context.selecciones.gnss}`}>
+                Ver ficha
+              </Link>
+            </p>
+          )}
 
           <div className="ai-messages" aria-live="polite">
             {!active?.messages.length && (
@@ -500,7 +653,24 @@ export function AiAdvisor() {
                   {item.role === "user" ? "Tú" : "Lici"}
                 </div>
                 {item.role === "assistant" ? (
-                  <AssistantAnswer data={item.data} />
+                  <AssistantAnswer
+                    data={item.data}
+                    onSelect={
+                      busy
+                        ? undefined
+                        : (ident) =>
+                            patchActive({
+                              context: {
+                                ...(active.context || item.data.contexto),
+                                selecciones: {
+                                  ...(active.context?.selecciones || {}),
+                                  gnss: ident,
+                                },
+                                referencia_gnss: ident,
+                              },
+                            })
+                    }
+                  />
                 ) : (
                   <p>
                     <BoldText text={item.text} />
@@ -508,12 +678,7 @@ export function AiAdvisor() {
                 )}
               </article>
             ))}
-            {busy && (
-              <div className="ai-message assistant">
-                <div className="ai-message-label">Lici</div>
-                <p>Interpretando requisitos y calculando el ranking…</p>
-              </div>
-            )}
+            {busy && <WaitingResponse />}
           </div>
 
           {error && (

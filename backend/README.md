@@ -60,3 +60,10 @@ ponderado estricto (0 puntos para un requisito incumplido o sin prueba); la
 proximidad al umbral se mantiene en `porcentaje_afinidad` solo como dato secundario.
 Los pesos revisados solo reemplazan los pesos anteriores de fábrica: se respetan
 las ponderaciones personalizadas y criterios desactivados desde Admin.
+
+El catálogo de oficina y las propuestas GNSS → controladora → software se
+describen en `docs/software/README.md`. Aplicar `sql/26_software_procesamiento.sql`
+en bases locales existentes; producción lo aplica mediante migración registrada.
+La IA separa requisitos por familia y devuelve `contexto` para continuar el chat,
+`solucion` con las propuestas y `rankings` con evaluaciones por familia.
+Las licencias y la interoperabilidad no se dan por confirmadas por compartir marca.
