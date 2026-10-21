@@ -57,7 +57,7 @@ def recommend(values: Requirements):
         raise HTTPException(422,'Completa al menos un requisito; No significa que no se necesita.')
     try:
         with connect() as conn, conn.cursor() as cur:
-            cur.execute("SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.imagen_url,to_jsonb(c) AS datos FROM equipos e LEFT JOIN controladora_especificaciones c USING(id_equipo) WHERE e.publicado AND e.categoria='Controladora'")
+            cur.execute("SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.imagen_url,e.anio_modelo,to_jsonb(c) AS datos FROM equipos e LEFT JOIN controladora_especificaciones c USING(id_equipo) WHERE e.publicado AND e.categoria='Controladora'")
             results=[]
             for row in cur.fetchall():
                 if values.solo_cotecmi and not es_cotecmi(row['marca']):

@@ -34,9 +34,12 @@ GEMINI_FALLBACK_MODELS=gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.1-flash-l
 ```
 
 La clave permanece en el backend. `GET /api/ia/estado` indica si el servicio está
-configurado o si la cuota gratuita se agotó. Los últimos cinco chats se guardan en
+configurado o si la cuota gratuita se agotó. El historial de chats se guarda en
 `localStorage` del navegador y no se comparten con otros visitantes. Cada respuesta
-usa como memoria un máximo de seis turnos anteriores del chat activo. El backend
+usa como memoria un máximo de seis turnos anteriores del chat activo. No se borran
+chats al superar cinco: el historial es desplazable y permite eliminación manual.
+El límite de almacenamiento lo determina el navegador; se avisa si no puede guardar.
+El backend
 recupera de PostgreSQL las fichas técnicas más relacionadas con la conversación
 (RAG léxico local, sin embeddings ni un servicio vectorial adicional).
 Licitex no impone un límite propio de consultas. Si el modelo principal agota su

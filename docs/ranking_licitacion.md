@@ -28,5 +28,26 @@ prueba de sensibilidad, no una modificación de los requisitos de la captura.
 
 Los NULL se explican como «Sin datos», no como ausencia confirmada. La memoria
 extendible conserva puntos cuando cumple con ampliación y lo declara.
-Top N sigue limitando cantidad de equipos y puede cortar un grupo empatado;
-los puestos se calculan antes del corte.
+Top N incluye todos los equipos empatados en el puesto de corte.
+
+## Orden de presentación — 21 de octubre de 2026
+
+Primero se ordena por porcentaje de cumplimiento y cobertura de los criterios
+solicitados. Dentro de la igualdad técnica se usa `equipos.anio_modelo`
+descendente; los años desconocidos quedan al final. A igual año se aplica la
+preferencia comercial SinoGNSS solicitada por Cotecmi y finalmente el ID estable.
+Esta preferencia no implica superioridad técnica ni concede puntos. Los equipos
+empatados siguen compartiendo puesto. Un modelo anterior que cumple más queda
+por encima de uno reciente que cumple menos.
+
+El mismo orden se aplica al recomendador, al chat y a conjuntos GNSS–controladora–
+software, conservando las condiciones técnicas y de marca del conjunto. El año
+de modelo es metadato del catálogo, no una fecha exacta de lanzamiento; no se
+rellenan años desconocidos con el año de una ficha o una actualización.
+
+La memoria ampliada documentada conserva todos los puntos, igual que una
+configuración opcional de fábrica cuando el mínimo es genérico. Las tarjetas,
+opciones y ampliaciones no se suman entre sí ni se presumen instaladas/incluidas.
+La condición aparece sin tener que abrir los detalles, además del valor de
+fábrica y la capacidad evaluada. Una exigencia explícita de memoria instalada
+mantiene `memoria_solo_fabrica=true` y no se cubre con estas opciones.

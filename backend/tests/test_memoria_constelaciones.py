@@ -32,14 +32,31 @@ class MemoriaConstelacionesTests(unittest.TestCase):
     def test_extension_insuficiente_desconocida_o_no_aceptada(self):
         for datos, esperado in [({"memoria": 4}, 0),
                                  ({"memoria": 4, "memoria_expandible": True}, 0),
-                                 ({"memoria": 4, "memoria_expandible": False, "memoria_expandida_max_gb": 32}, 0),
-                                 ({"memoria": 4, "memoria_opcional_fabrica_max_gb": 32}, 0)]:
+                                 ({"memoria": 4, "memoria_expandible": False, "memoria_expandida_max_gb": 32}, 0)]:
             self.assertEqual(evaluar(Preferencias(memoria_min_gb=8), datos)["porcentaje"], esperado)
         r = evaluar(Preferencias(memoria_min_gb=64), {"memoria": 4, "memoria_expandible": True, "memoria_expandida_max_gb": 32})
         self.assertEqual(r["porcentaje"], 0)
         self.assertEqual(r["porcentaje_afinidad"], 50)
         self.assertNotIn("Cumple:", r["explicacion"])
         self.assertEqual(evaluar(Preferencias(memoria_min_gb=8), {})["sin_datos"], 1)
+
+    def test_factory_configuration_gets_full_points_with_explicit_condition(self):
+        data={'memoria':8,'memoria_expandible':False,'memoria_opcional_fabrica_max_gb':32}
+        result=evaluar(Preferencias(memoria_min_gb=16),data)
+        self.assertEqual(result['porcentaje'],100)
+        detail=result['detalle'][0]
+        self.assertEqual(detail['puntos'],detail['peso'])
+        self.assertEqual(detail['tipo_ampliacion'],'opcion_fabrica')
+        self.assertEqual(detail['memoria_fabrica_gb'],8)
+        self.assertIn('no se presume instalada',detail['observacion'])
+        self.assertEqual(evaluar(Preferencias(memoria_min_gb=16,memoria_solo_fabrica=True),data)['porcentaje'],0)
+
+    def test_memory_capacities_are_not_added_and_unneeded_expansion_is_not_used(self):
+        data={'memoria':8,'memoria_expandible':True,'memoria_expandida_max_gb':32}
+        standard=evaluar(Preferencias(memoria_min_gb=8),data)
+        self.assertFalse(standard['detalle'][0]['requiere_ampliacion'])
+        self.assertEqual(standard['detalle'][0]['valor_equipo'],8)
+        self.assertEqual(evaluar(Preferencias(memoria_min_gb=40),data)['porcentaje'],0)
 
     def test_removable_card_is_not_installed_internal_memory(self):
         p=Preferencias(memoria_min_gb=8,memoria_solo_fabrica=True)

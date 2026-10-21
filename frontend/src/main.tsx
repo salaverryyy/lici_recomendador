@@ -41,6 +41,12 @@ import { StorageUsage, uploadFile } from "./almacenamiento";
 import { readStored, writeStored, usePersistentState } from "./persist";
 import { AiAdvisor } from "./ia";
 import { SoftwareCatalog } from "./software";
+import {
+  ORDER_NOTE,
+  ModelYear,
+  ExpansionNotice,
+  complianceLabel,
+} from "./ranking-notes";
 import "./style.css";
 
 type Equipo = {
@@ -1373,6 +1379,9 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                 último puesto mostrado; un puntaje alto no acredita cumplimiento
                 completo de la licitación.
               </p>
+              <p className="muted small-text">
+                {result.orden_presentacion || ORDER_NOTE}
+              </p>
               {result.resultados.map((r: any) => (
                 <article className="panel rank-card" key={r.equipo.id_equipo}>
                   <div className="rank-heading">
@@ -1391,10 +1400,12 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                         : r.porcentaje + "%"}
                     </strong>
                   </div>
+                  <ModelYear equipment={r.equipo} />
                   {r.porcentaje != null && (
                     <progress max={100} value={r.porcentaje} />
                   )}
                   <p>{r.explicacion}</p>
+                  <ExpansionNotice details={r.detalle} />
                   <CompareButton id={r.equipo.id_equipo} />
                   <details className="score-details">
                     <summary>Ver criterios evaluados</summary>
@@ -1406,12 +1417,7 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                             {d.unidad ? " (" + d.unidad + ")" : ""}
                           </dt>
                           <dd>
-                            {d.estado === "cumple"
-                              ? "Cumple"
-                              : d.estado === "sin_datos"
-                                ? "Sin datos"
-                                : "No cumple"}{" "}
-                            · {d.puntos}/{d.peso} puntos
+                            {complianceLabel(d)} · {d.puntos}/{d.peso} puntos
                             <p className="muted">
                               Equipo: {valor(d.valor_equipo)} {d.unidad} ·
                               Requerido: {valor(d.pedido)} {d.unidad}

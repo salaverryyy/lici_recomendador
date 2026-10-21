@@ -451,6 +451,9 @@ Reglas:
   de seguimiento ayudan a afinar y no deben impedir una respuesta útil.
 - Distingue capacidad instalada, expansión y opción de fábrica. Distingue 4G LTE
   de 3G/3.5G. No conviertas un barrido total de inclinación en inclinación por lado.
+- Un mínimo genérico de almacenamiento admite ampliación o configuración opcional
+  documentada: se puntúa como cumplimiento condicionado a incluirla en la oferta.
+  No actives memoria_solo_fabrica por un mínimo genérico ni por preferencia de marca.
 - Si exige un mínimo de memoria interna instalada, usa memoria_min_gb junto con
   memoria_solo_fabrica=true: una tarjeta externa ampliada no cubre ese requisito.
 - Para SLAM distingue GNSS integrado de un módulo opcional, precisión local de

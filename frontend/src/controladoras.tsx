@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { api } from "./api";
 import { usePersistentState } from "./persist";
+import { ORDER_NOTE, ModelYear } from "./ranking-notes";
 
 type Campo = {
   clave: string;
@@ -287,6 +288,7 @@ export function ControllerRank({ slot }: { slot: string }) {
         ) : (
           <>
             <p>{result.total_equipos} controladoras evaluadas</p>
+            <p className="muted small-text">{ORDER_NOTE}</p>
             {result.resultados.map((r: any) => (
               <article className="panel" key={r.equipo.id_equipo}>
                 <div className="rank-heading">
@@ -301,6 +303,7 @@ export function ControllerRank({ slot }: { slot: string }) {
                   </Link>
                   <strong>{r.porcentaje}% de ajuste</strong>
                 </div>
+                <ModelYear equipment={r.equipo} />
                 <progress max={100} value={r.porcentaje} />
                 <p>
                   {r.cumplimientos} requisitos cumplidos · {r.sin_datos} sin

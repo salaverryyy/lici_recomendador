@@ -4,6 +4,12 @@ import { Link } from "react-router-dom";
 import { api } from "./api";
 import { usePersistentState } from "./persist";
 import { SoftwareCard } from "./software";
+import {
+  ORDER_NOTE,
+  ModelYear,
+  ExpansionNotice,
+  complianceLabel,
+} from "./ranking-notes";
 
 type Context = {
   tipo_equipo: "gnss" | "controladora" | "slam" | "software" | "kit";
@@ -86,8 +92,7 @@ function cleanChats(value: unknown): Chat[] {
       (chat) =>
         chat && typeof chat.id === "string" && Array.isArray(chat.messages),
     )
-    .sort((a, b) => Number(b.updatedAt) - Number(a.updatedAt))
-    .slice(0, 5) as Chat[];
+    .sort((a, b) => Number(b.updatedAt) - Number(a.updatedAt)) as Chat[];
 }
 
 function RankCard({ result, kind }: { result: any; kind: string }) {
@@ -101,7 +106,9 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
     <article className="ai-rank-card">
       <div className="rank-heading">
         <span className="rank-number">
-          {result.posicion ? `#${result.posicion}` : "Opción"}
+          {result.posicion
+            ? `#${result.posicion}${result.empate ? " · Empate" : ""}`
+            : "Opción"}
         </span>
         <Link to={`/equipos/${result.equipo.id_equipo}`}>
           <h3>
@@ -114,6 +121,7 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
             : "Sin requisitos para puntuar"}
         </strong>
       </div>
+      <ModelYear equipment={result.equipo} />
       {result.porcentaje != null && (
         <progress max={100} value={result.porcentaje} />
       )}
@@ -130,6 +138,7 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
           ? ` Afinidad técnica: ${result.porcentaje_afinidad}% (incluye cercanía a umbrales incumplidos; no acredita cumplimiento).`
           : ""}
       </p>
+      <ExpansionNotice details={result.detalle} />
       <details className="score-details">
         <summary>Ver evaluación</summary>
         <dl>
@@ -138,15 +147,14 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
               <dt>{item.nombre}</dt>
               <dd>
                 <span className={`ai-state ${item.estado}`}>
-                  {item.estado === "cumple"
-                    ? "Cumple"
-                    : item.estado === "sin_datos"
-                      ? "Sin datos"
-                      : "No cumple"}
+                  {complianceLabel(item)}
                 </span>
                 {kind === "controladora" && item.valor != null
                   ? ` · ${display(item.valor)} ${item.unidad || ""}`
                   : ""}
+                {item.observacion && (
+                  <p className="muted small-text">{item.observacion}</p>
+                )}
               </dd>
             </div>
           ))}
@@ -329,6 +337,9 @@ function AssistantAnswer({
             Se muestran hasta 20 equipos, incluyendo todos los empatados en el
             último puesto. Las funciones no solicitadas no suman puntos.
           </p>
+          <p className="muted small-text">
+            {data.ranking?.orden_presentacion || ORDER_NOTE}
+          </p>
           {results.map((result: any) => (
             <div key={result.equipo.id_equipo}>
               <RankCard result={result} kind={data.tipo_equipo} />
@@ -446,9 +457,9 @@ function WaitingResponse({ query, type }: { query: string; type: string }) {
 }
 
 export function AiAdvisor() {
-  const [storedChats, setChats] = usePersistentState<Chat[]>(STORAGE_KEY, [
-    makeChat(),
-  ]);
+  const [storedChats, setChats, historyStorageError] = usePersistentState<
+    Chat[]
+  >(STORAGE_KEY, [makeChat()]);
   const chats = useMemo(() => cleanChats(storedChats), [storedChats]);
   const [activeId, setActiveId] = usePersistentState<string>(ACTIVE_KEY, "");
   const [message, setMessage] = useState("");
@@ -490,7 +501,7 @@ export function AiAdvisor() {
 
   function createChat() {
     const chat = makeChat();
-    setChats((previous) => [chat, ...cleanChats(previous)].slice(0, 5));
+    setChats((previous) => [chat, ...cleanChats(previous)]);
     setActiveId(chat.id);
     setMessage("");
     setError("");
@@ -498,12 +509,10 @@ export function AiAdvisor() {
   }
 
   function updateChat(chat: Chat) {
-    setChats((previous) =>
-      [
-        chat,
-        ...cleanChats(previous).filter((item) => item.id !== chat.id),
-      ].slice(0, 5),
-    );
+    setChats((previous) => [
+      chat,
+      ...cleanChats(previous).filter((item) => item.id !== chat.id),
+    ]);
   }
 
   function patchActive(changes: Partial<Chat>) {
@@ -564,9 +573,8 @@ export function AiAdvisor() {
                 requisitos: data.requisitos,
               }
             : pending.context,
-        // Diez turnos por consulta mantienen el historial útil sin agotar
-        // el almacenamiento local con respuestas técnicas extensas.
-        messages: [...pending.messages, assistant].slice(-20),
+        // Se conserva el historial visible; historyFor limita lo enviado a IA.
+        messages: [...pending.messages, assistant],
       };
       updateChat(completed);
       if (data.estado === "ok") setAvailability({ disponible: true });
@@ -620,10 +628,24 @@ export function AiAdvisor() {
             <Plus size={16} /> Nueva consulta
           </button>
           <p className="muted small-text">
-            Se guardan automáticamente las últimas 5 consultas en este
-            navegador. Lici recuerda el contexto dentro de cada consulta.
+            Historial: {chats.length} consultas guardadas en este navegador. No
+            se borran al crear nuevas; puedes recorrer la lista y eliminarlas
+            manualmente.
           </p>
-          <div className="ai-chat-list">
+          {historyStorageError && (
+            <p className="notice error" role="alert">
+              No se pudo guardar el historial: el almacenamiento del navegador
+              está lleno o bloqueado. Los cambios siguen abiertos en esta
+              sesión, pero podrían perderse al cerrar. Libera espacio o elimina
+              consultas que ya no necesites.
+            </p>
+          )}
+          <div
+            className="ai-chat-list"
+            role="region"
+            aria-label="Historial de consultas"
+            tabIndex={0}
+          >
             {chats.map((chat) => (
               <div
                 className={chat.id === active?.id ? "active" : ""}
@@ -718,7 +740,7 @@ export function AiAdvisor() {
                 <div className="ai-message-label">
                   {item.role === "user" ? "Tú" : "Lici"}
                 </div>
-                {item.role === "assistant" ? (
+                {item.role === "assistant" && item.data ? (
                   <AssistantAnswer
                     data={item.data}
                     onSelect={

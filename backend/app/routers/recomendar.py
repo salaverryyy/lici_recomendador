@@ -3,6 +3,7 @@ from psycopg import Error as DatabaseError
 
 from ..db import connect
 from ..cotecmi import es_cotecmi
+from ..orden_presentacion import clave_presentacion, NOTA_ORDEN
 from ..recomendador import CRITERIOS, Preferencias, criterios_seleccionados, evaluar_equipo
 
 
@@ -21,7 +22,7 @@ def ordenar_resultados(resultados):
     # mantienen un orden estable dentro del empate, no deciden un ganador.
     resultados.sort(key=lambda r: (
         -(r["porcentaje"] if r["porcentaje"] is not None else -1),
-        r["sin_datos"], -r["cumplimientos"], r["equipo"]["id_equipo"],
+        r["sin_datos"], -r["cumplimientos"], *clave_presentacion(r["equipo"]),
     ))
     cantidades = {}
     for r in resultados:
@@ -90,7 +91,7 @@ def recomendar(preferencias: Preferencias):
 
             cur.execute(
                 """
-                SELECT e.id_equipo, e.marca, e.modelo, e.categoria, e.imagen_url,
+                SELECT e.id_equipo, e.marca, e.modelo, e.categoria, e.imagen_url, e.anio_modelo,
                        to_jsonb(b) AS evaluacion
                 FROM equipos AS e
                 LEFT JOIN base_evaluacion AS b USING (id_equipo)
@@ -131,6 +132,7 @@ def recomendar(preferencias: Preferencias):
                     "modelo": equipo["modelo"],
                     "categoria": equipo["categoria"],
                     "imagen_url": equipo["imagen_url"],
+                    "anio_modelo": equipo["anio_modelo"],
                 },
                 **puntuacion,
             })
@@ -143,6 +145,7 @@ def recomendar(preferencias: Preferencias):
             "top_n_solicitado": preferencias.top_n,
             "mostrados": len(mostrados),
             "metodo_puntuacion": "cumplimiento_ponderado",
+            "orden_presentacion": NOTA_ORDEN,
             "empate_en_primer_puesto": bool(resultados and resultados[0]["empate"]),
             "criterios_seleccionados": [criterio.clave for criterio in elegidos],
             "resultados": mostrados,

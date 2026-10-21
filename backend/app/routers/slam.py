@@ -73,7 +73,7 @@ def recommend(values: Requirements):
     try:
         with connect() as conn, conn.cursor() as cur:
             cur.execute("""
-                SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.imagen_url,to_jsonb(s) AS datos
+                SELECT e.id_equipo,e.marca,e.modelo,e.categoria,e.imagen_url,e.anio_modelo,to_jsonb(s) AS datos
                 FROM equipos e LEFT JOIN slam_especificaciones s USING(id_equipo)
                 WHERE e.publicado AND e.categoria='Escáner SLAM'
             """)

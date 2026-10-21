@@ -1006,6 +1006,10 @@ body:has(.compare-tray) main {
   display: grid;
   gap: 7px;
   margin-top: 17px;
+  max-height: min(60vh, 620px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 .ai-chat-list > div {
   display: grid;
@@ -1217,11 +1221,10 @@ body:has(.compare-tray) main {
     position: static;
   }
   .ai-chat-list {
-    display: flex;
-    overflow-x: auto;
+    max-height: 240px;
   }
   .ai-chat-list > div {
-    min-width: 190px;
+    min-width: 0;
   }
 }
 .thinking-dots {

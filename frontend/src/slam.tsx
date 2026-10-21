@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { api } from "./api";
 import { usePersistentState } from "./persist";
+import { ORDER_NOTE, ModelYear } from "./ranking-notes";
 
 type Campo = {
   clave: string;
@@ -307,6 +308,7 @@ export function SlamRank({ slot }: { slot: string }) {
           ) : (
             <>
               <p>{result.total_equipos} escáneres SLAM evaluados</p>
+              <p className="muted small-text">{ORDER_NOTE}</p>
               {result.resultados.map((item: any) => (
                 <article
                   className="panel rank-card"
@@ -324,6 +326,7 @@ export function SlamRank({ slot }: { slot: string }) {
                     </Link>
                     <strong>{item.porcentaje}% de ajuste</strong>
                   </div>
+                  <ModelYear equipment={item.equipo} />
                   <progress max={100} value={item.porcentaje} />
                   <p>
                     {item.cumplimientos} requisitos cumplidos · {item.sin_datos}{" "}

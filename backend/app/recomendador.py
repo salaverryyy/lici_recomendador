@@ -230,6 +230,7 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
         memoria_fabrica = None
         memoria_no_interna = False
         requiere_ampliacion = False
+        tipo_ampliacion = None
 
         # Los límites térmicos se evalúan por cumplimiento, sin dividir valores
         # Celsius negativos. Si se necesita cámara, aplicar su rango restringido.
@@ -266,12 +267,19 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
         elif criterio.modo in ("minimo", "maximo"):
             if criterio.clave == "memoria":
                 memoria_fabrica = valor
-                ampliada = datos.get("memoria_expandida_max_gb")
-                if not preferencias.memoria_solo_fabrica and datos.get("memoria_expandible") is True and ampliada is not None and (valor is None or ampliada > valor):
-                    if valor is None or valor < pedido:
+                opciones = []
+                if datos.get('memoria_expandible') is True and datos.get('memoria_expandida_max_gb') is not None:
+                    opciones.append((datos['memoria_expandida_max_gb'], 'extension'))
+                if datos.get('memoria_opcional_fabrica_max_gb') is not None:
+                    opciones.append((datos['memoria_opcional_fabrica_max_gb'], 'opcion_fabrica'))
+                if not preferencias.memoria_solo_fabrica and opciones and (valor is None or valor < pedido):
+                    ampliada, tipo = max(opciones, key=lambda item: item[0])
+                    if valor is None or ampliada > valor:
                         valor = ampliada
                         requiere_ampliacion = True
-                        observacion = f"Memoria de fábrica: {memoria_fabrica if memoria_fabrica is not None else 'sin datos'} GB; capacidad ampliada declarada: {ampliada} GB."
+                        tipo_ampliacion = tipo
+                        condicion = 'configuración opcional de fábrica' if tipo == 'opcion_fabrica' else 'ampliación'
+                        observacion = f"Memoria estándar: {memoria_fabrica if memoria_fabrica is not None else 'sin datos'} GB; con {condicion}: {ampliada} GB. Debe incluirse y verificarse en la oferta; no se presume instalada."
                 if preferencias.memoria_solo_fabrica:
                     observacion = "Se evalúa solo la memoria declarada de fábrica; no se acepta ampliación para cubrir el mínimo interno exigido."
                     memoria_no_interna = datos.get('memoria_es_interna') is False
@@ -284,7 +292,7 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
                 if estado == "cumple":
                     factor = 1.0
                     if requiere_ampliacion:
-                        observacion = "Cumple con memoria extendida. " + observacion
+                        observacion = ("Cumple con configuración opcional de fábrica. " if tipo_ampliacion == 'opcion_fabrica' else "Cumple con memoria extendida. ") + observacion
                 elif criterio.modo == "minimo":
                     factor = float(valor) / float(pedido) if pedido else 0.0
                 else:
@@ -335,6 +343,7 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
             "estado": estado,
             "observacion": observacion,
             "requiere_ampliacion": requiere_ampliacion,
+            "tipo_ampliacion": tipo_ampliacion,
             "memoria_fabrica_gb": memoria_fabrica if criterio.clave == "memoria" else None,
             "factor": round(factor, 4),
             "peso": peso,
@@ -349,7 +358,7 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
         item['puntos'] = item['peso'] * item['factor']
     puntos = sum(item["puntos"] for item in detalle)
     porcentaje = round(100 * puntos / peso_total, 2) if peso_total else None
-    cumplidos = [item["nombre"] + (" ("+item['unidad']+")" if item['unidad'] else '') + (" (con memoria extendida)" if item["requiere_ampliacion"] else "")
+    cumplidos = [item["nombre"] + (" ("+item['unidad']+")" if item['unidad'] else '') + ((" (con configuración opcional de fábrica)" if item['tipo_ampliacion']=='opcion_fabrica' else " (con memoria extendida)") if item["requiere_ampliacion"] else "")
                  for item in detalle if item["estado"] == "cumple"]
     incumplidos = [item["nombre"] + (" ("+item['unidad']+")" if item['unidad'] else '') for item in detalle if item["estado"] == "incumple"]
     desconocidos = [item["nombre"] + (" ("+item['unidad']+")" if item['unidad'] else '') for item in detalle if item["estado"] == "sin_datos"]

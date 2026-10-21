@@ -1,9 +1,10 @@
 """Compone opciones de oficina/campo sin convertir afinidad de marca en compatibilidad."""
 from .software import rank as rank_software
+from .orden_presentacion import clave_presentacion, NOTA_ORDEN
 
 
 def unscored(row):
-    return {'equipo': {k: row.get(k) for k in ('id_equipo','marca','modelo','categoria')},
+    return {'equipo': {k: row.get(k) for k in ('id_equipo','marca','modelo','categoria','anio_modelo')},
             'porcentaje': None, 'detalle': [], 'sin_datos': 0}
 
 
@@ -26,7 +27,7 @@ def assemble(gnss, controllers, software, requirements, selections, reference=No
         brand = receiver['equipo']['marca']
         # Política de catálogo: nunca completar una marca con otra colectora.
         candidates = [r for r in controllers if r['equipo']['marca']==brand and brand != 'Emlid']
-        candidates.sort(key=lambda r: (issues(r)[0], -(r.get('porcentaje') or 0), issues(r)[1], r['equipo']['marca']!=brand, r['equipo']['id_equipo']))
+        candidates.sort(key=lambda r: (issues(r)[0], -(r.get('porcentaje') or 0), issues(r)[1], *clave_presentacion(r['equipo'])))
         controller = candidates[0] if candidates else None
         native = [r for r in software if r['marca']==brand]
         # No se presume intercambiabilidad de formatos entre todas las marcas.
@@ -56,10 +57,10 @@ def assemble(gnss, controllers, software, requirements, selections, reference=No
                         'estado': 'no_cumple' if failures or (strict and (missing_controller or not processing)) or (mobile and bool(requirements.get('controladora'))) else 'pendiente_validacion',
                         'pendientes': pending, 'familias_sin_requisitos': not_evaluated,
                         'seleccion_explicita': bool(selections.get('gnss'))})
-    options.sort(key=lambda o: (o['estado']=='no_cumple', -(o['porcentaje'] if o['porcentaje'] is not None else -1), o['sin_datos'], o['gnss']['equipo']['id_equipo']))
+    options.sort(key=lambda o: (o['estado']=='no_cumple', -(o['porcentaje'] if o['porcentaje'] is not None else -1), o['sin_datos'], *clave_presentacion(o['gnss']['equipo'])))
     shown = options[:limit]
     if shown:
         boundary = (shown[-1]['estado'], shown[-1]['porcentaje'])
         shown.extend(o for o in options[limit:] if (o['estado'],o['porcentaje'])==boundary)
     return {'opciones': shown, 'total': len(options), 'misma_marca_exigida': strict,
-            'nota': 'Orden GNSS → controladora → software de oficina. Porcentaje parcial: media por familia con requisitos; no acredita cumplimiento total ni compatibilidad del conjunto. Los incumplimientos conocidos se muestran después de las opciones sin incumplimientos.'}
+            'nota': 'Orden GNSS → controladora → software de oficina. Porcentaje parcial: media por familia con requisitos; no acredita cumplimiento total ni compatibilidad del conjunto. Los incumplimientos conocidos se muestran después de las opciones sin incumplimientos. '+NOTA_ORDEN}

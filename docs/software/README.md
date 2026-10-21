@@ -8,7 +8,7 @@ Auditoría: 21 de octubre de 2026. El inventario trazable está en [catalogo_202
 | Compass Solution | SinoGNSS / ComNav | [Producto oficial](https://www.comnavtech.com/sp/product/software/Compass%20Solution.html): estático/rápido/cinemático e informes. [Ficha N3](https://www.comnavtech.com/uploads/soft/20250606/4cf6ea262b3d28e11c75a61c53fc2eb6.pdf): observaciones RINEX y binarias. |
 | Emlid Studio | Emlid | [Producto](https://emlid.com/emlid-studio/) y [manual](https://docs.emlid.com/emlid-studio/): gratuito, Windows/macOS, estático, cinemático, drones, Stop & Go y conversión RINEX. |
 
-No se asignan gratuidad, sistema operativo, licencia incluida o modalidad perpetua a PProcessing/Compass sin evidencia. En Compass se acreditan informes de ajuste/red, pero el requisito específico de ajuste de redes queda pendiente de confirmación del método. En Emlid Studio tampoco se presume ajuste de redes ni exportaciones no documentadas. Software gratuito no acredita una licencia comercial exigida. Estos programas son de oficina; no se presentan como aplicaciones Android de la colectora. Survey Master, SingularPad y Emlid Flow tienen un papel diferente.
+La auditoría incremental documentada en [auditoria_2026-10-21.md](auditoria_2026-10-21.md) confirma Windows para PProcessing/Compass y ajuste de redes por mínimos cuadrados para Compass. No se asignan gratuidad, licencia incluida o modalidad perpetua sin evidencia. En Emlid Studio tampoco se presume ajuste de redes ni exportaciones no documentadas. Software gratuito no acredita una licencia comercial exigida. Estos programas son de oficina; no se presentan como aplicaciones Android de la colectora. Survey Master, SingularPad y Emlid Flow tienen un papel diferente.
 
 ## Catálogo y datos
 
@@ -30,7 +30,7 @@ La evaluación conjunta considera las tres familias con requisitos: media de sus
 
 La verificación final conserva cantidades, accesorios, licencias, versiones, formatos concretos, kit y requisitos no representados como pendientes. Requiere comprobar registro bruto del receptor, archivo de prueba y app de campo. Si el usuario cambia el receptor y mantiene un software incompatible por marca con la selección, se informa que no hay una combinación auditada; no se ignora silenciosamente su selección.
 
-La memoria sigue guardándose localmente en los cinco chats del navegador, sin crear almacenamiento externo ni servicios de pago. La extracción conjunta utiliza una llamada lógica de interpretación (más los reintentos/respaldos ya existentes), seguida de cálculos locales; no hay una llamada extra por cada programa o conjunto.
+El historial se guarda localmente en el navegador, sin límite automático de cinco chats ni recorte de mensajes visibles. La lista es desplazable y la eliminación manual. No se crean almacenamiento externo ni servicios de pago. Solo los últimos seis turnos, acotados en longitud, se envían al modelo; guardar más chats no amplía ese contexto ni añade llamadas. Si el navegador rechaza el guardado por falta de espacio o bloqueo, se avisa y se conservan los cambios en la sesión, sin borrar chats automáticamente. Borrar los datos del sitio elimina el historial local y no hay sincronización entre dispositivos.
 
 ## Espera y accesibilidad
 

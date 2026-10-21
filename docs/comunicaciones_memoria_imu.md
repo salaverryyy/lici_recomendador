@@ -24,7 +24,10 @@ solo se evalúa la capacidad instalada conocida. No se suman almacenamiento inte
 y tarjeta externa cuando la ficha no confirma una capacidad agregada.
 
 Capacidades opcionales de fábrica (`memoria_opcional_fabrica_max_gb`) se muestran
-separadas: no se consideran ampliaciones confirmadas. T300+: 8 GB estándar y
+separadas de una expansión posterior. Para un mínimo genérico también pueden
+dar todos los puntos, con la condición visible «Cumple con configuración opcional
+de fábrica»: la oferta debe incluir esa configuración. No se presume instalada
+ni se permite con `memoria_solo_fabrica=true`. T300+: 8 GB estándar y
 16/32 GB al ordenar. P6H: ROM opcional y MicroSD son dos vías diferentes.
 Jupiter: 4 GB estándar y ampliable hasta 32 GB. Orion/X1/X1 Lite: 8 GB y hasta 32 GB.
 i93 revisión March 2026: 32 GB y expansión externa 128 GB.
