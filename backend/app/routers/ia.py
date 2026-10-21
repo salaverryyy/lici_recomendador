@@ -21,6 +21,7 @@ from ..soluciones import assemble, unscored
 from ..imagenes_ia import ImageInput, MAX_TOTAL
 from ..comercial import enriquecer
 from ..controladoras import META as CONTROLLER_FIELDS
+from ..ia import normalize_components
 
 
 router = APIRouter(prefix="/api/ia", tags=["asistente con IA"])
@@ -69,6 +70,55 @@ class AIRequest(BaseModel):
         if sum(len(item.data)*3//4 for item in self.imagenes)>MAX_TOTAL:
             raise ValueError('Las imágenes superan el límite total de 2.4 MB.')
         return self
+
+
+class GNSSSelection(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    id_gnss: str = Field(min_length=1,max_length=100)
+    contexto_previo: PreviousContext
+    solo_cotecmi: bool = True
+    top_n: int = Field(default=20,ge=1,le=100)
+    omitidos: list[str] = Field(default_factory=list,max_length=80)
+
+    @model_validator(mode='after')
+    def limit_pending_review(self):
+        if any(len(item)>2000 for item in self.omitidos) or sum(map(len,self.omitidos))>20000:
+            raise ValueError('La revisión manual excede el tamaño permitido.')
+        return self
+
+
+@router.post('/seleccionar-gnss')
+def select_gnss(body: GNSSSelection):
+    """Elección explícita sin inferencia de Gemini ni consumo de su cuota."""
+    try:
+        catalog = _catalog(body.solo_cotecmi, 'auto')
+        receiver = next((r for r in catalog if r['id_equipo']==body.id_gnss and r['categoria']=='GNSS'), None)
+        if receiver is None:
+            raise HTTPException(status_code=422,detail='El GNSS no está publicado o no pertenece al catálogo permitido.')
+        previous = body.contexto_previo
+        incoming = dict(previous.componentes)
+        if previous.tipo_equipo in ('gnss','controladora','software') and previous.requisitos and previous.tipo_equipo not in incoming:
+            incoming[previous.tipo_equipo] = previous.requisitos
+        omitted = list(body.omitidos)
+        components = normalize_components({}, incoming, omitted)
+        selections = {'gnss':body.id_gnss}
+        for family,category in (('controladora','Controladora'),('software','Software de procesamiento')):
+            ident = previous.selecciones.get(family)
+            if any(r['id_equipo']==ident and r['marca']==receiver['marca'] and r['categoria']==category for r in catalog):
+                selections[family] = ident
+        parsed = {'tipo_equipo':'kit','intencion':'recomendacion','componentes':components,
+                  'selecciones':selections,'misma_marca':previous.misma_marca,
+                  'requisitos':{},'respuesta_general':'','omitidos':omitted, 'preguntas':[],
+                  'resumen':f"GNSS elegido: {receiver['marca']} {receiver['modelo']}. Se revisan su controladora y software.",
+                  'tiene_criterios':bool(components)}
+        request = AIRequest(mensaje='Continuar con el GNSS elegido',solo_cotecmi=body.solo_cotecmi,
+                            top_n=body.top_n,contexto_previo=previous)
+        workflow = _recommend_workflow(parsed,request,catalog)
+        return {'estado':'ok',**parsed,**workflow,'solo_cotecmi':body.solo_cotecmi,
+                'generado_en':datetime.now().astimezone().isoformat()}
+    except (DatabaseError, AIProviderError, ValueError) as exc:
+        raise HTTPException(status_code=503 if isinstance(exc,DatabaseError) else 422,
+                            detail='No se pudo continuar con esa selección. Revisa el catálogo y los requisitos.') from exc
 
 
 @router.get("/estado")

@@ -501,8 +501,9 @@ Reglas:
 - LTE integrado requiere módem propio y ranura física SIM del equipo evaluado.
   No transfieras el LTE del teléfono/controladora al receptor ni confíes en la
   palabra «Leica 4G» de formatos RTK: no acredita un módem celular.
-- El servidor ordena empates técnicos por costo comparable interno y después
-  preferencia comercial SinoGNSS. No inventes costos ni superioridad por marca.
+- El servidor ordena primero por cumplimiento técnico. En igualdad técnica prioriza
+  SinoGNSS y luego el costo comparable interno dentro de la marca. Otra marca que
+  cumple más debe ir antes. No inventes costos ni superioridad técnica por marca.
 - Para SLAM distingue GNSS integrado de un módulo opcional, precisión local de
   precisión absoluta y autonomía por batería de autonomía total con repuestos.
 - Usa el campo aplicaciones para representar el uso principal con una de sus

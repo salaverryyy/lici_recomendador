@@ -33,8 +33,8 @@ Top N incluye todos los equipos empatados en el puesto de corte.
 ## Orden de presentación — 21 de octubre de 2026
 
 Primero se ordena por porcentaje de cumplimiento y cobertura de los criterios
-solicitados. Dentro de la igualdad técnica se aplica primero el menor costo de
-mercado comparable en USD; después la preferencia comercial SinoGNSS,
+solicitados. Dentro de la igualdad técnica se aplica primero la preferencia
+comercial SinoGNSS; después el menor costo de mercado comparable en USD,
 el año de modelo descendente y el ID estable. Un precio sin confirmar nunca es cero.
 Esta preferencia no implica superioridad técnica ni concede puntos. Los equipos
 empatados siguen compartiendo puesto. Un modelo anterior que cumple más queda
@@ -43,10 +43,19 @@ por encima de uno reciente que cumple menos.
 Las referencias comerciales solo se usan en el servidor: se eliminan de la API
 pública y del catálogo enviado a Gemini, y no se muestran en las tarjetas.
 La falta de precio comparable no demuestra que el equipo sea más caro.
+Mars Pro y Jupiter se contrastaron en el mismo distribuidor, con una conversión
+común del BCE. El orden deriva de datos comerciales y no de IDs o del texto de una
+licitación. Si cambia el cumplimiento (por ejemplo, alcance láser), se recalcula
+antes de aplicar cualquier desempate.
 
 Las preguntas concretas y comparaciones responden en modo conversacional, sin
 recalcular rankings ni volver a mostrar el conjunto. Se conserva intacto el
 contexto anterior para retomar posteriormente la licitación.
+
+El botón de elección usa `/api/ia/seleccionar-gnss`, valida el catálogo permitido,
+conserva requisitos y reconstruye el conjunto de la misma marca sin llamar a
+Gemini. Retira selecciones incompatibles de otra marca y confirma la elección en
+el historial y en las tarjetas. La selección permanece al recargar.
 
 El mismo orden se aplica al recomendador, al chat y a conjuntos GNSS–controladora–
 software, conservando las condiciones técnicas y de marca del conjunto. El año

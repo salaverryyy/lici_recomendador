@@ -88,12 +88,25 @@ function historyFor(messages: Message[]) {
   const selected: Array<Pick<Message, "role" | "text">> = [];
   for (const item of messages.slice(-12).reverse()) {
     if (remaining <= 0) break;
-    const text = item.text.slice(0, Math.min(2500, remaining)).trim();
+    const text = (
+      item.role === "assistant" ? cleanCostNotices(item.text) : item.text
+    )
+      .slice(0, Math.min(2500, remaining))
+      .trim();
     if (!text) continue;
     selected.push({ role: item.role, text });
     remaining -= text.length;
   }
   return selected.reverse();
+}
+
+function cleanCostNotices(text: unknown) {
+  return String(text ?? "")
+    .replace(
+      /Costo orientativo:\s*cotizar;\s*sin precio público comparable\.?/gi,
+      "",
+    )
+    .trim();
 }
 
 function cleanChats(value: unknown): Chat[] {
@@ -189,9 +202,11 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
 function AssistantAnswer({
   data,
   onSelect,
+  selectedGnss,
 }: {
   data: any;
   onSelect?: (id: string) => void;
+  selectedGnss?: string;
 }) {
   if (data?.estado === "no_disponible") {
     return (
@@ -212,7 +227,7 @@ function AssistantAnswer({
   return (
     <>
       <p style={{ whiteSpace: "pre-wrap" }}>
-        <BoldText text={data?.respuesta} />
+        <BoldText text={cleanCostNotices(data?.respuesta)} />
       </p>
       {data?.resumen && (
         <p className="muted">
@@ -319,9 +334,13 @@ function AssistantAnswer({
                 <button
                   type="button"
                   className="outline"
+                  aria-pressed={selectedGnss === option.gnss.equipo.id_equipo}
+                  disabled={selectedGnss === option.gnss.equipo.id_equipo}
                   onClick={() => onSelect(option.gnss.equipo.id_equipo)}
                 >
-                  Elegir este GNSS para continuar
+                  {selectedGnss === option.gnss.equipo.id_equipo
+                    ? "GNSS elegido"
+                    : "Elegir este GNSS para continuar"}
                 </button>
               )}
               <h4>2. Controladora</h4>
@@ -402,9 +421,13 @@ function AssistantAnswer({
                 <button
                   type="button"
                   className="outline"
+                  aria-pressed={selectedGnss === result.equipo.id_equipo}
+                  disabled={selectedGnss === result.equipo.id_equipo}
                   onClick={() => onSelect(result.equipo.id_equipo)}
                 >
-                  Elegir este GNSS para continuar
+                  {selectedGnss === result.equipo.id_equipo
+                    ? "GNSS elegido"
+                    : "Elegir este GNSS para continuar"}
                 </button>
               )}
             </div>
@@ -522,11 +545,20 @@ export function AiAdvisor() {
   const [images, setImages] = useState<AiImage[]>([]);
   const [preparingImages, setPreparingImages] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
+  const messagesContainer = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [availability, setAvailability] = useState<any>(null);
   const initializedEmptyHistory = useRef(false);
   const active = chats.find((chat) => chat.id === activeId) || chats[0];
+  useEffect(() => {
+    if (active?.messages.length) {
+      messagesContainer.current?.lastElementChild?.scrollIntoView({
+        behavior: "auto",
+        block: "start",
+      });
+    }
+  }, [activeId, active?.messages.length]);
   useEffect(() => {
     if (active && !active.messages.length) setExamples(nextExamples());
   }, [active?.id]);
@@ -695,6 +727,59 @@ export function AiAdvisor() {
     }
   }
 
+  async function selectGnss(ident: string, source: any) {
+    if (!active || busy || preparingImages) return;
+    const context: Context = active.context ||
+      source.contexto || {
+        tipo_equipo: source.tipo_equipo || "gnss",
+        requisitos: source.requisitos || {},
+        componentes: source.componentes || {},
+      };
+    const candidates = [
+      ...(source.ranking?.resultados || []).map((r: any) => r.equipo),
+      ...(source.solucion?.opciones || []).map((r: any) => r.gnss.equipo),
+    ];
+    const equipment = candidates.find((e: any) => e.id_equipo === ident);
+    const name = equipment ? `${equipment.marca} ${equipment.modelo}` : ident;
+    const pending: Chat = {
+      ...active,
+      updatedAt: Date.now(),
+      messages: [
+        ...active.messages,
+        {
+          id: id(),
+          role: "user",
+          text: `Elijo ${name}. Continuar con su controladora y software.`,
+        },
+      ],
+    };
+    updateChat(pending);
+    setBusy(true);
+    setError("");
+    try {
+      const data = await api("/ia/seleccionar-gnss", "POST", {
+        id_gnss: ident,
+        contexto_previo: context,
+        omitidos: source.omitidos || [],
+        solo_cotecmi: active.onlyCotecmi,
+        top_n: 20,
+      });
+      updateChat({
+        ...pending,
+        updatedAt: Date.now(),
+        context: data.contexto,
+        messages: [
+          ...pending.messages,
+          { id: id(), role: "assistant", text: data.respuesta, data },
+        ],
+      });
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const retry = availability?.reintentar_en
     ? new Date(availability.reintentar_en).toLocaleString("es-PE")
     : null;
@@ -837,7 +922,11 @@ export function AiAdvisor() {
             </p>
           )}
 
-          <div className="ai-messages" aria-live="polite">
+          <div
+            className="ai-messages"
+            aria-live="polite"
+            ref={messagesContainer}
+          >
             {!active?.messages.length && (
               <div className="ai-welcome">
                 <Bot size={38} />
@@ -875,25 +964,22 @@ export function AiAdvisor() {
                 {item.role === "assistant" && item.data ? (
                   <AssistantAnswer
                     data={item.data}
+                    selectedGnss={active.context?.selecciones?.gnss}
                     onSelect={
                       busy
                         ? undefined
-                        : (ident) =>
-                            patchActive({
-                              context: {
-                                ...(active.context || item.data.contexto),
-                                selecciones: {
-                                  ...(active.context?.selecciones || {}),
-                                  gnss: ident,
-                                },
-                                referencia_gnss: ident,
-                              },
-                            })
+                        : (ident) => void selectGnss(ident, item.data)
                     }
                   />
                 ) : (
                   <p>
-                    <BoldText text={item.text} />
+                    <BoldText
+                      text={
+                        item.role === "assistant"
+                          ? cleanCostNotices(item.text)
+                          : item.text
+                      }
+                    />
                     {!!item.adjuntos?.length && (
                       <small className="muted">
                         {" "}

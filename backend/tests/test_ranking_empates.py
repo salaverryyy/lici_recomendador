@@ -1,5 +1,7 @@
 import unittest
 from app.routers.recomendar import ordenar_resultados, limitar_con_empates
+from app.comercial import enriquecer
+from app.recomendador import Preferencias, CRITERIOS, criterios_seleccionados, evaluar_equipo
 
 
 class EmpatesTest(unittest.TestCase):
@@ -31,6 +33,30 @@ class EmpatesTest(unittest.TestCase):
         rows[1]['equipo']['referencia_precio']={'precio_usd':2000,'comparable':True}
         ordenar_resultados(rows)
         self.assertEqual(rows[0]['equipo']['id_equipo'],'PRICED')
+
+    def test_real_commercial_references_sort_mars_before_jupiter_only_on_tie(self):
+        rows=[self.row('GNSS-SINOGNSS-JUPITER','SinoGNSS',2025),
+              self.row('GNSS-SINOGNSS-MARS-PRO','SinoGNSS',2023),
+              self.row('GNSS-SINGULARXYZ-X1','SingularXYZ',2023)]
+        for row in rows:row['equipo']=enriquecer(row['equipo'])
+        ordenar_resultados(rows)
+        self.assertEqual([r['equipo']['id_equipo'] for r in rows],
+                         ['GNSS-SINOGNSS-MARS-PRO','GNSS-SINOGNSS-JUPITER','GNSS-SINGULARXYZ-X1'])
+        self.assertTrue(all(r['posicion']==1 for r in rows))
+        # Un requisito adicional vuelve a calcular el cumplimiento: ni marca ni costo lo alteran.
+        preferences=Preferencias(laser_alcance_min_m=50)
+        for row,reach in zip(rows,(10,50,0)):
+            row.update(evaluar_equipo(preferences,criterios_seleccionados(preferences),
+                                     {c.clave:c.peso for c in CRITERIOS},{'laser_alcance_m':reach},[]))
+        ordenar_resultados(rows)
+        self.assertEqual(rows[0]['equipo']['id_equipo'],'GNSS-SINOGNSS-JUPITER')
+
+    def test_better_scoring_foreign_model_precedes_preferred_brand_even_when_expensive(self):
+        rows=[self.row('SINO','SinoGNSS',2025,95),self.row('OTHER','SingularXYZ',2023,100)]
+        rows[0]['equipo']['referencia_precio']={'precio_usd':100,'comparable':True}
+        rows[1]['equipo']['referencia_precio']={'precio_usd':10000,'comparable':True}
+        ordenar_resultados(rows)
+        self.assertEqual(rows[0]['equipo']['id_equipo'],'OTHER')
 
     def test_limit_preserves_all_products_tied_at_boundary(self):
         rows=[{'equipo':{'id_equipo':str(i)},'porcentaje':p,'sin_datos':0,'cumplimientos':1}

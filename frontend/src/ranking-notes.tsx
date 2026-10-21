@@ -1,5 +1,5 @@
 export const ORDER_NOTE =
-  "En igualdad técnica se prioriza el menor costo de mercado comparable disponible; después, preferencia comercial SinoGNSS y año más reciente. Los costos son internos; la falta de referencia no demuestra que un equipo sea más caro. Este orden no concede puntos ni acredita superioridad técnica.";
+  "En igualdad técnica se prioriza SinoGNSS; dentro de la marca, el menor costo de mercado comparable disponible y después el año más reciente. Los costos son internos; la falta de referencia no demuestra que un equipo sea más caro. Este orden no concede puntos ni acredita superioridad técnica.";
 
 export function complianceLabel(detail: any) {
   if (detail.estado !== "cumple")

@@ -166,24 +166,38 @@
   {
     "id_equipo": "GNSS-SINOGNSS-JUPITER",
     "modelo": "Jupiter Laser RTK",
-    "precio_usd": null,
-    "comparable": false,
-    "fuente_url": "https://www.geo-st.ru/catalogue/gps_glonass_oborudovanie/",
+    "precio_usd": 10125.0028,
+    "comparable": true,
+    "fuente_url": "https://equipodetopografia.com/products/gnss-jupiter-laser-rtk-de-sinognss",
     "fecha_consulta": "2026-10-21",
-    "alcance": "Referencia publicada en rublos por GeoStandard; no se convierte a USD ni participa en desempates de precio. Revisiones, impuestos y configuración regional pueden variar. No es cotización Cotecmi ni costo importado a Perú.",
-    "estado": "otra_moneda",
-    "precio_origen": 420000,
-    "moneda_origen": "RUB"
+    "alcance": "Referencia interna minorista de un receptor anunciado individualmente por Equipo de topografía (México). Conversión común del BCE; no es cotización Cotecmi ni costo importado a Perú. No acredita stock, equivalencia exacta de accesorios, memoria bajo pedido ni adaptación USB-C. Solo desempata cumplimiento técnico idéntico; no aporta puntos ni acredita cumplimiento.",
+    "estado": "referencia_publica",
+    "precio_origen": 187135.0,
+    "moneda_origen": "MXN",
+    "conversion": {
+      "fuente_url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+      "fecha_tasa": "2026-10-21",
+      "USD_por_EUR": 1.1234,
+      "MXN_por_EUR": 20.7632
+    }
   },
   {
     "id_equipo": "GNSS-SINOGNSS-MARS-PRO",
     "modelo": "Mars Pro Laser RTK",
-    "precio_usd": null,
-    "comparable": false,
-    "fuente_url": "https://www.comnavtech.com/product/receiver/marpro.html",
+    "precio_usd": 9288.5343,
+    "comparable": true,
+    "fuente_url": "https://equipodetopografia.com/products/gnss-mars-pro-laser-rtk-sinognss",
     "fecha_consulta": "2026-10-21",
-    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
-    "estado": "cotizar"
+    "alcance": "Referencia interna minorista de un receptor anunciado individualmente por Equipo de topografía (México). Conversión común del BCE; no es cotización Cotecmi ni costo importado a Perú. No acredita stock, equivalencia exacta de accesorios, memoria bajo pedido ni adaptación USB-C. Solo desempata cumplimiento técnico idéntico; no aporta puntos ni acredita cumplimiento.",
+    "estado": "referencia_publica",
+    "precio_origen": 171675.0,
+    "moneda_origen": "MXN",
+    "conversion": {
+      "fuente_url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+      "fecha_tasa": "2026-10-21",
+      "USD_por_EUR": 1.1234,
+      "MXN_por_EUR": 20.7632
+    }
   },
   {
     "id_equipo": "GNSS-CHCNAV-I93",
@@ -208,12 +222,20 @@
   {
     "id_equipo": "GNSS-SINOGNSS-T20",
     "modelo": "T20 Palm RTK",
-    "precio_usd": null,
-    "comparable": false,
-    "fuente_url": "https://comnavtech.com/product/receiver/t20.html",
+    "precio_usd": 6708.7917,
+    "comparable": true,
+    "fuente_url": "https://equipodetopografia.com/products/gnss-t20-sinognss",
     "fecha_consulta": "2026-10-21",
-    "alcance": "Cotizar: no se encontró una referencia pública nueva, unitaria y comparable en USD. No equivale a precio cero.",
-    "estado": "cotizar"
+    "alcance": "Referencia interna minorista de un receptor anunciado individualmente por Equipo de topografía (México). Conversión común del BCE; no es cotización Cotecmi ni costo importado a Perú. No acredita stock, equivalencia exacta de accesorios, memoria bajo pedido ni adaptación USB-C. Solo desempata cumplimiento técnico idéntico; no aporta puntos ni acredita cumplimiento.",
+    "estado": "referencia_publica",
+    "precio_origen": 123995.0,
+    "moneda_origen": "MXN",
+    "conversion": {
+      "fuente_url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+      "fecha_tasa": "2026-10-21",
+      "USD_por_EUR": 1.1234,
+      "MXN_por_EUR": 20.7632
+    }
   },
   {
     "id_equipo": "GNSS-SOUTH-G1",

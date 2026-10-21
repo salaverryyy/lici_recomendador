@@ -57,7 +57,7 @@ class DialogoPreciosTests(unittest.TestCase):
         self.assertEqual(data['omitidos'],[])
         self.assertEqual(data['contexto']['referencia_gnss'],'JUPITER')
 
-    def test_comparable_cost_precedes_brand_only_in_technical_ties(self):
+    def test_brand_precedes_cost_only_in_technical_ties(self):
         def row(ident,brand,cost,score):
             return {'equipo':{'id_equipo':ident,'marca':brand,
                     'referencia_precio':{'precio_usd':cost,'comparable':True}},
@@ -65,7 +65,7 @@ class DialogoPreciosTests(unittest.TestCase):
         rows=[row('SINO','SinoGNSS',3000,100), row('X1','SingularXYZ',2000,100),
               row('CHEAP','Emlid',1000,90)]
         ordenar_resultados(rows)
-        self.assertEqual([r['equipo']['id_equipo'] for r in rows],['X1','SINO','CHEAP'])
+        self.assertEqual([r['equipo']['id_equipo'] for r in rows],['SINO','X1','CHEAP'])
         self.assertEqual(rows[0]['posicion'],rows[1]['posicion'])
 
     def test_prices_do_not_reach_provider_or_public_json(self):
