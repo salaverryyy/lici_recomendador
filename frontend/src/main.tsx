@@ -46,7 +46,6 @@ import {
   ModelYear,
   ExpansionNotice,
   complianceLabel,
-  PriceReference,
 } from "./ranking-notes";
 import "./style.css";
 
@@ -1402,7 +1401,6 @@ function GnssRecommend({ slot = "" }: { slot?: string }) {
                     </strong>
                   </div>
                   <ModelYear equipment={r.equipo} />
-                  <PriceReference equipment={r.equipo} />
                   {r.porcentaje != null && (
                     <progress max={100} value={r.porcentaje} />
                   )}

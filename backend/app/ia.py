@@ -18,6 +18,19 @@ from .controladoras import META, validate as validar_controladora
 from .recomendador import CRITERIOS, Preferencias, criterios_seleccionados
 from .slam import META as SLAM_META, validate as validar_slam
 from .software import FIELDS as SOFTWARE_FIELDS, validate as validar_software
+from .comercial import sin_precios
+
+
+def es_dialogo(message, intention):
+    """El contexto previo no convierte una pregunta puntual en otra licitación."""
+    if re.search(r'\branking\b|\brankea|\blista\b|\blistado\b|\brecalcula|\bfiltra|\bbusca\b', message, re.I):
+        return False
+    if len(message) < 1000 and re.search(
+        r'por\s*qu[eé]|\bporque\b|\bcompara|\bdiferencia|\bventaja|cu[aá]l.{0,60}mejor|cu[aá]nt.{0,60}tiene|qu[eé].{0,40}significa',
+        message, re.I,
+    ):
+        return True
+    return intention in ('comparacion', 'explicacion', 'consulta_catalogo')
 
 
 class AIProviderError(Exception):
@@ -187,7 +200,7 @@ def _response_schema() -> dict:
             "omitidos": {"type": "array", "items": {"type": "string"}},
             "lectura_imagenes": {"type":"array", "maxItems":3, "items":{"type":"object","properties":{"indice":{"type":"integer"},"texto":{"type":"string"},"dudas":{"type":"array","items":{"type":"string"}}},"required":["indice","texto","dudas"]}},
         },
-        "required": ["tipo_equipo", "requisitos", "resumen", "preguntas", "omitidos"],
+        "required": ["tipo_equipo", "intencion", "respuesta_general", "requisitos", "resumen", "preguntas", "omitidos"],
         "additionalProperties": False,
     }
 
@@ -384,6 +397,30 @@ Devuelve EXCLUSIVAMENTE un objeto JSON con esta forma:
 }}
 
 Reglas:
+- Responde a la intención del mensaje ACTUAL, aunque el historial contenga una licitación.
+  Comparar, explicar una elección, preguntar una especificación o pedir consejo no
+  equivale a solicitar otro ranking ni a reconstruir el conjunto anterior.
+  «Por qué R80 y no R60», «cuál es mejor» y «compara X con Y» requieren una respuesta
+  argumentada en respuesta_general, intencion="comparacion" o "explicacion".
+  Una pregunta concreta como «cuántos GB tiene Jupiter» usa "consulta_catalogo".
+  Usa "recomendacion" cuando pide buscar/listar/filtrar equipos, cambiar requisitos,
+  elegir un componente o evaluar una licitación. Conserva el contexto sin repetirlo.
+  En una explicación o comparación no agregues requisitos, selecciones ni omitidos
+  anteriores que no sean pertinentes a la pregunta actual.
+- En respuesta_general contesta primero lo preguntado. Compara datos concretos de
+  los modelos nombrados, ventajas y desventajas según el uso, y concluye cuándo
+  elegir cada uno. Si una opción anterior no se puntuó, di que era provisional:
+  una controladora más reciente no es automáticamente mejor ni más conveniente.
+  Si pregunta por qué se mostró una colectora sin requisitos para puntuar, explica
+  que fue una opción provisional del orden de presentación, no una evaluación
+  que demostrara superioridad sobre las demás. Justifica después con diferencias
+  documentadas y reconoce dónde la alternativa puede convenir más.
+  No inventes medidas, certificaciones o ventajas para justificar la opción previa.
+  anio_modelo es metadato de catálogo: no lo describas como fecha de lanzamiento
+  comprobada ni como prueba de mayor calidad o compatibilidad.
+  Puedes sugerir una alternativa sin recalcular ni mostrar otro ranking.
+  No muestres precios, importes, monedas, enlaces comerciales ni estimaciones de
+  costo. Cotecmi gestiona las cotizaciones; los costos de desempate son internos.
 - Tipo solicitado: {requested_type}. Si es "auto", dedúcelo. Un receptor, base,
   rover, RTK o GNSS es "gnss"; un colector, controlador o controladora es
   "controladora"; LiDAR, nube de puntos, escáner 3D, mapeo móvil o SLAM es
@@ -464,10 +501,8 @@ Reglas:
 - LTE integrado requiere módem propio y ranura física SIM del equipo evaluado.
   No transfieras el LTE del teléfono/controladora al receptor ni confíes en la
   palabra «Leica 4G» de formatos RTK: no acredita un módem celular.
-- Prioriza SinoGNSS solo en igualdad de cumplimiento técnico, como preferencia
-  comercial de Cotecmi. Si otra marca cumple más requisitos debe ir antes.
-  Para desempatar por costo usa solo referencias comparables del catálogo,
-  indicando fuente, moneda y fecha. No inventes precios ni mezcles kits y unidades.
+- El servidor ordena empates técnicos por costo comparable interno y después
+  preferencia comercial SinoGNSS. No inventes costos ni superioridad por marca.
 - Para SLAM distingue GNSS integrado de un módulo opcional, precisión local de
   precisión absoluta y autonomía por batería de autonomía total con repuestos.
 - Usa el campo aplicaciones para representar el uso principal con una de sus
@@ -493,7 +528,7 @@ Campos de escáneres SLAM permitidos:
 {json.dumps(_slam_catalog(), ensure_ascii=False, separators=(',', ':'))}
 
 CATALOGO_VERIFICADO (vacío cuando la consulta no necesita modelos):
-{json.dumps(catalog_context or [], ensure_ascii=False, separators=(',', ':'), default=str)}
+{json.dumps(sin_precios(catalog_context or []), ensure_ascii=False, separators=(',', ':'), default=str)}
 
 Mensaje actual del usuario:
 {message}
@@ -539,6 +574,8 @@ def interpret(
     kind = raw.get("tipo_equipo")
     if kind not in ("gnss", "controladora", "slam", "software", "kit"):
         raise AIProviderError("No se pudo determinar si buscas un GNSS, una controladora o un escáner SLAM.")
+    if es_dialogo(message, raw.get('intencion')) and not str(raw.get('respuesta_general') or '').strip():
+        raise AIProviderError('La IA no respondió la pregunta concreta. Intenta nuevamente.', code=502, reason='respuesta_invalida')
 
     incoming = raw.get("requisitos") if isinstance(raw.get("requisitos"), dict) else {}
     requirements = dict(previous_requirements or {}) if previous_type == kind else dict((workflow_context or {}).get('componentes', {}).get(kind, {}))

@@ -21,9 +21,15 @@ from .routers.ia import router as ia_router
 from .routers.slam import router as slam_router
 from .migrations import apply_runtime_migrations
 from .routers.software import router as software_router
+from .comercial import sin_precios
 
 
-app = FastAPI(title="Licitex API")
+class PublicJSONResponse(JSONResponse):
+    def render(self, content):
+        return super().render(sin_precios(content))
+
+
+app = FastAPI(title="Licitex API", default_response_class=PublicJSONResponse)
 
 
 @app.exception_handler(RequestValidationError)

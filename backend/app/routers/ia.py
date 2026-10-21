@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from ..cotecmi import es_cotecmi
 from ..db import connect
-from ..ia import AIProviderError, interpret, probe_status, status
+from ..ia import AIProviderError, interpret, probe_status, status, es_dialogo
 from ..recomendador import Preferencias
 from .controladoras import Requirements as ControllerRequirements, recommend as recommend_controller
 from .recomendar import recomendar as recommend_gnss
@@ -20,6 +20,7 @@ from ..software import rank as recommend_software, comparison_advice
 from ..soluciones import assemble, unscored
 from ..imagenes_ia import ImageInput, MAX_TOTAL
 from ..comercial import enriquecer
+from ..controladoras import META as CONTROLLER_FIELDS
 
 
 router = APIRouter(prefix="/api/ia", tags=["asistente con IA"])
@@ -127,8 +128,7 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
               FROM equipos e LEFT JOIN controladora_especificaciones c USING(id_equipo)
               WHERE e.publicado AND e.categoria='Controladora' ORDER BY e.marca,e.modelo
             """)
-            allowed = {'sistema_operativo','android_version','ram_gb','almacenamiento_gb','expansion_gb',
-                       'pantalla_pulgadas','teclado_qwerty','autonomia_h','lte_4g','sim_fisica','conectividad_nota','proteccion_ip','caida_m','fuente'}
+            allowed = set(CONTROLLER_FIELDS) | {'fuente','notas'}
             for row in cur.fetchall():
                 data = row.pop('datos') or {}
                 rows.append({**row, **{key: data.get(key) for key in allowed}})
@@ -306,6 +306,14 @@ def ai_recommend(body: AIRequest):
                 "mensaje": "No se pudo consultar el catálogo técnico en este momento.",
                 "reintentar_en": None}
 
+    if es_dialogo(body.mensaje, parsed.get('intencion')):
+        reply = _dialogue_reply(parsed, body)
+        return {'estado':'ok', **parsed, **reply, 'requisitos':{}, 'omitidos':[],
+                'solo_cotecmi':body.solo_cotecmi,
+                'memoria':{'mensajes_usados':len(body.historial),'turnos_usados':len(body.historial)//2,
+                           'equipos_recuperados':[r['id_equipo'] for r in catalog],'persistencia':'navegador'},
+                'generado_en':datetime.now().astimezone().isoformat()}
+
     if parsed['tipo_equipo'] != 'slam':
         try:
             workflow = _recommend_workflow(parsed, body, full_catalog)
@@ -360,7 +368,19 @@ def ai_recommend(body: AIRequest):
     }
 
 
+def _dialogue_reply(parsed, body):
+    previous = body.contexto_previo
+    context = previous.model_dump() if previous else {
+        'tipo_equipo':parsed['tipo_equipo'], 'requisitos':{}, 'componentes':{},
+        'selecciones':{}, 'misma_marca':False, 'referencia_gnss':None,
+    }
+    return {'modo_respuesta':'conversacion','ranking':None,'rankings':{},'solucion':{'opciones':[]},
+            'respuesta':parsed['respuesta_general'], 'contexto':context}
+
+
 def _recommend_workflow(parsed, body, catalog):
+    if es_dialogo(body.mensaje, parsed.get('intencion')):
+        return _dialogue_reply(parsed, body)
     components = parsed['componentes']
     selected = parsed['selecciones']
     categories = {'gnss':'GNSS','controladora':'Controladora','software':'Software de procesamiento'}

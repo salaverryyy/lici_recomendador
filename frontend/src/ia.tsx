@@ -19,7 +19,6 @@ import {
   ModelYear,
   ExpansionNotice,
   complianceLabel,
-  PriceReference,
 } from "./ranking-notes";
 
 type Context = {
@@ -145,7 +144,6 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
         </strong>
       </div>
       <ModelYear equipment={result.equipo} />
-      <PriceReference equipment={result.equipo} />
       {result.porcentaje != null && (
         <progress max={100} value={result.porcentaje} />
       )}
@@ -213,7 +211,7 @@ function AssistantAnswer({
   const results = data?.ranking?.resultados || [];
   return (
     <>
-      <p>
+      <p style={{ whiteSpace: "pre-wrap" }}>
         <BoldText text={data?.respuesta} />
       </p>
       {data?.resumen && (
@@ -370,21 +368,23 @@ function AssistantAnswer({
           ))}
         </details>
       )}
-      {data.tipo_equipo === "software" && !data?.solucion?.opciones?.length && (
-        <details className="ai-result-group" open>
-          <summary>
-            Software de procesamiento ·{" "}
-            {data?.rankings?.software?.resultados?.length || 0} opciones
-          </summary>
-          {data?.rankings?.software?.resultados?.map((r: any) => (
-            <SoftwareCard
-              key={r.software.id_software}
-              software={r.software}
-              evaluation={r}
-            />
-          ))}
-        </details>
-      )}
+      {data.tipo_equipo === "software" &&
+        !!data?.rankings?.software?.resultados?.length &&
+        !data?.solucion?.opciones?.length && (
+          <details className="ai-result-group" open>
+            <summary>
+              Software de procesamiento ·{" "}
+              {data?.rankings?.software?.resultados?.length || 0} opciones
+            </summary>
+            {data?.rankings?.software?.resultados?.map((r: any) => (
+              <SoftwareCard
+                key={r.software.id_software}
+                software={r.software}
+                evaluation={r}
+              />
+            ))}
+          </details>
+        )}
       {results.length > 0 && !data?.solucion?.opciones?.length && (
         <details className="ai-ranking ai-result-group" open>
           <summary>Equipos recomendados · {results.length} opciones</summary>
@@ -446,7 +446,7 @@ function WaitingResponse({ query, type }: { query: string; type: string }) {
   const hardware =
     /receptor|jupiter|mars|\bx1\b|t300/i.test(query) ||
     (!software && /\bgnss\b|\brover|\bbase\b/i.test(query));
-  const controller = /controladora|colectora|\br80\b|sc260/i.test(query);
+  const controller = /controladora|colectora|\br[68]0\b|sc260/i.test(query);
   const slam = /\bslam\b|lidar|esc[aá]ner|ls600|heron|\bh[12]\b/i.test(query);
   const scope =
     Number(software) + Number(controller) + Number(slam) + Number(hardware) > 1

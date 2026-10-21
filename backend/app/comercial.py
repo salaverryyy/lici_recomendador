@@ -23,3 +23,12 @@ def precio_comparable(equipo):
     reference=equipo.get('referencia_precio') or {}
     value=reference.get('precio_usd')
     return float(value) if reference.get('comparable') and isinstance(value,(int,float)) and value>0 else float('inf')
+
+
+def sin_precios(value):
+    """Las referencias comerciales se usan en el servidor, nunca en respuestas públicas."""
+    if isinstance(value, dict):
+        return {key: sin_precios(item) for key, item in value.items() if key != 'referencia_precio'}
+    if isinstance(value, (list, tuple)):
+        return [sin_precios(item) for item in value]
+    return value

@@ -1,5 +1,5 @@
 export const ORDER_NOTE =
-  "En igualdad técnica: preferencia comercial SinoGNSS, luego menor precio orientativo comparable y año más reciente. Las referencias no son precios Cotecmi ni costos finales en Perú. Este orden no concede puntos ni acredita superioridad técnica.";
+  "En igualdad técnica se prioriza el menor costo de mercado comparable disponible; después, preferencia comercial SinoGNSS y año más reciente. Los costos son internos; la falta de referencia no demuestra que un equipo sea más caro. Este orden no concede puntos ni acredita superioridad técnica.";
 
 export function complianceLabel(detail: any) {
   if (detail.estado !== "cumple")
@@ -54,31 +54,5 @@ export function ModelYear({ equipment }: { equipment: any }) {
         ? `Año del modelo: ${equipment.anio_modelo}`
         : "Año del modelo sin confirmar"}
     </p>
-  );
-}
-
-export function PriceReference({ equipment }: { equipment: any }) {
-  const price = equipment.referencia_precio;
-  if (!price?.precio_usd && !price?.precio_origen)
-    return (
-      <p className="muted small-text">
-        Costo orientativo: cotizar; sin precio público comparable.
-      </p>
-    );
-  return (
-    <details className="small-text">
-      <summary>
-        Referencia:{" "}
-        {price.precio_usd
-          ? `US$ ${Number(price.precio_usd).toLocaleString("en-US", { minimumFractionDigits: 2 })}`
-          : `${price.moneda_origen} ${Number(price.precio_origen).toLocaleString()}`}{" "}
-        · no es cotización Cotecmi
-      </summary>
-      <p>{price.alcance}</p>
-      <a href={price.fuente_url} target="_blank" rel="noopener noreferrer">
-        Fuente comercial
-      </a>{" "}
-      · {price.fecha_consulta}
-    </details>
   );
 }
