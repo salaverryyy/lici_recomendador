@@ -24,7 +24,8 @@ def assemble(gnss, controllers, software, requirements, selections, reference=No
     options = []
     for receiver in gnss:
         brand = receiver['equipo']['marca']
-        candidates = [r for r in controllers if not strict or r['equipo']['marca']==brand]
+        # Política de catálogo: nunca completar una marca con otra colectora.
+        candidates = [r for r in controllers if r['equipo']['marca']==brand and brand != 'Emlid']
         candidates.sort(key=lambda r: (issues(r)[0], -(r.get('porcentaje') or 0), issues(r)[1], r['equipo']['marca']!=brand, r['equipo']['id_equipo']))
         controller = candidates[0] if candidates else None
         native = [r for r in software if r['marca']==brand]
@@ -36,7 +37,10 @@ def assemble(gnss, controllers, software, requirements, selections, reference=No
         failures = sum(issues(r)[0] for r in (receiver, controller, processing))
         unknown = sum(issues(r)[1] for r in (receiver, controller, processing))
         pending = ['Validar app de campo, versión, enlace receptor–controladora, formatos y licencia de oficina con el proveedor.']
-        if not controller:
+        mobile = {'nombre':'Emlid Flow en teléfono compatible', 'nota':'Aplicación de campo para Android/iOS. El teléfono no se considera incluido ni cumple automáticamente requisitos de una colectora dedicada.', 'url':'https://emlid.com/emlid-flow/'} if brand == 'Emlid' else None
+        if mobile:
+            pending.append('Emlid utiliza Emlid Flow en teléfono compatible; confirmar modelo, sistema operativo y requisitos de la licitación. No se asigna SC260, R60 ni R80.')
+        elif not controller:
             pending.append('No hay controladora publicada que respete la selección/condición de marca.')
         elif controller['equipo']['marca']!=brand:
             pending.append('Controladora de otra marca: compatibilidad pendiente, no acreditada por tener Bluetooth o Android.')
@@ -45,10 +49,11 @@ def assemble(gnss, controllers, software, requirements, selections, reference=No
         if requirements.get('gnss', {}).get('memoria_min_gb') or processing:
             pending.append('Verificar registro de observaciones brutas del receptor y un archivo de prueba base/rover.')
         not_evaluated = [family for family in ('gnss','controladora','software') if not requirements.get(family)]
-        options.append({'gnss': receiver, 'controladora': controller, 'software': processing,
+        missing_controller = not controller and (not mobile or bool(requirements.get('controladora')) or bool(selections.get('controladora')))
+        options.append({'gnss': receiver, 'controladora': controller, 'app_campo': mobile, 'software': processing,
                         'alternativas_controladora': [r['equipo'] for r in candidates[1:]],
                         'porcentaje': score, 'incumplimientos': failures, 'sin_datos': unknown,
-                        'estado': 'no_cumple' if failures or (strict and (not controller or not processing)) else 'pendiente_validacion',
+                        'estado': 'no_cumple' if failures or (strict and (missing_controller or not processing)) or (mobile and bool(requirements.get('controladora'))) else 'pendiente_validacion',
                         'pendientes': pending, 'familias_sin_requisitos': not_evaluated,
                         'seleccion_explicita': bool(selections.get('gnss'))})
     options.sort(key=lambda o: (o['estado']=='no_cumple', -(o['porcentaje'] if o['porcentaje'] is not None else -1), o['sin_datos'], o['gnss']['equipo']['id_equipo']))

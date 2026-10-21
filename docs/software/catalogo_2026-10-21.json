@@ -1,38 +1,130 @@
 [
   {
-    "id_software": "SW-SINGULARXYZ-PPROCESSING", "marca": "SingularXYZ", "nombre": "PProcessing",
+    "id_software": "SW-SINGULARXYZ-PPROCESSING",
+    "marca": "SingularXYZ",
+    "nombre": "PProcessing",
     "descripcion": "Posprocesamiento de observaciones GNSS estáticas y cinemáticas, líneas base y ajuste de redes. Software de oficina, distinto de SingularPad de campo.",
     "licencia": "Precio, activación, modalidad y licencia incluida: confirmar con el proveedor. No se presume gratuito ni incluido en cada receptor.",
     "formatos": "Entrada: datos binarios, RINEX 2.x/3.x y RTCM32. Salida: DXF, TXT, KML, CSV e informes HTML.",
-    "funciones": {"estatico": true, "cinematico": true, "ajuste_red": true, "rinex": true, "rinex_2": true, "rinex_3": true, "informes": true, "geotag": null, "gratuito": null, "windows": null, "macos": null, "exporta_dxf": true, "exporta_csv": true},
+    "funciones": {
+      "estatico": true,
+      "cinematico": true,
+      "ajuste_red": true,
+      "rinex": true,
+      "rinex_2": true,
+      "rinex_3": true,
+      "informes": true,
+      "geotag": null,
+      "gratuito": null,
+      "windows": true,
+      "macos": null,
+      "exporta_dxf": true,
+      "exporta_csv": true
+    },
     "compatibilidad": "Opción del ecosistema SingularXYZ. Verificar registro bruto, formato y configuración de cada receptor. Admitir RINEX no garantiza toda combinación de marcas ni todas las versiones.",
     "fuentes": [
-      {"url": "https://www.singularxyz.com/product_detail/PProcessing", "alcance": "Funciones, formatos, líneas base, ajuste de redes e informes.", "fecha_consulta": "2026-10-21"},
-      {"url": "https://www.singularxyz.com/blog_detail/100", "alcance": "Flujo oficial PPK con datos de base y rover.", "fecha_consulta": "2026-10-21"}
+      {
+        "url": "https://www.singularxyz.com/product_detail/PProcessing",
+        "alcance": "Funciones, formatos, líneas base, ajuste de redes e informes.",
+        "fecha_consulta": "2026-10-21"
+      },
+      {
+        "url": "https://www.singularxyz.com/blog_detail/100",
+        "alcance": "Flujo oficial PPK con datos de base y rover.",
+        "fecha_consulta": "2026-10-21"
+      },
+      {
+        "url": "https://www.singularxyz.com/uploads/files/202506/7f0e2c99c04a5b2883575f5edef93573.pdf",
+        "alcance": "Ficha oficial PProcessing, revisión 03-03-2023, página 2: Windows, RINEX 2.x/3.x, ajuste de redes, DXF/CSV e informes HTML. Requisitos actuales de Windows: verificar versión instalada.",
+        "fecha_consulta": "2026-10-21"
+      }
     ]
   },
   {
-    "id_software": "SW-SINOGNSS-COMPASS", "marca": "SinoGNSS", "nombre": "Compass Solution",
+    "id_software": "SW-SINOGNSS-COMPASS",
+    "marca": "SinoGNSS",
+    "nombre": "Compass Solution",
     "descripcion": "Software de oficina de ComNav para posprocesamiento estático, estático rápido y cinemático. Procesa GPS, GLONASS, BeiDou y Galileo; genera informes de líneas base, ajuste, red y cierres.",
-    "licencia": "Precio, activación, modalidad y licencia incluida: confirmar con el proveedor. No confundir con Compass Receiver Utility (CRU) ni Survey Master.",
-    "formatos": "Observaciones RINEX y ComNav Raw Binary, según ficha oficial N3. Versiones RINEX y formatos de exportación no verificados en las fuentes revisadas.",
-    "funciones": {"estatico": true, "cinematico": true, "ajuste_red": null, "rinex": true, "rinex_2": null, "rinex_3": null, "informes": true, "geotag": null, "gratuito": null, "windows": null, "macos": null, "exporta_dxf": null, "exporta_csv": null},
-    "compatibilidad": "Opción del ecosistema SinoGNSS/ComNav. Confirmar registro bruto del receptor y versión de Compass. La presencia de informes de ajuste no acredita por sí sola un método específico de ajuste de redes o una certificación.",
+    "licencia": "El manual V2.0.1 exige llave/dongle y su controlador para PPK. Confirmar precio, activación, modalidad e inclusión con el proveedor para la versión ofertada. No confundir con Compass Receiver Utility (CRU) ni Survey Master.",
+    "formatos": "Manual V2.0.1: el selector de importación admite RINEX 2.0/3.0 y datos ComNav. Exporta DXF, TXT, KML, informes HTML y CSV de resultados PPK. La admisión de las familias RINEX 2/3 no garantiza todas sus revisiones. El manual limita los datos brutos dinámicos a formato ComNav.",
+    "funciones": {
+      "estatico": true,
+      "cinematico": true,
+      "ajuste_red": true,
+      "rinex": true,
+      "rinex_2": true,
+      "rinex_3": true,
+      "informes": true,
+      "geotag": null,
+      "gratuito": null,
+      "windows": true,
+      "macos": null,
+      "exporta_dxf": true,
+      "exporta_csv": true
+    },
+    "compatibilidad": "Software del ecosistema SinoGNSS/ComNav. El manual V2.0.1 documenta Windows, ajuste de redes por mínimos cuadrados, ajuste 3D WGS84, 2D local y alturas. Confirmar la versión instalada, formatos de base/rover y requisitos actuales de Windows; no confundir importación RINEX estática con compatibilidad PPK universal.",
     "fuentes": [
-      {"url": "https://www.comnavtech.com/sp/product/software/Compass%20Solution.html", "alcance": "Modos de procesamiento, constelaciones e informes. Método concreto de ajuste de redes pendiente.", "fecha_consulta": "2026-10-21"},
-      {"url": "https://www.comnavtech.com/uploads/soft/20250606/4cf6ea262b3d28e11c75a61c53fc2eb6.pdf", "alcance": "Ficha N3, revisión 2025.05.26: observaciones RINEX y ComNav Raw Binary para Compass.", "fecha_consulta": "2026-10-21"}
+      {
+        "url": "https://www.comnavtech.com/sp/product/software/Compass%20Solution.html",
+        "alcance": "Página oficial: procesamiento estático/cinemático, constelaciones e informes.",
+        "fecha_consulta": "2026-10-21"
+      },
+      {
+        "url": "https://www.comnavtech.com/uploads/soft/20250606/4cf6ea262b3d28e11c75a61c53fc2eb6.pdf",
+        "alcance": "Ficha N3, revisión 2025.05.26: observaciones RINEX y ComNav Raw Binary para Compass.",
+        "fecha_consulta": "2026-10-21"
+      },
+      {
+        "url": "https://kpn.com.uy/web/wp-content/uploads/2017/12/Compass-Solution_User-Manual_V2.0_Espa%C3%B1ol.pdf",
+        "alcance": "Manual ComNav V2.0.1 alojado por el distribuidor KPN: instalación Windows, importación RINEX 2.0/3.0 (selector de archivos en sección 2.2), ajuste por mínimos cuadrados (3.1.4), dongle y datos dinámicos ComNav (3.2), exportación DXF/CSV (4). Contrastado con el manual inglés local de la misma versión.",
+        "fecha_consulta": "2026-10-21"
+      }
     ]
   },
   {
-    "id_software": "SW-EMLID-STUDIO", "marca": "Emlid", "nombre": "Emlid Studio",
+    "id_software": "SW-EMLID-STUDIO",
+    "marca": "Emlid",
+    "nombre": "Emlid Studio",
     "descripcion": "Aplicación de escritorio gratuita para procesamiento estático, cinemático/PPK, datos de drones y Stop & Go con Emlid Flow, además de conversión de registros a RINEX.",
     "licencia": "Descarga gratuita según Emlid. No equivale a una licencia comercial perpetua exigida por una licitación ni acredita licencia de Emlid Flow o Flow 360.",
-    "formatos": "Importación de registros RINEX y UBX. Drones RTK con marcas temporales MRK. Versiones RINEX de entrada no confirmadas por separado en esta auditoría.",
-    "funciones": {"estatico": true, "cinematico": true, "ajuste_red": null, "rinex": true, "rinex_2": null, "rinex_3": null, "informes": null, "geotag": true, "gratuito": true, "windows": true, "macos": true, "exporta_dxf": null, "exporta_csv": null},
+    "formatos": "RINEX y UBX; conversión RTCM3 según flujo. El historial documenta RINEX 2.11 y 3.03 y navegación 2.x/3.x; Studio 1.10 añade RINEX 3.04 en el convertidor. Esto no garantiza cada revisión en todos los modos de procesamiento. Salida POS y CSV corregido en Stop & Go con Emlid Flow; este CSV exige la estructura original de Flow y no equivale a exportación CAD general. Drones RTK con marcas MRK.",
+    "funciones": {
+      "estatico": true,
+      "cinematico": true,
+      "ajuste_red": null,
+      "rinex": true,
+      "rinex_2": true,
+      "rinex_3": true,
+      "informes": null,
+      "geotag": true,
+      "gratuito": true,
+      "windows": true,
+      "macos": true,
+      "exporta_dxf": null,
+      "exporta_csv": true
+    },
     "compatibilidad": "Opción del ecosistema Emlid Reach con registro de datos. No sustituye software de ajuste de redes sin evidencia ni funciona como app de campo en Android. Verificar logs de base/rover y flujo concreto; no afirmar compatibilidad universal.",
     "fuentes": [
-      {"url": "https://emlid.com/emlid-studio/", "alcance": "Gratuidad, RINEX/UBX, procesamiento estático/cinemático y geotag de drones.", "fecha_consulta": "2026-10-21"},
-      {"url": "https://docs.emlid.com/emlid-studio/", "alcance": "Cinco flujos de trabajo y plataformas Windows 10 de 64 bits o posterior y macOS 10.14 o posterior.", "fecha_consulta": "2026-10-21"}
+      {
+        "url": "https://emlid.com/emlid-studio/",
+        "alcance": "Gratuidad, RINEX/UBX, procesamiento estático/cinemático y geotag de drones.",
+        "fecha_consulta": "2026-10-21"
+      },
+      {
+        "url": "https://docs.emlid.com/emlid-studio/",
+        "alcance": "Cinco flujos de trabajo y plataformas Windows 10 de 64 bits o posterior y macOS 10.14 o posterior.",
+        "fecha_consulta": "2026-10-21"
+      },
+      {
+        "url": "https://docs.emlid.com/emlid-studio/reference/changelogs/",
+        "alcance": "Historial oficial: RINEX 2.11/3.03 y navegación 2.x/3.x; versión 1.10 (19-08-2026) añade 3.04 al convertidor, sin acreditar todos los modos.",
+        "fecha_consulta": "2026-10-21"
+      },
+      {
+        "url": "https://docs.emlid.com/emlid-studio/stop-n-go-with-ef-workflow/",
+        "alcance": "Flujo oficial Stop & Go: observaciones RINEX, conversión UBX/RTCM3 y generación de CSV corregido a partir del CSV de Emlid Flow.",
+        "fecha_consulta": "2026-10-21"
+      }
     ]
   }
 ]

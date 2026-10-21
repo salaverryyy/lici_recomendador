@@ -122,7 +122,9 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
         {unknown?.length || 0} sin datos
       </p>
       <p className="muted small-text">
-        Cumplimiento verificado de los criterios evaluados.
+        {result.porcentaje == null
+          ? "Referencia sin evaluación técnica de requisitos."
+          : "Cumplimiento verificado de los criterios evaluados."}
         {result.porcentaje_afinidad != null &&
         result.porcentaje_afinidad !== result.porcentaje
           ? ` Afinidad técnica: ${result.porcentaje_afinidad}% (incluye cercanía a umbrales incumplidos; no acredita cumplimiento).`
@@ -235,7 +237,9 @@ function AssistantAnswer({
             >
               <summary>
                 {option.gnss.equipo.marca} {option.gnss.equipo.modelo} →{" "}
-                {option.controladora?.equipo.modelo || "Controladora pendiente"}{" "}
+                {option.controladora?.equipo.modelo ||
+                  option.app_campo?.nombre ||
+                  "Controladora pendiente"}{" "}
                 → {option.software?.software.nombre || "Software pendiente"} ·{" "}
                 {option.estado === "no_cumple"
                   ? "Tiene incumplimientos"
@@ -268,6 +272,17 @@ function AssistantAnswer({
               <h4>2. Controladora</h4>
               {option.controladora ? (
                 <RankCard result={option.controladora} kind="controladora" />
+              ) : option.app_campo ? (
+                <p>
+                  <a
+                    href={option.app_campo.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {option.app_campo.nombre}
+                  </a>
+                  . {option.app_campo.nota}
+                </p>
               ) : (
                 <p>No se encontró una controladora que respete la selección.</p>
               )}
@@ -315,11 +330,18 @@ function AssistantAnswer({
             último puesto. Las funciones no solicitadas no suman puntos.
           </p>
           {results.map((result: any) => (
-            <RankCard
-              key={result.equipo.id_equipo}
-              result={result}
-              kind={data.tipo_equipo}
-            />
+            <div key={result.equipo.id_equipo}>
+              <RankCard result={result} kind={data.tipo_equipo} />
+              {data.tipo_equipo === "gnss" && onSelect && (
+                <button
+                  type="button"
+                  className="outline"
+                  onClick={() => onSelect(result.equipo.id_equipo)}
+                >
+                  Elegir este GNSS para continuar
+                </button>
+              )}
+            </div>
           ))}
         </div>
       )}
@@ -342,7 +364,7 @@ function AssistantAnswer({
   );
 }
 
-function WaitingResponse() {
+function WaitingResponse({ query, type }: { query: string; type: string }) {
   const [seconds, setSeconds] = useState(0);
   useEffect(() => {
     const start = Date.now();
@@ -352,11 +374,55 @@ function WaitingResponse() {
     );
     return () => clearInterval(timer);
   }, []);
+  const software = /software|p\s?processing|compass|emlid studio|rinex/i.test(
+    query,
+  );
+  const hardware =
+    /receptor|jupiter|mars|\bx1\b|t300/i.test(query) ||
+    (!software && /\bgnss\b|\brover|\bbase\b/i.test(query));
+  const controller = /controladora|colectora|\br80\b|sc260/i.test(query);
+  const slam = /\bslam\b|lidar|esc[aá]ner|ls600|heron|\bh[12]\b/i.test(query);
+  const scope =
+    Number(software) + Number(controller) + Number(slam) + Number(hardware) > 1
+      ? "kit"
+      : software
+        ? "software"
+        : controller
+          ? "controladora"
+          : slam
+            ? "slam"
+            : hardware
+              ? "gnss"
+              : type;
+  const specific: Record<string, string[]> = {
+    software: [
+      "La consulta se centra en software de procesamiento.",
+      "Los formatos RINEX, las funciones y las licencias condicionan la elección.",
+      "Una función pendiente de confirmar no equivale a una función ausente.",
+    ],
+    gnss: [
+      "La consulta se centra en receptores GNSS.",
+      "La precisión, las señales y la conectividad se contrastan con el catálogo.",
+    ],
+    controladora: [
+      "La consulta se centra en controladoras.",
+      "El sistema operativo, la memoria y la autonomía condicionan la elección.",
+    ],
+    slam: [
+      "La consulta se centra en escáneres SLAM.",
+      "El alcance LiDAR, la precisión y la aplicación condicionan la elección.",
+    ],
+    kit: [
+      "La consulta abarca varios componentes de la solución.",
+      "La compatibilidad del conjunto y sus licencias requieren verificación.",
+    ],
+  };
   const messages = [
     "Tu consulta está en proceso.",
-    "La evaluación distingue GNSS, controladora y software de oficina.",
+    ...(specific[scope] || [
+      "La respuesta utilizará los datos técnicos disponibles.",
+    ]),
     "Los datos sin confirmar se mostrarán como pendientes.",
-    "Las licencias y la compatibilidad del conjunto requieren verificación.",
   ];
   return (
     <div className="ai-message assistant" role="status">
@@ -678,7 +744,15 @@ export function AiAdvisor() {
                 )}
               </article>
             ))}
-            {busy && <WaitingResponse />}
+            {busy && (
+              <WaitingResponse
+                query={
+                  active?.messages.filter((m) => m.role === "user").at(-1)
+                    ?.text || ""
+                }
+                type={active?.type || ""}
+              />
+            )}
           </div>
 
           {error && (

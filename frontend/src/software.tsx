@@ -53,19 +53,25 @@ export function SoftwareCard({
       )}
       <details>
         <summary>Funciones, formatos, licencia y fuentes</summary>
-        <dl>
-          {Object.entries(software.funciones || {}).map(([key, value]) => (
-            <div key={key}>
-              <dt>{names[key] || key}</dt>
-              <dd>
-                {value === true
-                  ? "Sí"
-                  : value === false
-                    ? "No"
-                    : "No confirmado en las fuentes revisadas"}
-              </dd>
-            </div>
-          ))}
+        <dl className="software-specs">
+          {Object.entries(names)
+            .filter(([key]) => key in (software.funciones || {}))
+            .map(([key, name]) => (
+              <div key={key}>
+                <dt>{name}</dt>
+                <dd
+                  className={
+                    software.funciones[key] == null ? "software-unknown" : ""
+                  }
+                >
+                  {software.funciones[key] === true
+                    ? "Sí"
+                    : software.funciones[key] === false
+                      ? "No"
+                      : "Pendiente de confirmar"}
+                </dd>
+              </div>
+            ))}
         </dl>
         <p>{software.formatos}</p>
         <p>
@@ -76,7 +82,10 @@ export function SoftwareCard({
           {software.fuentes.map((f: any) => (
             <li key={f.url}>
               <a href={f.url} target="_blank" rel="noopener noreferrer">
-                Fuente del fabricante ↗
+                {f.url.includes("kpn.com.uy")
+                  ? "Manual del fabricante · copia del distribuidor"
+                  : "Fuente del fabricante"}{" "}
+                ↗
               </a>{" "}
               · {f.fecha_consulta}
               <p className="small-text">{f.alcance}</p>

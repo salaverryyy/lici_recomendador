@@ -16,7 +16,7 @@ from .recomendar import recomendar as recommend_gnss
 from .recomendar import limitar_con_empates
 from .slam import Requirements as SlamRequirements, recommend as recommend_slam
 from .software import catalogo as software_catalog
-from ..software import rank as recommend_software
+from ..software import rank as recommend_software, comparison_advice
 from ..soluciones import assemble, unscored
 
 
@@ -382,7 +382,10 @@ def _recommend_workflow(parsed, body, catalog):
     brand = next((r['marca'] for r in catalog if r['id_equipo']==anchor), None)
     ranks['software'] = recommend_software(software, components.get('software', {}), brand, parsed['misma_marca'])
     # Sin requisitos/selección GNSS no se inventa un receptor ganador.
-    eligible_gnss = gnss_results if components.get('gnss') or selected.get('gnss') or reference else []
+    # Recordar requisitos de otras familias no autoriza mostrar un kit en cada turno.
+    kind = parsed['tipo_equipo']
+    show_solution = kind == 'kit' or (kind in ('software','controladora') and (selected.get('gnss') or reference))
+    eligible_gnss = gnss_results if show_solution and (components.get('gnss') or selected.get('gnss') or reference) else []
     solution = assemble(eligible_gnss, ranks['controladora']['resultados'], software, components, selected,
                         reference, parsed['misma_marca'], body.top_n)
     kind = parsed['tipo_equipo']
@@ -390,20 +393,30 @@ def _recommend_workflow(parsed, body, catalog):
     if ranking and 'mostrados' in ranking:
         ranking = {**ranking, 'resultados':limitar_con_empates(ranking['resultados'],body.top_n)}
         ranking['mostrados'] = len(ranking['resultados'])
+    usb_list = kind == 'gnss' and components.get('gnss') == {'usb_c': True} and re.search(r'lista|todos|cu[aá]les', body.mensaje, re.I)
+    if usb_list and ranking:
+        matches = [r for r in ranks['gnss']['resultados'] if any(d.get('clave') == 'usb_c' and d['estado'] == 'cumple' for d in r.get('detalle', []))]
+        ranking = {**ranking, 'resultados':matches, 'mostrados':len(matches)}
     if solution['opciones']:
         first = solution['opciones'][0]
         names = [first['gnss']['equipo']['marca']+' '+first['gnss']['equipo']['modelo'],
-                 first['controladora']['equipo']['modelo'] if first['controladora'] else 'controladora pendiente',
+                 first['controladora']['equipo']['modelo'] if first['controladora'] else (first.get('app_campo') or {}).get('nombre','controladora pendiente'),
                  first['software']['software']['nombre'] if first['software'] else 'software pendiente']
         answer = 'Propuesta en orden GNSS → controladora → software de oficina: **'+' → '.join(names)+'**. '
         answer += ('El conjunto tiene incumplimientos documentados. ' if first['estado']=='no_cumple' else '')
         answer += 'Es una propuesta parcial: verifica cada bloque, compatibilidad, archivos y licencias; no acredita cumplimiento total.'
     elif kind=='software':
-        answer = parsed['respuesta_general'] or 'Estos son los softwares de oficina auditados. Elige el GNSS para asociar el programa de su marca y revisar el conjunto.'
+        answer = comparison_advice(body.mensaje, software, components.get('software', {}), brand) or parsed['respuesta_general'] or 'Estos son los softwares de oficina auditados. Elige el GNSS para asociar el programa de su marca y revisar el conjunto.'
     else:
         answer = _answer(kind, ranking, parsed['omitidos']) if ranking else parsed['respuesta_general'] or 'Indica el receptor o sus requisitos para construir el conjunto GNSS, controladora y software.'
+    if usb_list and ranking:
+        answer = f"Hay **{len(ranking['resultados'])} modelos con USB-C confirmado** en el catálogo permitido. Se listan solo los confirmados; los equipos sin datos o sin ese puerto quedan fuera. Tener USB-C no acredita carga ni una modalidad de transferencia concreta."
     if solution['opciones'] and not selected.get('gnss'):
         answer += ' El GNSS mostrado es una referencia provisional; puedes elegir otra opción.'
+    if kind == 'software' and solution['opciones']:
+        advice = comparison_advice(body.mensaje, software, components.get('software', {}), brand)
+        if advice:
+            answer += ' ' + advice
     reference = selected.get('gnss') or (solution['opciones'][0]['gnss']['equipo']['id_equipo'] if solution['opciones'] else reference)
     return {'ranking':ranking,'rankings':ranks,'solucion':solution,'respuesta':answer,
             'contexto':{'tipo_equipo':kind,'requisitos':parsed['requisitos'],'componentes':components,

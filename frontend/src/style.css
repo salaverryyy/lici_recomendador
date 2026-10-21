@@ -1265,6 +1265,39 @@ body:has(.compare-tray) main {
   overflow-wrap: anywhere;
   margin-block: 12px;
 }
+.software-card .software-specs {
+  margin: 16px 0;
+  font-size: 14px;
+}
+.software-card .software-specs > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(120px, 1fr);
+  align-items: start;
+  gap: 10px 20px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.software-card .software-specs dt {
+  min-width: 0;
+  font-weight: 500;
+}
+.software-card .software-specs dd {
+  min-width: 0;
+  margin: 0;
+  text-align: left;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.software-card .software-specs .software-unknown {
+  color: var(--muted);
+  font-weight: 400;
+}
+@media (max-width: 480px) {
+  .software-card .software-specs > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .thinking-dots i {
     animation: none;

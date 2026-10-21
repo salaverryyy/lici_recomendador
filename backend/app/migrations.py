@@ -19,6 +19,7 @@ def apply_runtime_migrations() -> None:
         "24_ia_provider_limits",
         "25_auditoria_integral",
         "26_software_procesamiento",
+        "27_software_auditoria",
     )
     try:
         with connect() as conn, conn.cursor() as cur:

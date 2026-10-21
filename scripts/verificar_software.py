@@ -23,6 +23,10 @@ def main():
             response.raise_for_status()
             data=response.json(); assert data['estado']=='ok',data
             context=data['contexto']
+            if kind=='gnss':
+                assert not data['solucion']['opciones'], 'Una consulta GNSS no pide un kit'
+                assert data['ranking']['resultados']
+                continue
             first=data['solucion']['opciones'][0]
             assert first['gnss']['equipo']['id_equipo']=='GNSS-SINGULARXYZ-X1'
             assert first['software']['software']['nombre']=='PProcessing'
@@ -35,7 +39,8 @@ def main():
         response.raise_for_status(); data=response.json(); assert data['estado']=='ok',data
         first=data['solucion']['opciones'][0]
         assert first['software']['software']['nombre']=='Compass Solution'
-        assert first['software']['sin_datos']>=1, 'No atribuir ajuste de redes sin evidencia'
+        assert first['software']['sin_datos']==0, 'Ajuste de redes confirmado en el manual V2.0.1'
+        assert first['software']['porcentaje']==100
         assert data['contexto']['selecciones']['gnss']=='GNSS-SINOGNSS-JUPITER'
         print('OK: tres softwares HTTP, secuencia GNSS/controladora/software y consulta conjunta; sin consumo de IA.')
 
