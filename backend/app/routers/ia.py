@@ -157,7 +157,7 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
                        'red_rtk_horizontal_mm','red_rtk_vertical_mm','red_rtk_ppm_h','red_rtk_ppm_v',
                        'static_horizontal_mm','static_vertical_mm','static_ppm_h','static_ppm_v',
                        'largo_static_horizontal_mm','largo_static_vertical_mm','largo_static_ppm_h','largo_static_ppm_v',
-                       'tiene_imu','inclinacion_imu_deg','tiene_camara','cantidad_camaras','laser',
+                       'tiene_imu','inclinacion_imu_deg','imu_sin_limite_angular','tiene_camara','cantidad_camaras','laser',
                        'laser_alcance_m','autonomia_bateria','memoria','memoria_expandible','memoria_es_interna',
                        'memoria_expandida_max_gb','memoria_opcional_fabrica_max_gb','memoria_interna_opcional_max_gb','memoria_interna_opciones_gb','usb_c_con_adaptador','carga_usb_c','lemo_solo_datos','internet_compartido','sim_fisica','conectividad_nota','lte_4g','uhf_tx_rx_integrada','proteccion_ip',
                        'radio_frecuencia','radio_potencia_max_w','cantidad_baterias','lemo','lemo_pines',

@@ -1768,6 +1768,7 @@ function Editor() {
     "rinex_3_conversion",
     "registro_propietario",
     "tiene_imu",
+    "imu_sin_limite_angular",
     "tiene_camara",
     "sim_4g",
     "laser",

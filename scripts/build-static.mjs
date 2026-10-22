@@ -3,4 +3,5 @@ import { fileURLToPath } from 'node:url';
 const destino = fileURLToPath(new URL('../public/', import.meta.url));
 await mkdir(destino, { recursive: true });
 await cp(fileURLToPath(new URL('../frontend/dist/', import.meta.url)), destino, { recursive: true });
+await cp(fileURLToPath(new URL('../assets/catalogo/', import.meta.url)), fileURLToPath(new URL('../public/media/', import.meta.url)), { recursive: true });
 console.log('Interfaz preparada en public/ para el CDN de Vercel.');

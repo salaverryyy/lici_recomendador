@@ -17,6 +17,6 @@ def etiquetas_auditoria(cur, ids):
 def etiqueta_sin_valor(auditoria, campo):
     row = auditoria.get(campo) or {}
     value = row.get('valor_declarado', '')
-    if value in ('No aplica', 'Depende del kit ofertado', 'Modo no especificado por separado'):
+    if value in ('No aplica', 'Depende del kit ofertado', 'Modo no especificado por separado', 'Sin límite angular impuesto'):
         return value
     return 'No publicado / pendiente de confirmar'

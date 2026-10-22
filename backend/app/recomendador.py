@@ -303,6 +303,11 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
                 estado = "cumple" if valor is True else "incumple"
                 factor = 1.0 if estado == "cumple" else 0.0
         elif criterio.modo in ("minimo", "maximo"):
+            if criterio.clave=='inclinacion_imu_deg' and datos.get('tiene_imu') is True and datos.get('imu_sin_limite_angular') is True:
+                valor=None  # Sin máximo numérico publicado: no fabricar uno con el pedido.
+                estado='cumple'
+                factor=1.0
+                observacion='El fabricante declara compensación sin límite angular impuesto. Se admite el ángulo solicitado; no se presenta como un máximo numérico ni como garantía de precisión constante. Verificar FIX y precisión en función de la inclinación.'
             if criterio.clave == "memoria":
                 memoria_fabrica = valor
                 opciones = []

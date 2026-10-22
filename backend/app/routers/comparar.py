@@ -10,6 +10,7 @@ from ..evidencia import etiquetas_auditoria, etiqueta_sin_valor
 router = APIRouter(prefix="/api", tags=["comparador"])
 
 COLUMNAS = {
+    'imu_sin_limite_angular': ('IMU sin límite angular impuesto por el fabricante',None),
     'temperatura_laser_min_c': ('Láser: frío de operación','°C'),
     'temperatura_laser_max_c': ('Láser: calor de operación','°C'),
     'baterias_incluidas_por_receptor': ('Baterías incluidas por receptor',None),

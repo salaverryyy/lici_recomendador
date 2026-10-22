@@ -86,6 +86,7 @@ BOOLEANOS |= {'lemo','usb','usb_c','rs232','memoria_es_interna'}
 BOOLEANOS |= {'sim_fisica','usb_c_con_adaptador'}
 BOOLEANOS |= {'carga_usb_c','lemo_solo_datos','internet_compartido'}
 BOOLEANOS |= {'registro_rinex_2','rinex_2_directo','rinex_3_directo','rinex_2_conversion','rinex_3_conversion'}
+BOOLEANOS.add('imu_sin_limite_angular')
 TEXTOS |= {'rinex_conversion_software','rinex_conversion_nota'}
 NUMERICOS |= {'memoria_interna_opcional_max_gb'}
 NUMERICOS |= {'actualizacion_hz','inclinacion_imu_deg'}
