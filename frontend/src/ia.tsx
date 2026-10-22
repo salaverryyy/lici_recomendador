@@ -12,7 +12,12 @@ import { Link } from "react-router-dom";
 import { api } from "./api";
 import { usePersistentState } from "./persist";
 import { SoftwareCard } from "./software";
-import { prepareImage, type AiImage } from "./ai-images";
+import {
+  prepareImages,
+  MAX_IMAGES,
+  MAX_IMAGE_TOTAL,
+  type AiImage,
+} from "./ai-images";
 import { nextExamples } from "./ai-examples";
 import {
   ORDER_NOTE,
@@ -191,6 +196,14 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
                 {kind === "controladora" && item.valor != null
                   ? ` · ${display(item.valor)} ${item.unidad || ""}`
                   : ""}
+                {kind === "gnss" && item.unidad === "°C" && (
+                  <p className="small-text">
+                    Exigido: {display(item.pedido)} °C · Límite aplicado:{" "}
+                    {item.valor_equipo == null
+                      ? "Sin datos"
+                      : `${display(item.valor_equipo)} °C`}
+                  </p>
+                )}
                 {item.observacion && (
                   <p className="muted small-text">{item.observacion}</p>
                 )}
@@ -655,17 +668,17 @@ export function AiAdvisor() {
 
   async function addImages(files: File[]) {
     if (busy || preparingImages) return;
-    if (images.length + files.length > 3) {
-      setError("Puedes adjuntar hasta 3 imágenes por mensaje.");
+    if (images.length + files.length > MAX_IMAGES) {
+      setError(`Puedes adjuntar hasta ${MAX_IMAGES} imágenes por mensaje.`);
       return;
     }
     setPreparingImages(true);
     setError("");
     try {
-      const next = [...images, ...(await Promise.all(files.map(prepareImage)))];
+      const next = await prepareImages(files, images);
       if (
         next.reduce((sum, image) => sum + (image.data.length * 3) / 4, 0) >
-        2_400_000
+        MAX_IMAGE_TOTAL
       )
         throw new Error(
           "Las imágenes superan 2.4 MB en total. Envía menos páginas por mensaje.",
@@ -1059,7 +1072,7 @@ export function AiAdvisor() {
             <button
               type="button"
               className="outline"
-              disabled={busy || preparingImages || images.length >= 3}
+              disabled={busy || preparingImages || images.length >= MAX_IMAGES}
               onClick={() => fileInput.current?.click()}
             >
               <Paperclip size={16} />{" "}
@@ -1107,10 +1120,11 @@ export function AiAdvisor() {
             </button>
           </form>
           <p className="muted small-text">
-            Puedes adjuntar o pegar hasta 3 imágenes JPG, PNG o WebP. Revisa la
-            transcripción y los datos dudosos. Las imágenes se envían al
-            proveedor de IA para interpretarlas; en el historial quedan sus
-            nombres y la lectura obtenida.
+            Puedes adjuntar o pegar hasta 10 imágenes JPG, PNG o WebP. Se
+            optimiza su tamaño para enviarlas juntas. Revisa la transcripción y
+            los datos dudosos. Las imágenes se envían al proveedor de IA para
+            interpretarlas; en el historial quedan sus nombres y la lectura
+            obtenida.
           </p>
           <p className="muted small-text">
             La IA interpreta el texto; la puntuación se calcula con los datos

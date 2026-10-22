@@ -3,6 +3,7 @@ import re
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from .rinex import capacidad_rinex
+from .termica import limite_operacion
 
 
 class Preferencias(BaseModel):
@@ -248,13 +249,11 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
         # Los límites térmicos se evalúan por cumplimiento, sin dividir valores
         # Celsius negativos. Si se necesita cámara, aplicar su rango restringido.
         if criterio.modo in ("ambiente_min", "ambiente_max"):
-            if criterio.clave.startswith("temperatura_operacion_") and (
-                preferencias.necesita_camara is True or (preferencias.cantidad_camaras_min or 0) > 0
-            ):
+            if criterio.clave.startswith("temperatura_operacion_"):
                 eje = "min" if criterio.modo == "ambiente_min" else "max"
-                camara = datos.get(f"temperatura_camara_{eje}_c")
-                if camara is not None:
-                    valor = camara if valor is None else (max(valor, camara) if eje == "min" else min(valor, camara))
+                valor,observacion=limite_operacion(datos,eje,
+                    camara=preferencias.necesita_camara is True or (preferencias.cantidad_camaras_min or 0)>0,
+                    laser=preferencias.laser is True or (preferencias.laser_alcance_min_m or 0)>0)
             if valor is not None:
                 cumple = valor <= pedido if criterio.modo == "ambiente_min" else valor >= pedido
                 estado = "cumple" if cumple else "incumple"

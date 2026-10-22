@@ -6,6 +6,7 @@ from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 MAX_TOTAL = 2_400_000
+MAX_IMAGES = 10
 
 
 class ImageInput(BaseModel):

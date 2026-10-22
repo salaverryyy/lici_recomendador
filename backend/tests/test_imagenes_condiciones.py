@@ -34,7 +34,8 @@ class ImagesAndConditionsTests(TestCase):
         with self.assertRaises(ValidationError):ImageInput(nombre='bad.png',mime_type='image/png',data=base64.b64encode(b'not a picture').decode())
         good=image_input()
         with self.assertRaises(ValidationError):ImageInput(nombre='bad.jpg',mime_type='image/jpeg',data=good.data)
-        with self.assertRaises(ValidationError):AIRequest(mensaje='lee estas imagenes',imagenes=[good]*4)
+        self.assertEqual(len(AIRequest(mensaje='lee estas imagenes',imagenes=[good]*10).imagenes),10)
+        with self.assertRaises(ValidationError):AIRequest(mensaje='lee estas imagenes',imagenes=[good]*11)
 
     def test_image_is_transmitted_to_gemini_not_only_its_filename(self):
         raw={'tipo_equipo':'gnss','requisitos':{}}
@@ -58,6 +59,37 @@ class ImagesAndConditionsTests(TestCase):
         raw={'tipo_equipo':'gnss','requisitos':{'canales_min':220}}
         with patch.object(ia,'quota_until',return_value=None),patch.object(ia,'_post_gemini',return_value=(raw,{})):
             with self.assertRaises(ia.AIProviderError):ia.interpret('Lee la licitacion',imagenes=[image_input()])
+
+    def test_ten_images_are_all_transmitted_and_all_readings_retained(self):
+        images=[image_input() for _ in range(10)]
+        raw={'tipo_equipo':'gnss','requisitos':{},'lectura_imagenes':[
+            {'indice':i,'texto':f'Página sintética {i}','dudas':[]} for i in range(1,11)]}
+        body={'candidates':[{'finishReason':'STOP','content':{'parts':[{'text':json.dumps(raw)}]}}]}
+        captured=[]
+        def post(request,**kwargs):
+            captured.append(json.loads(request.data));return BytesIO(json.dumps(body).encode())
+        with patch.dict(os.environ,{'GEMINI_API_KEY':'test-key'}),patch.object(ia,'quota_until',return_value=None),patch.object(ia,'urlopen',side_effect=post):
+            result=ia.interpret('Lee las páginas sintéticas',imagenes=images)
+        self.assertEqual(len(captured[0]['contents'][0]['parts']),11)
+        self.assertEqual(len(result['lectura_imagenes']),10)
+        self.assertGreater(captured[0]['generationConfig']['maxOutputTokens'],8192)
+
+    def test_legible_image_temperature_and_double_camera_override_omission(self):
+        raw={'tipo_equipo':'gnss','requisitos':{'necesita_camara':True,'temperatura_operacion_min_c':-40,'temperatura_operacion_max_c':70},
+             'lectura_imagenes':[{'indice':1,'texto':'Ejemplo ficticio. TEMP OPERACIÓN: -35 C a +60 C. Sistema doble cámara.','dudas':[]}]}
+        with patch.object(ia,'quota_until',return_value=None),patch.object(ia,'_post_gemini',return_value=(raw,{})):
+            result=ia.interpret('Evalúa estas imágenes',imagenes=[image_input()])
+        req=result['componentes']['gnss']
+        self.assertEqual((req['temperatura_operacion_min_c'],req['temperatura_operacion_max_c']),(-35,60))
+        self.assertEqual(req['cantidad_camaras_min'],2)
+
+    def test_uncertain_temperature_does_not_receive_points(self):
+        raw={'tipo_equipo':'gnss','requisitos':{'temperatura_operacion_min_c':-35,'temperatura_operacion_max_c':60},
+             'lectura_imagenes':[{'indice':1,'texto':'TEMP OPERACIÓN: -35 C a +60 C.','dudas':['Temperatura borrosa; confirmar ambos extremos.']}]}
+        with patch.object(ia,'quota_until',return_value=None),patch.object(ia,'_post_gemini',return_value=(raw,{})):
+            result=ia.interpret('Evalúa estas imágenes',imagenes=[image_input()])
+        self.assertNotIn('temperatura_operacion_min_c',result['componentes']['gnss'])
+        self.assertTrue(any('Temperatura borrosa' in item for item in result['omitidos']))
 
     def test_internal_factory_order_meets_internal_minimum(self):
         data={'memoria':4,'memoria_es_interna':True,'memoria_expandible':True,'memoria_expandida_max_gb':32,'memoria_interna_opcional_max_gb':32}

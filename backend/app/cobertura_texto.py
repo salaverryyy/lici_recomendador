@@ -7,9 +7,22 @@ def normalize(text):
     return ' '.join(''.join(c for c in unicodedata.normalize('NFKD',text.casefold()) if not unicodedata.combining(c)).split())
 
 
-def completar_explicitos(text, components, omitted):
+def completar_explicitos(text, components, omitted, dudas=None):
     plain=normalize(text)
     gnss=components.setdefault('gnss',{})
+    uncertain=normalize(' '.join(dudas or []))
+    # Límites legibles y cantidad de cámaras no dependen de que Gemini los recuerde.
+    thermal=re.search(r'(?:temp(?:eratura)?\.?\s*(?:de\s+)?operacion|rango termico(?: de trabajo)?)\s*:.{0,70}?(-\s*\d+(?:[.,]\d+)?)\s*°?\s*c\s*(?:a|hasta|[-–])\s*\+?(\d+(?:[.,]\d+)?)\s*°?\s*c',plain)
+    if thermal and not re.search(r'temperatur|termic|frio|calor|grados',uncertain):
+        gnss['temperatura_operacion_min_c']=float(thermal[1].replace(' ','').replace(',','.'))
+        gnss['temperatura_operacion_max_c']=float(thermal[2].replace(',','.'))
+    elif re.search(r'temperatur|termic|frio|calor|grados',uncertain):
+        for key in ('temperatura_operacion_min_c','temperatura_operacion_max_c'):gnss.pop(key,None)
+    if re.search(r'\b(?:doble\s+camara|dos\s+camaras|2\s+camaras)\b',plain) and not re.search(r'camara|fotogrametr',uncertain):
+        gnss['cantidad_camaras_min']=2
+        gnss.pop('necesita_camara',None)  # La cantidad ya exige cámara; no duplicar puntos.
+    elif re.search(r'camara|fotogrametr',uncertain):
+        gnss.pop('cantidad_camaras_min',None)
     if re.search(r'\b4g\b|\blte\b',plain) and not re.search(r'(?:sin|no\s+(?:necesito|requiero|se exige))\s+(?:4g|lte)',plain):
         gnss['lte_4g']=True
         if re.search(r'(?:enlace|internet|conexion)\s+compartid[oa]',plain):

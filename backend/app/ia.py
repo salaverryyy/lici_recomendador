@@ -255,7 +255,7 @@ def _post_gemini_model(prompt: str, active_model: str, imagenes=None) -> tuple[d
         "generationConfig": {
             "responseMimeType": "application/json",
             "responseJsonSchema": _response_schema(),
-            "maxOutputTokens": 8192,
+            "maxOutputTokens": min(32768,8192+2048*len(imagenes or [])),
         },
     }
     request = Request(
@@ -272,7 +272,7 @@ def _post_gemini_model(prompt: str, active_model: str, imagenes=None) -> tuple[d
         except AIProviderError as exc:
             if exc.reason in ("respuesta_truncada", "respuesta_invalida") and attempt < 1:
                 if exc.reason == "respuesta_truncada":
-                    payload["generationConfig"]["maxOutputTokens"] = 16384
+                    payload["generationConfig"]["maxOutputTokens"] = min(65536,max(16384,payload['generationConfig']['maxOutputTokens']*2))
                     request.data = json.dumps(payload).encode("utf-8")
                 continue
             raise
@@ -421,6 +421,12 @@ Reglas:
   que demostrara superioridad sobre las demás. Justifica después con diferencias
   documentadas y reconoce dónde la alternativa puede convenir más.
   No inventes medidas, certificaciones o ventajas para justificar la opción previa.
+  En temperaturas distingue receptor GNSS, cámara y láser. Un límite específico
+  del láser no limita la cámara. Usa temperatura_operacion_* para el receptor y
+  temperatura_camara_*/temperatura_laser_* solo para la función correspondiente.
+  Ausencia de un límite separado no permite inventar otro rango ni copiar el de
+  otro componente. Doble cámara exige cantidad_camaras_min=2; tener láser o AR no
+  convierte una cámara en dos. No presupongas fotogrametría por tener cámara.
   anio_modelo es metadato de catálogo: no lo describas como fecha de lanzamiento
   comprobada ni como prueba de mayor calidad o compatibilidad.
   Puedes sugerir una alternativa sin recalcular ni mostrar otro ranking.
@@ -696,7 +702,7 @@ def interpret(
         if kind=='gnss' and requirements.get('memoria_min_gb') is not None:
             requirements['memoria_solo_fabrica']=True
     if kind in ('gnss','kit') and not es_dialogo(message,raw.get('intencion')):
-        completar_explicitos(source_text,components,omitted)
+        completar_explicitos(source_text,components,omitted,[d for r in readings for d in r['dudas']])
         if kind=='gnss':requirements=components.get('gnss',{})
         selected=any(components.values())
     selections = {} if stable else dict((workflow_context or {}).get('selecciones') or {})

@@ -18,10 +18,11 @@ from .slam import Requirements as SlamRequirements, recommend as recommend_slam
 from .software import catalogo as software_catalog
 from ..software import rank as recommend_software, comparison_advice
 from ..soluciones import assemble, unscored
-from ..imagenes_ia import ImageInput, MAX_TOTAL
+from ..imagenes_ia import ImageInput, MAX_TOTAL, MAX_IMAGES
 from ..comercial import enriquecer
 from ..controladoras import META as CONTROLLER_FIELDS
 from ..ia import normalize_components
+from ..termica import respuesta_termica
 
 
 router = APIRouter(prefix="/api/ia", tags=["asistente con IA"])
@@ -61,7 +62,7 @@ class AIRequest(BaseModel):
     top_n: int = Field(default=20, ge=1, le=100)
     contexto_previo: PreviousContext | None = None
     historial: list[ConversationMessage] = Field(default_factory=list, max_length=12)
-    imagenes: list[ImageInput] = Field(default_factory=list, max_length=3)
+    imagenes: list[ImageInput] = Field(default_factory=list, max_length=MAX_IMAGES)
 
     @model_validator(mode="after")
     def limit_history(self):
@@ -160,7 +161,7 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
                        'laser_alcance_m','autonomia_bateria','memoria','memoria_expandible','memoria_es_interna',
                        'memoria_expandida_max_gb','memoria_opcional_fabrica_max_gb','memoria_interna_opcional_max_gb','memoria_interna_opciones_gb','usb_c_con_adaptador','carga_usb_c','lemo_solo_datos','internet_compartido','sim_fisica','conectividad_nota','lte_4g','uhf_tx_rx_integrada','proteccion_ip',
                        'radio_frecuencia','radio_potencia_max_w','cantidad_baterias','lemo','lemo_pines',
-                       'peso_max','temperatura_operacion_min_c','temperatura_operacion_max_c','caida_m','caida_condiciones','vibracion_norma','choque_condiciones',
+                       'peso_max','temperatura_operacion_min_c','temperatura_operacion_max_c','temperatura_almacenamiento_min_c','temperatura_almacenamiento_max_c','temperatura_camara_min_c','temperatura_camara_max_c','temperatura_laser_min_c','temperatura_laser_max_c','ambiental_fuente','ambiental_notas','caida_m','caida_condiciones','vibracion_norma','choque_condiciones',
                        'registro_rinex','registro_rinex_2','registro_rinex_3','rinex_versiones','registro_propietario','formato_propietario',
                        'rinex_2_directo','rinex_3_directo','rinex_2_conversion','rinex_3_conversion','rinex_conversion_software','rinex_conversion_nota',
                        'gps','glonass','galileo','beidou','qzss','navic_irnss','sbas',
@@ -359,7 +360,7 @@ def ai_recommend(body: AIRequest):
                 "reintentar_en": None}
 
     if es_dialogo(body.mensaje, parsed.get('intencion')):
-        reply = _dialogue_reply(parsed, body)
+        reply = _dialogue_reply(parsed, body, full_catalog)
         return {'estado':'ok', **parsed, **reply, 'requisitos':{}, 'omitidos':[],
                 'solo_cotecmi':body.solo_cotecmi,
                 'memoria':{'mensajes_usados':len(body.historial),'turnos_usados':len(body.historial)//2,
@@ -420,19 +421,19 @@ def ai_recommend(body: AIRequest):
     }
 
 
-def _dialogue_reply(parsed, body):
+def _dialogue_reply(parsed, body, catalog=None):
     previous = body.contexto_previo
     context = previous.model_dump() if previous else {
         'tipo_equipo':parsed['tipo_equipo'], 'requisitos':{}, 'componentes':{},
         'selecciones':{}, 'misma_marca':False, 'referencia_gnss':None,
     }
     return {'modo_respuesta':'conversacion','ranking':None,'rankings':{},'solucion':{'opciones':[]},
-            'respuesta':parsed['respuesta_general'], 'contexto':context}
+            'respuesta':respuesta_termica(body.mensaje,catalog or [],[h.model_dump() for h in body.historial]) or parsed['respuesta_general'], 'contexto':context}
 
 
 def _recommend_workflow(parsed, body, catalog):
     if es_dialogo(body.mensaje, parsed.get('intencion')):
-        return _dialogue_reply(parsed, body)
+        return _dialogue_reply(parsed, body, catalog)
     components = parsed['componentes']
     selected = parsed['selecciones']
     categories = {'gnss':'GNSS','controladora':'Controladora','software':'Software de procesamiento'}

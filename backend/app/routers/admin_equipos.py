@@ -72,6 +72,7 @@ NUMERICOS = {
     "alto_mm", "ppp_h_cm", "ppp_v_cm",
 }
 TEMPERATURAS = {'temperatura_almacenamiento_min_c', 'temperatura_operacion_max_c', 'temperatura_almacenamiento_max_c', 'temperatura_camara_min_c', 'temperatura_operacion_min_c', 'temperatura_camara_max_c'}
+TEMPERATURAS |= {'temperatura_laser_min_c','temperatura_laser_max_c'}
 NUMERICOS |= {'caida_m', 'humedad_max_pct'}
 TEXTOS = {'ambiental_notas', 'radio_frecuencia', 'proteccion_ip', 'choque_condiciones', 'ambiental_fuente', 'caida_condiciones', 'vibracion_norma', 'humedad_condicion'}
 BOOLEANOS |= {"memoria_expandible", "bluetooth", "wifi", "uhf_tx_rx_integrada", "lte_4g",
@@ -251,7 +252,7 @@ def editar_especificaciones(id_equipo: str, datos: CambiosEspecificaciones, _=De
             cur.execute("SELECT * FROM base_evaluacion WHERE id_equipo = %s FOR UPDATE", (id_equipo,))
             actuales = cur.fetchone()
             combinados = {**actuales, **cambios}
-            for prefijo in ("operacion", "almacenamiento", "camara"):
+            for prefijo in ("operacion", "almacenamiento", "camara", "laser"):
                 minimo = combinados.get(f"temperatura_{prefijo}_min_c")
                 maximo = combinados.get(f"temperatura_{prefijo}_max_c")
                 if minimo is not None and maximo is not None and minimo > maximo:
