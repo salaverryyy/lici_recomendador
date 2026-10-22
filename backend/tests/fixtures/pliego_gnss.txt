@@ -1,0 +1,14 @@
+Ejemplo ficticio elaborado exclusivamente para pruebas de software. No corresponde a una licitación ni a un cliente.
+Conjunto de demostración: 2 Base y 3 Rovers + software de oficina. Los componentes deben ser de la misma marca.
+Seguimiento de Señales: capacidad mínima de 512 canales.
+Constelaciones Soportadas: GPS, GLONASS, Galileo, BeiDou y QZSS. Frecuencias Mínimas: revisar las señales individualmente.
+Precisión en Tiempo Real (RTK): Horizontal: ≤ 10 mm + 0.8 ppm. Vertical: ≤ 20 mm + 1.2 ppm.
+Precisión en Post-proceso (Estático): Horizontal: ≤ 4 mm + 0.2 ppm. Vertical: ≤ 7 mm + 0.4 ppm.
+Compensación de Inclinación: sensor IMU integrado con un ángulo mínimo de 45 grados de inclinación.
+Memoria de Almacenamiento: mínimo de 32 GB de memoria interna. Formatos de Datos: formato nativo del fabricante y RINEX 2.x y 3.x.
+Peso: no deberá ser mayor a 2.2 kilogramos.
+Puerto USB Tipo-C con carga de energía y transferencia de datos.
+Radio UHF Interna: transmisor/receptor Tx/Rx. Rango de frecuencia de 400 MHz a 480 MHz.
+Módem 4G/LTE mediante enlace compartido. Interfaces Inalámbricas: Bluetooth y Wi-Fi.
+Condiciones comunes para receptores y colectoras. Protección contra Intemperie: IP67 o IP68. Resistencia a impactos: caídas desde 2.0 metros, norma MIL-STD-810G.
+Rango Térmico de Trabajo: -30 °C hasta +55 °C.

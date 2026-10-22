@@ -82,7 +82,10 @@ class AITests(unittest.TestCase):
              patch.object(ia, '_post_gemini_model', side_effect=[
                  ia.AIProviderError('Inválida', code=502, reason='respuesta_invalida'), result,
              ]), patch.object(ia, 'mark_quota') as mark_quota:
-            self.assertEqual(ia._post_gemini('Consulta'), result)
+            response=ia._post_gemini('Consulta')
+            self.assertEqual(response[0], result[0])
+            self.assertTrue(response[1]['_fallback'])
+            self.assertEqual(response[1]['_fallback_reasons'][0]['motivo'],'respuesta_invalida')
         mark_quota.assert_not_called()
 
     def test_omitted_tender_conditions_are_not_silently_cut_at_twelve(self):
@@ -129,7 +132,11 @@ class AITests(unittest.TestCase):
         ) as provider:
             result = ia._post_gemini('Consulta técnica')
 
-        self.assertEqual(result, provider_result)
+        self.assertEqual(result[0], provider_result[0])
+        self.assertEqual(result[1]['_model'], 'gemini-respaldo')
+        self.assertTrue(result[1]['_fallback'])
+        self.assertEqual(result[1]['_primary_model'], 'gemini-principal')
+        self.assertEqual(result[1]['_fallback_reasons'][0]['codigo'], 429)
         self.assertEqual(
             [call.args[1] for call in provider.call_args_list],
             ['gemini-principal', 'gemini-respaldo'],

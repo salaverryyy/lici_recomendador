@@ -20,6 +20,7 @@ from .slam import META as SLAM_META, validate as validar_slam
 from .software import FIELDS as SOFTWARE_FIELDS, validate as validar_software
 from .comercial import sin_precios
 from .cobertura_texto import completar_explicitos
+from .pliegos import extraer_pliego
 
 
 def es_dialogo(message, intention):
@@ -300,7 +301,10 @@ def _post_gemini(prompt: str, requested_model: str | None = None, imagenes=None)
     failures: list[AIProviderError] = []
     for active_model in model_chain(requested_model):
         try:
-            return _post_gemini_model(prompt, active_model, imagenes) if imagenes else _post_gemini_model(prompt, active_model)
+            raw, usage = _post_gemini_model(prompt, active_model, imagenes) if imagenes else _post_gemini_model(prompt, active_model)
+            usage = {**usage, '_primary_model':model_chain(requested_model)[0],
+                     '_fallback':bool(failures), '_fallback_reasons':[{'codigo':f.code,'motivo':f.reason} for f in failures]}
+            return raw, usage
         except AIProviderError as exc:
             if exc.code not in (404, 429, 502, 503, 504):
                 raise
@@ -592,6 +596,9 @@ def interpret(
         prompt += '\n'.join(f'{i}: {item.nombre}' for i,item in enumerate(imagenes,1))
         prompt += '\nLee los requisitos visibles y devuelve lectura_imagenes con un elemento por imagen: indice (1 en adelante), texto (transcripción de los requisitos legibles) y dudas (cifras, unidades, símbolos o líneas ilegibles/ambiguas). No adivines valores ni completes letras con especificaciones del catálogo. No conviertas valores dudosos en criterios puntuables; inclúyelos en omitidos y pide verificación. Cruza páginas sin duplicar requisitos y trata sellos/firmas como ruido. Una imagen puede ser totalmente ilegible: texto vacío y duda explícita.\n'
     raw, usage = _post_gemini(prompt, imagenes=imagenes) if imagenes else _post_gemini(prompt)
+    stable = extraer_pliego(message) if not imagenes else None
+    if stable:
+        raw={**raw,'intencion':'recomendacion','tipo_equipo':stable['tipo_equipo']}
     kind = raw.get("tipo_equipo")
     if kind not in ("gnss", "controladora", "slam", "software", "kit"):
         raise AIProviderError("No se pudo determinar si buscas un GNSS, una controladora o un escáner SLAM.")
@@ -614,6 +621,23 @@ def interpret(
         for reading in readings:
             for doubt in reading['dudas']:
                 omitted.append(f"Imagen {reading['indice']}: verificar {doubt}")
+
+    if stable:
+        # Un pliego completo reemplaza requisitos heredados y selecciones del chat.
+        # Solo se puntúan cláusulas reconocidas; no se rellenan desde el catálogo.
+        kind=stable['tipo_equipo']
+        extras={**(raw.get('componentes') or {}).get('gnss',{}), **incoming}
+        incoming={}
+        requirements={}
+        unverified={k:v for k,v in extras.items() if k in _gnss_catalog() and k not in stable['componentes']['gnss'] and v is not None and v is not False}
+        omitted=stable['omitidos']+['Revisar las cláusulas no representadas en la matriz de criterios; los datos no interpretados no acreditan cumplimiento.']
+        if unverified:
+            labels={c.campo_input:c.nombre for c in CRITERIOS}
+            omitted.append('La IA propuso otros criterios sin lectura explícita corroborada: '+', '.join(labels.get(k,k) for k in unverified)+'. Verificar sus valores antes de añadirlos a la evaluación.')
+        raw={**raw,'componentes':stable['componentes'],'selecciones':{},
+             'misma_marca':stable['misma_marca'],'intencion':'recomendacion',
+             'resumen':'Requisitos GNSS extraídos del pliego; condiciones comunes aplicadas a las colectoras y formatos al software de oficina cuando corresponde.',
+             'preguntas':(['Confirma si el límite térmico superior exigido es +60 °C o +65 °C.'] if any('Rango térmico ambiguo' in s for s in omitted) else [])}
 
     if kind == "gnss":
         allowed = set(_gnss_catalog())
@@ -651,7 +675,7 @@ def interpret(
             raise AIProviderError('Requisitos de software inválidos.', code=502, reason='respuesta_invalida') from exc
         selected = bool(requirements)
 
-    components = normalize_components(raw.get('componentes', {}), (workflow_context or {}).get('componentes', {}), omitted)
+    components = normalize_components(raw.get('componentes', {}), {} if stable else (workflow_context or {}).get('componentes', {}), omitted)
     if kind in ('gnss', 'controladora', 'software'):
         if not incoming and isinstance(raw.get('componentes', {}).get(kind), dict):
             requirements = components.get(kind, {})
@@ -675,7 +699,7 @@ def interpret(
         completar_explicitos(source_text,components,omitted)
         if kind=='gnss':requirements=components.get('gnss',{})
         selected=any(components.values())
-    selections = dict((workflow_context or {}).get('selecciones') or {})
+    selections = {} if stable else dict((workflow_context or {}).get('selecciones') or {})
     incoming_selections = raw.get('selecciones') or {}
     if not isinstance(incoming_selections, dict):
         raise AIProviderError('Selecciones inválidas.', code=502, reason='respuesta_invalida')
@@ -708,6 +732,10 @@ def interpret(
         "uso": {
             "proveedor": "Gemini",
             "modelo": usage.get("_model", model_name()),
+            "modelo_principal": usage.get('_primary_model',model_name()),
+            "respaldo_usado": usage.get('_fallback',False),
+            "motivos_respaldo": usage.get('_fallback_reasons',[]),
+            "extraccion": 'Cláusulas explícitas verificadas por Licitex' if stable else 'Interpretación de IA con validación de campos',
             "tokens_entrada": usage.get("promptTokenCount"),
             "tokens_salida": usage.get("candidatesTokenCount"),
         },

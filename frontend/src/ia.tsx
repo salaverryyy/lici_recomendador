@@ -167,7 +167,11 @@ function RankCard({ result, kind }: { result: any; kind: string }) {
       <p className="muted small-text">
         {result.porcentaje == null
           ? "Referencia sin evaluación técnica de requisitos."
-          : "Cumplimiento verificado de los criterios evaluados."}
+          : failed?.length
+            ? "Hay requisitos que no cumple; revisa la evaluación."
+            : unknown?.length
+              ? "Evaluación incompleta: hay requisitos sin datos confirmados."
+              : "Cumplimiento verificado de los criterios evaluados."}
         {result.porcentaje_afinidad != null &&
         result.porcentaje_afinidad !== result.porcentaje
           ? ` Afinidad técnica: ${result.porcentaje_afinidad}% (incluye cercanía a umbrales incumplidos; no acredita cumplimiento).`
@@ -226,6 +230,28 @@ function AssistantAnswer({
   const results = data?.ranking?.resultados || [];
   return (
     <>
+      {data?.uso && (
+        <div className="notice small-text">
+          <strong>Modelo utilizado: {data.uso.modelo}</strong> ·{" "}
+          {data.uso.proveedor}
+          {data.uso.respaldo_usado && (
+            <p>
+              Se utilizó un modelo de respaldo porque{" "}
+              {data.uso.modelo_principal} no estuvo disponible.
+              {data.uso.motivos_respaldo
+                ?.map((r: any) => r.codigo)
+                .filter(Boolean).length > 0 &&
+                ` Códigos recibidos: ${data.uso.motivos_respaldo
+                  .map((r: any) => r.codigo)
+                  .filter(Boolean)
+                  .join(", ")}.`}
+            </p>
+          )}
+          {data.uso.extraccion && (
+            <p>{data.uso.extraccion}. La puntuación la calcula Licitex.</p>
+          )}
+        </div>
+      )}
       <p style={{ whiteSpace: "pre-wrap" }}>
         <BoldText text={cleanCostNotices(data?.respuesta)} />
       </p>
