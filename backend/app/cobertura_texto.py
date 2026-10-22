@@ -19,6 +19,8 @@ def completar_explicitos(text, components, omitted):
         gnss.update(usb_c=True,carga_usb_c=True)
     if re.search(r'rinex.{0,100}3\s*[.x]',plain):
         gnss.setdefault('registro_rinex_3',True)
+    if re.search(r'rinex.{0,100}2\s*[.x]',plain):
+        gnss.setdefault('registro_rinex_2',True)
     fall=re.search(r'(?:caida|caidas).{0,100}?(\d+(?:[.,]\d+)?)\s*metros',plain)
     if fall:
         gnss.setdefault('caida_min_m',float(fall[1].replace(',','.')))
@@ -39,7 +41,7 @@ def completar_explicitos(text, components, omitted):
         (r'webui|interfaz web','Verificar WebUI y alcance inalámbrico exigido; Wi-Fi no acredita por sí solo ambas condiciones.'),
         (r'cmr|rtcm','Verificar versiones RTCM/CMR/CMR+ y transmisión/recepción nativas, separadas de los protocolos de radio.'),
         (r'frecuencias minimas|e5a|b3\b','Verificar todas las señales/frecuencias específicas; admitir la constelación no acredita cada señal.'),
-        (r'rinex.{0,100}2\s*[.x]','Verificar RINEX 2.x y revisiones requeridas; RINEX 3.x se evalúa por separado.'),
+        (r'rinex.{0,100}2\s*[.x]','Verificar las revisiones RINEX exactas y señales incluidas; las familias 2.x y 3.x se evalúan por separado.'),
     ):
         if re.search(pattern,plain):omitted.append(note)
     return components

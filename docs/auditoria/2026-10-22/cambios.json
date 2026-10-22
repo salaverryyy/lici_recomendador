@@ -1,0 +1,1127 @@
+[
+  {
+    "id_equipo": "GNSS-SINOGNSS-JUPITER",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "Jupiter WebUI genera directamente RINEX 2.10/3.02. CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-JUPITER",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_2_conversion",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "Jupiter WebUI genera directamente RINEX 2.10/3.02. CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-JUPITER",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "Jupiter WebUI genera directamente RINEX 2.10/3.02. CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-JUPITER",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Compass Receiver Utility (CRU)",
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "Jupiter WebUI genera directamente RINEX 2.10/3.02. CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-JUPITER",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Jupiter WebUI genera directamente RINEX 2.10/3.02. CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida.",
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "Jupiter WebUI genera directamente RINEX 2.10/3.02. CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-JUPITER",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_versiones",
+    "valor": "Directo WebUI: 2.10, 3.02; Conversión CRU: 2.01, 2.11, 3.01, 3.02, 3.03, 3.04",
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4",
+    "nota": "Jupiter WebUI genera directamente RINEX 2.10/3.02. CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-MARS-PRO",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-MARS-PRO",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_2_conversion",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-MARS-PRO",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_3",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-MARS-PRO",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-MARS-PRO",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Compass Receiver Utility (CRU)",
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-MARS-PRO",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida.",
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-MARS-PRO",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_versiones",
+    "valor": "Conversión CRU: 2.01, 2.11, 3.01, 3.02, 3.03, 3.04",
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T20",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T20",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_2_conversion",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T20",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_3",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T20",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T20",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Compass Receiver Utility (CRU)",
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T20",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida.",
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T20",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_versiones",
+    "valor": "Conversión CRU: 2.01, 2.11, 3.01, 3.02, 3.03, 3.04",
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T300PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T300PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_2_conversion",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T300PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_3",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T300PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T300PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T300PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Compass Receiver Utility (CRU)",
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T300PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida.",
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4; ficha/manual del receptor que declara ComNav Binary",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-T300PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_versiones",
+    "valor": "Conversión CRU: 2.01, 2.11, 3.01, 3.02, 3.03, 3.04",
+    "fuente_url": "https://www.comnavtech.com/about/blogs/445.html",
+    "documento": "CRU, sección 2.3.4",
+    "nota": "CRU convierte observaciones ComNav Binary (.cnb) a 2.01/2.11/3.01/3.02/3.03/3.04. El formato bruto del modelo consta en su ficha/manual; comprobar archivo real y versión de CRU. No confundir CRU con Compass Solution ni presuponer licencia incluida."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-JUPITER",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_2_directo",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/uploads/download/Jupiter%20Laser%20RTK%20User%20Guide.pdf",
+    "documento": "Jupiter User Guide, 3.3.3.2 y 3.3.3.3",
+    "nota": "WebUI permite CNB, RINEX 2.10 y 3.02; no acredita otras revisiones nativas."
+  },
+  {
+    "id_equipo": "GNSS-SINOGNSS-JUPITER",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_directo",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/uploads/download/Jupiter%20Laser%20RTK%20User%20Guide.pdf",
+    "documento": "Jupiter User Guide, 3.3.3.2 y 3.3.3.3",
+    "nota": "WebUI permite CNB, RINEX 2.10 y 3.02; no acredita otras revisiones nativas."
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I50",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://chcnav.com/uploads/i50_DS_EN.pdf",
+    "documento": "Ficha del fabricante aportada: formatos RINEX 2.11 y 3.02",
+    "nota": "Se conservan las versiones publicadas; no se acredita toda revisión ni se deduce la modalidad de grabación directa."
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I50",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Ficha del fabricante: RINEX 2.11/3.02. La modalidad directa frente a conversión no está verificada por separado.",
+    "fuente_url": "https://chcnav.com/uploads/i50_DS_EN.pdf",
+    "documento": "Ficha del fabricante aportada",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I73",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://geospatial.chcnav.com/",
+    "documento": "Ficha del fabricante aportada: formatos RINEX 2.11 y 3.02",
+    "nota": "Se conservan las versiones publicadas; no se acredita toda revisión ni se deduce la modalidad de grabación directa."
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I73",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Ficha del fabricante: RINEX 2.11/3.02. La modalidad directa frente a conversión no está verificada por separado.",
+    "fuente_url": "https://geospatial.chcnav.com/",
+    "documento": "Ficha del fabricante aportada",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I73PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://chcnav.com/dam/jcr%3A00ee4b28-4f64-49a8-8eaa-14cdc03ff129/i73%2B_DS_EN.pdf",
+    "documento": "Ficha del fabricante aportada: formatos RINEX 2.11 y 3.02",
+    "nota": "Se conservan las versiones publicadas; no se acredita toda revisión ni se deduce la modalidad de grabación directa."
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I73PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Ficha del fabricante: RINEX 2.11/3.02. La modalidad directa frente a conversión no está verificada por separado.",
+    "fuente_url": "https://chcnav.com/dam/jcr%3A00ee4b28-4f64-49a8-8eaa-14cdc03ff129/i73%2B_DS_EN.pdf",
+    "documento": "Ficha del fabricante aportada",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I93",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://geospatial.chcnav.com/",
+    "documento": "Ficha del fabricante aportada: formatos RINEX 2.11 y 3.02",
+    "nota": "Se conservan las versiones publicadas; no se acredita toda revisión ni se deduce la modalidad de grabación directa."
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I93",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Ficha del fabricante: RINEX 2.11/3.02. La modalidad directa frente a conversión no está verificada por separado.",
+    "fuente_url": "https://geospatial.chcnav.com/",
+    "documento": "Ficha del fabricante aportada",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_directo",
+    "valor": true,
+    "fuente_url": "https://docs.emlid.com/reachrs2/ppk-quickstart/how-to-record-and-download-logs/ppk-logging/",
+    "documento": "Manual Emlid, Recording RINEX logs on Reach",
+    "nota": "Emlid Flow configura los registros y descarga RINEX 3.03 del receptor. Verificar firmware y revisión requerida."
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://docs.emlid.com/emlid-studio/reference/changelogs/",
+    "documento": "Emlid Studio 1.10, 19-08-2026",
+    "nota": "El conversor incorpora 3.04 desde 1.10; no se traslada esa versión a registro nativo del receptor."
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Emlid Studio",
+    "fuente_url": "https://docs.emlid.com/emlid-studio/convert-to-rinex-workflow/",
+    "documento": "Convert to RINEX, formatos UBX/RTCM/RINEX",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Registro directo 3.03 configurado con Emlid Flow. Emlid Studio 1.10 permite conversión a 3.04; no se presume registro nativo 3.04 ni RINEX 2.x sin confirmación.",
+    "fuente_url": "https://docs.emlid.com/emlid-studio/reference/changelogs/",
+    "documento": "Emlid Studio y documentación de registro Reach",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_directo",
+    "valor": true,
+    "fuente_url": "https://docs.emlid.com/reachrs2/ppk-quickstart/how-to-record-and-download-logs/ppk-logging/",
+    "documento": "Manual Emlid, Recording RINEX logs on Reach",
+    "nota": "Emlid Flow configura los registros y descarga RINEX 3.03 del receptor. Verificar firmware y revisión requerida."
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://docs.emlid.com/emlid-studio/reference/changelogs/",
+    "documento": "Emlid Studio 1.10, 19-08-2026",
+    "nota": "El conversor incorpora 3.04 desde 1.10; no se traslada esa versión a registro nativo del receptor."
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Emlid Studio",
+    "fuente_url": "https://docs.emlid.com/emlid-studio/convert-to-rinex-workflow/",
+    "documento": "Convert to RINEX, formatos UBX/RTCM/RINEX",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Registro directo 3.03 configurado con Emlid Flow. Emlid Studio 1.10 permite conversión a 3.04; no se presume registro nativo 3.04 ni RINEX 2.x sin confirmación.",
+    "fuente_url": "https://docs.emlid.com/emlid-studio/reference/changelogs/",
+    "documento": "Emlid Studio y documentación de registro Reach",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS3",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_directo",
+    "valor": true,
+    "fuente_url": "https://docs.emlid.com/reachrs3/ppk-quickstart/how-to-record-and-download-logs/ppk-logging/",
+    "documento": "Manual Emlid, Recording RINEX logs on Reach",
+    "nota": "Emlid Flow configura los registros y descarga RINEX 3.03 del receptor. Verificar firmware y revisión requerida."
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS3",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://docs.emlid.com/emlid-studio/reference/changelogs/",
+    "documento": "Emlid Studio 1.10, 19-08-2026",
+    "nota": "El conversor incorpora 3.04 desde 1.10; no se traslada esa versión a registro nativo del receptor."
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS3",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Emlid Studio",
+    "fuente_url": "https://docs.emlid.com/emlid-studio/convert-to-rinex-workflow/",
+    "documento": "Convert to RINEX, formatos UBX/RTCM/RINEX",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS3",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Registro directo 3.03 configurado con Emlid Flow. Emlid Studio 1.10 permite conversión a 3.04; no se presume registro nativo 3.04 ni RINEX 2.x sin confirmación.",
+    "fuente_url": "https://docs.emlid.com/emlid-studio/reference/changelogs/",
+    "documento": "Emlid Studio y documentación de registro Reach",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS16",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS16",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_2_conversion",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS16",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_3",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS16",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS16",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Leica Infinity",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS16",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado.",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS16",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_versiones",
+    "valor": "Conversión Infinity v3.1.1: 2.11, 3.02",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, exportación GNSS raw data",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18T",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18T",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_2_conversion",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18T",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_3",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18T",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18T",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Leica Infinity",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18T",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado.",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18T",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_versiones",
+    "valor": "Conversión Infinity v3.1.1: 2.11, 3.02",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, exportación GNSS raw data",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_2_conversion",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_3",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Leica Infinity",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado.",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS18",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_versiones",
+    "valor": "Conversión Infinity v3.1.1: 2.11, 3.02",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, exportación GNSS raw data",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS10",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS10",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_2_conversion",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS10",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_3",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS10",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS10",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Leica Infinity",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS10",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado.",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS10",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_versiones",
+    "valor": "Conversión Infinity v3.1.1: 2.11, 3.02",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, exportación GNSS raw data",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS25",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS25",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_2_conversion",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS25",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_3",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS25",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS25",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Leica Infinity",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS25",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado.",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, pp. PDF 37 y 45",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-LEICA-GS25",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_versiones",
+    "valor": "Conversión Infinity v3.1.1: 2.11, 3.02",
+    "fuente_url": "https://fenix.ciencias.ulisboa.pt/downloadFile/1126037345804184/Leica%20Infinity%20User%20Guide%20v3.1.1.pdf",
+    "documento": "Leica Infinity Help v3.1.1, exportación GNSS raw data",
+    "nota": "Leica Infinity Help v3.1.1 (manual del fabricante alojado por universidad), páginas PDF 37 y 45: importa datos MDB de Captivate/SmartWorx y exporta RINEX 2.11/3.02. Confirmar versión de Infinity, funciones/licencia y archivo bruto; la versión nativa del receptor no se ha confirmado."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R12I",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R12I",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_2_conversion",
+    "valor": true,
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R12I",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_3",
+    "valor": true,
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R12I",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R12I",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex",
+    "valor": true,
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R12I",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Trimble Convert to RINEX",
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R12I",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor.",
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R12I",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_versiones",
+    "valor": "Conversión: 2.10, 2.11, 3.02, 3.03, 3.04, 3.05",
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial Convert to RINEX",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R12I",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex",
+    "valor": true,
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial Convert to RINEX",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R8S",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_2",
+    "valor": true,
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R8S",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_2_conversion",
+    "valor": true,
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R8S",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex_3",
+    "valor": true,
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R8S",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R8S",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex",
+    "valor": true,
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R8S",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "Trimble Convert to RINEX",
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R8S",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor.",
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial TBC, Convert to RINEX; ficha del receptor",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R8S",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_versiones",
+    "valor": "Conversión: 2.10, 2.11, 3.02, 3.03, 3.04, 3.05",
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial Convert to RINEX",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-TRIMBLE-R8S",
+    "tabla": "base_evaluacion",
+    "campo": "registro_rinex",
+    "valor": true,
+    "fuente_url": "https://help.fieldsystems.trimble.com/tbc/17261.htm",
+    "documento": "Ayuda oficial Convert to RINEX",
+    "nota": "El registro T02/T04 del modelo se convierte mediante Convert to RINEX; la ayuda oficial admite 2.10, 2.11, 3.02, 3.03, 3.04, 3.05 y 4.01. Requiere Trimble Configuration Utility vigente y archivo bruto compatible. No acredita generación directa en el receptor."
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-X1",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_directo",
+    "valor": true,
+    "fuente_url": "https://singularxyz.com/download-file/19",
+    "documento": "X1-Series User Manual v1.0, p. PDF 9",
+    "nota": "La configuración Static Data Collection admite XYZ, RINEX 3.02 y 3.04."
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-X1",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_3_conversion",
+    "valor": true,
+    "fuente_url": "https://singularxyz.com/download-file/19",
+    "documento": "X1-Series User Manual v1.0, pp. PDF 9 y 13",
+    "nota": "Conversión del formato XYZ con SingularXYZ Converter."
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-X1",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_software",
+    "valor": "SingularXYZ Converter",
+    "fuente_url": "https://singularxyz.com/download-file/19",
+    "documento": "X1-Series User Manual v1.0, 3.3",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-X1",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "La ficha declara RINEX 3.02/3.04 y formato XYZ. No acredita RINEX 2.x. La modalidad directa se marca solo donde el manual del modelo la confirma.",
+    "fuente_url": "https://www.singularxyz.com/product_detail/X1",
+    "documento": "Ficha del fabricante y manual del modelo",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-X1-LITE",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "La ficha declara RINEX 3.02/3.04 y formato XYZ. No acredita RINEX 2.x. La modalidad directa se marca solo donde el manual del modelo la confirma.",
+    "fuente_url": "https://www.singularxyz.com/product_detail/X1_Lite",
+    "documento": "Ficha del fabricante y manual del modelo",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-ORION-ONE",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "La ficha declara RINEX 3.02/3.04 y formato XYZ. No acredita RINEX 2.x. La modalidad directa se marca solo donde el manual del modelo la confirma.",
+    "fuente_url": "https://www.singularxyz.com/product_detail/Orion_ONE",
+    "documento": "Ficha del fabricante y manual del modelo",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-Z1",
+    "tabla": "base_evaluacion",
+    "campo": "rinex_conversion_nota",
+    "valor": "La ficha declara RINEX 3.02/3.04 y formato XYZ. No acredita RINEX 2.x. La modalidad directa se marca solo donde el manual del modelo la confirma.",
+    "fuente_url": "https://www.singularxyz.com/product_detail/Z1",
+    "documento": "Ficha del fabricante y manual del modelo",
+    "nota": ""
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-ORION-ONE",
+    "tabla": "base_evaluacion",
+    "campo": "carga_usb_c",
+    "valor": true,
+    "fuente_url": "https://www.singularxyz.com/product_detail/Orion_ONE",
+    "documento": "Interfaz Type-C para datos y carga",
+    "nota": "Se confirma carga, no solo presencia de conector. No cambia la corrección LEMO solo datos."
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-Z1",
+    "tabla": "base_evaluacion",
+    "campo": "carga_usb_c",
+    "valor": true,
+    "fuente_url": "https://www.singularxyz.com/product_detail/Z1",
+    "documento": "Interfaz Type-C para datos y carga",
+    "nota": "Se confirma carga, no solo presencia de conector. No cambia la corrección LEMO solo datos."
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-SFAIRA-ONE-PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "carga_usb_c",
+    "valor": true,
+    "fuente_url": "https://www.singularxyz.com/product_detail/Sfaira_ONE_Plus",
+    "documento": "Carga con power bank por Type-C",
+    "nota": "Se confirma carga, no solo presencia de conector. No cambia la corrección LEMO solo datos."
+  },
+  {
+    "id_equipo": "GNSS-CHCNAV-I73",
+    "tabla": "base_evaluacion",
+    "campo": "carga_usb_c",
+    "valor": true,
+    "fuente_url": "https://chcnav.com/",
+    "documento": "i73_DS_EN_Surveyour2.pdf: carga con cargador de teléfono por USB-C",
+    "nota": "Se confirma carga, no solo presencia de conector. No cambia la corrección LEMO solo datos."
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2",
+    "tabla": "base_evaluacion",
+    "campo": "carga_usb_c",
+    "valor": true,
+    "fuente_url": "https://docs.emlid.com/reachrs2/specifications/specs/",
+    "documento": "Ficha Reach RS2: Charging USB-C",
+    "nota": "Se confirma carga, no solo presencia de conector. No cambia la corrección LEMO solo datos."
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "carga_usb_c",
+    "valor": true,
+    "fuente_url": "https://docs.emlid.com/reachrs2/specifications/specs/",
+    "documento": "Ficha Reach RS2+: Charging USB-C",
+    "nota": "Se confirma carga, no solo presencia de conector. No cambia la corrección LEMO solo datos."
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS3",
+    "tabla": "base_evaluacion",
+    "campo": "carga_usb_c",
+    "valor": true,
+    "fuente_url": "https://docs.emlid.com/reachrs3/specifications/specs/",
+    "documento": "Ficha Reach RS3: USB Type-C charging",
+    "nota": "Se confirma carga, no solo presencia de conector. No cambia la corrección LEMO solo datos."
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2",
+    "tabla": "base_evaluacion",
+    "campo": "internet_compartido",
+    "valor": true,
+    "fuente_url": "https://docs.emlid.com/reachrs2/firmware-update/connecting-reach-to-the-internet/connecting-to-the-internet/",
+    "documento": "Emlid, conectar Reach a Wi-Fi/Internet para NTRIP",
+    "nota": "Requiere fuente de Internet externa con LTE y datos, red 2.4 GHz y configuración compatible; no convierte 3.5G interno de RS2 en LTE."
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS2PLUS",
+    "tabla": "base_evaluacion",
+    "campo": "internet_compartido",
+    "valor": true,
+    "fuente_url": "https://docs.emlid.com/reachrs2/firmware-update/connecting-reach-to-the-internet/connecting-to-the-internet/",
+    "documento": "Emlid, conectar Reach a Wi-Fi/Internet para NTRIP",
+    "nota": "Requiere fuente de Internet externa con LTE y datos, red 2.4 GHz y configuración compatible; no convierte 3.5G interno de RS2 en LTE."
+  },
+  {
+    "id_equipo": "GNSS-EMLID-RS3",
+    "tabla": "base_evaluacion",
+    "campo": "internet_compartido",
+    "valor": true,
+    "fuente_url": "https://docs.emlid.com/reachrs3/firmware-update/connecting-reach-to-the-internet/connecting-to-the-mobile-hotspot/",
+    "documento": "Emlid, conectar Reach a Wi-Fi/Internet para NTRIP",
+    "nota": "Requiere fuente de Internet externa con LTE y datos, red 2.4 GHz y configuración compatible; no convierte 3.5G interno de RS2 en LTE."
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-X1",
+    "tabla": "base_evaluacion",
+    "campo": "internet_compartido",
+    "valor": true,
+    "fuente_url": "https://singularxyz.com/download-file/19",
+    "documento": "X1-Series User Manual, flujo RTK / PDA CORS",
+    "nota": "Modo PDA CORS con software y controladora conectada a Internet; verificar LTE del dispositivo externo."
+  },
+  {
+    "id_equipo": "GNSS-SINGULARXYZ-X1-LITE",
+    "tabla": "base_evaluacion",
+    "campo": "internet_compartido",
+    "valor": true,
+    "fuente_url": "https://singularxyz.com/download-file/19",
+    "documento": "X1-Series User Manual, flujo RTK / PDA CORS",
+    "nota": "Modo PDA CORS con software y controladora conectada a Internet; verificar LTE del dispositivo externo."
+  },
+  {
+    "id_equipo": "SLAM-SINOGNSS-LS600",
+    "tabla": "slam_especificaciones",
+    "campo": "exporta_laz",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/uploads/soft/20250811/4e5ae729a4210495ed99192713a313ce.pdf",
+    "documento": "Ficha LS600 de ComNav, p.2, RealEditor: Multi-Format Import & Export",
+    "nota": "Formatos de postproceso mediante RealEditor; verificar versión y licencia. No prueba que esa licencia venga incluida."
+  },
+  {
+    "id_equipo": "SLAM-SINOGNSS-LS600",
+    "tabla": "slam_especificaciones",
+    "campo": "exporta_ply",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/uploads/soft/20250811/4e5ae729a4210495ed99192713a313ce.pdf",
+    "documento": "Ficha LS600 de ComNav, p.2, RealEditor: Multi-Format Import & Export",
+    "nota": "Formatos de postproceso mediante RealEditor; verificar versión y licencia. No prueba que esa licencia venga incluida."
+  },
+  {
+    "id_equipo": "SLAM-SINOGNSS-LS600",
+    "tabla": "slam_especificaciones",
+    "campo": "exporta_e57",
+    "valor": true,
+    "fuente_url": "https://www.comnavtech.com/uploads/soft/20250811/4e5ae729a4210495ed99192713a313ce.pdf",
+    "documento": "Ficha LS600 de ComNav, p.2, RealEditor: Multi-Format Import & Export",
+    "nota": "Formatos de postproceso mediante RealEditor; verificar versión y licencia. No prueba que esa licencia venga incluida."
+  }
+]

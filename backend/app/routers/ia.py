@@ -161,7 +161,8 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
                        'memoria_expandida_max_gb','memoria_opcional_fabrica_max_gb','memoria_interna_opcional_max_gb','memoria_interna_opciones_gb','usb_c_con_adaptador','carga_usb_c','lemo_solo_datos','internet_compartido','sim_fisica','conectividad_nota','lte_4g','uhf_tx_rx_integrada','proteccion_ip',
                        'radio_frecuencia','radio_potencia_max_w','cantidad_baterias','lemo','lemo_pines',
                        'peso_max','temperatura_operacion_min_c','temperatura_operacion_max_c','caida_m','caida_condiciones','vibracion_norma','choque_condiciones',
-                       'registro_rinex','registro_rinex_3','rinex_versiones','registro_propietario','formato_propietario',
+                       'registro_rinex','registro_rinex_2','registro_rinex_3','rinex_versiones','registro_propietario','formato_propietario',
+                       'rinex_2_directo','rinex_3_directo','rinex_2_conversion','rinex_3_conversion','rinex_conversion_software','rinex_conversion_nota',
                        'gps','glonass','galileo','beidou','qzss','navic_irnss','sbas',
                        'tiene_ppp','ppp_h_cm','ppp_v_cm','bluetooth','wifi','usb','usb_c','rs232',
                        'auditoria_fuente','auditoria_notas','tecnica_fuente','tecnica_notas'}

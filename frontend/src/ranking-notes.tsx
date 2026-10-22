@@ -8,6 +8,8 @@ export function complianceLabel(detail: any) {
     return "Cumple transferencia de archivos con adaptador LEMO–USB-C, sin carga";
   if (detail.requiere_enlace_compartido)
     return "Cumple mediante enlace 4G/LTE compartido";
+  if (detail.requiere_conversion)
+    return `Cumple mediante conversión con ${detail.software_conversion || "software documentado"}`;
   if (!detail.requiere_ampliacion) return "Cumple";
   if (detail.opcion_interna)
     return "Cumple con memoria interna de fábrica bajo pedido";
@@ -23,7 +25,8 @@ export function ExpansionNotice({ details }: { details?: any[] }) {
         d.estado === "cumple" &&
         (d.requiere_ampliacion ||
           d.requiere_adaptador ||
-          d.requiere_enlace_compartido),
+          d.requiere_enlace_compartido ||
+          d.requiere_conversion),
     ) || [];
   if (!conditional.length) return null;
   return (
@@ -33,7 +36,9 @@ export function ExpansionNotice({ details }: { details?: any[] }) {
           <strong>
             {d.nombre}: {complianceLabel(d)}.
           </strong>{" "}
-          {d.requiere_adaptador || d.requiere_enlace_compartido ? (
+          {d.requiere_adaptador ||
+          d.requiere_enlace_compartido ||
+          d.requiere_conversion ? (
             d.observacion
           ) : (
             <>

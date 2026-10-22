@@ -2,6 +2,7 @@ from dataclasses import dataclass, replace
 import re
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from .rinex import capacidad_rinex
 
 
 class Preferencias(BaseModel):
@@ -44,6 +45,9 @@ class Preferencias(BaseModel):
     protocolo_multimarca: bool | None = None
     bateria_interna: bool | None = None
     registro_rinex_3: bool | None = None
+    registro_rinex_2: bool | None = None
+    rinex_3_nativo: bool = False
+    rinex_2_nativo: bool = False
     registro_propietario: bool | None = None
     necesita_camara: bool | None = None
     cantidad_camaras_min: int | None = Field(default=None, ge=1, le=20)
@@ -146,8 +150,9 @@ CRITERIOS = (
                             ("uhf_tx_rx_integrada", "Radio UHF integrada Tx/Rx"), ("lte_4g", "4G LTE integrado"),
                             ("radio_potencia_ajustable", "Potencia de radio ajustable"),
                             ("protocolo_multimarca", "Protocolos de radio para múltiples marcas"),
-                            ("bateria_interna", "Batería interna"), ("registro_rinex_3", "Registro RINEX 3.x"),
+                            ("bateria_interna", "Batería interna"), ("registro_rinex_3", "Compatibilidad / exportación RINEX 3.x"),
                             ("registro_propietario", "Registro en formato propietario"))),
+    Criterio('registro_rinex_2','registro_rinex_2','registro_rinex_2','Compatibilidad / exportación RINEX 2.x',None,'booleano',3),
     Criterio("radio_potencia_max_w", "radio_potencia_min_w", "radio_potencia_max_w", "Potencia de transmisión disponible", "W", "minimo", 3),
     Criterio("temperatura_operacion_min_c", "temperatura_operacion_min_c", "temperatura_operacion_min_c", "Frío de operación requerido", "°C", "ambiente_min", 4),
     Criterio("temperatura_operacion_max_c", "temperatura_operacion_max_c", "temperatura_operacion_max_c", "Calor de operación requerido", "°C", "ambiente_max", 4),
@@ -238,6 +243,7 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
         opcion_interna = False
         requiere_adaptador = False
         requiere_enlace_compartido = False
+        requiere_conversion = False
 
         # Los límites térmicos se evalúan por cumplimiento, sin dividir valores
         # Celsius negativos. Si se necesita cámara, aplicar su rango restringido.
@@ -268,6 +274,9 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
                 factor = float(cumple)
 
         elif criterio.modo == "booleano":
+            if criterio.clave in ('registro_rinex_2','registro_rinex_3'):
+                version=criterio.clave[-1]
+                valor,requiere_conversion,observacion=capacidad_rinex(datos,version,getattr(preferencias,f'rinex_{version}_nativo'))
             if criterio.clave == 'usb_c' and valor is not True and not preferencias.usb_c_nativo and datos.get('usb_c_con_adaptador') is True:
                 valor = True
                 requiere_adaptador = True
@@ -388,6 +397,8 @@ def evaluar_equipo(preferencias, criterios, pesos, evaluacion, rangos):
             "opcion_interna": opcion_interna,
             "requiere_adaptador": requiere_adaptador,
             "requiere_enlace_compartido": requiere_enlace_compartido,
+            "requiere_conversion": requiere_conversion,
+            "software_conversion": datos.get('rinex_conversion_software') if requiere_conversion else None,
             "memoria_fabrica_gb": memoria_fabrica if criterio.clave == "memoria" else None,
             "factor": round(factor, 4),
             "peso": peso,

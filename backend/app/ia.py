@@ -333,7 +333,7 @@ def _post_gemini(prompt: str, requested_model: str | None = None, imagenes=None)
 def _gnss_catalog() -> dict:
     properties = Preferencias.model_json_schema()["properties"]
     allowed = {c.campo_input for c in CRITERIOS}
-    allowed.update({"ancho_max_mm", "alto_max_mm", "radio_max_mhz", "memoria_solo_fabrica", "usb_c_nativo", "lte_permite_compartido"})
+    allowed.update({"ancho_max_mm", "alto_max_mm", "radio_max_mhz", "memoria_solo_fabrica", "usb_c_nativo", "lte_permite_compartido", "rinex_2_nativo", "rinex_3_nativo"})
     return {key: properties[key] for key in sorted(allowed) if key in properties}
 
 
@@ -513,6 +513,14 @@ Reglas:
   No los omitas por no conocer el modelo ni copies automáticamente requisitos
   exclusivos del receptor. Las condiciones de ensayo y normas sin campo de cada
   familia deben quedar explícitas para revisión manual.
+- Si pide RINEX 2.x y 3.x, exige registro_rinex_2=true y registro_rinex_3=true.
+  La compatibilidad puede cubrirse con conversión de datos brutos documentada,
+  indicando software y condición, sin afirmar que ese programa venga incluido.
+  Importar RINEX en un programa no demuestra exportación ni soporte del receptor.
+  Si pide expresamente grabación/exportación RINEX directa en receptor, sin
+  conversión, usa rinex_2_nativo/rinex_3_nativo=true para la familia solicitada.
+  No confundas «formato nativo del fabricante y compatibilidad RINEX» con exigir
+  RINEX nativo. Una versión 3.02 no acredita todas las revisiones 3.x.
 - El servidor ordena primero por cumplimiento técnico. En igualdad técnica prioriza
   SinoGNSS y luego el costo comparable interno dentro de la marca. Otra marca que
   cumple más debe ir antes. No inventes costos ni superioridad técnica por marca.
