@@ -25,6 +25,7 @@ def apply_runtime_migrations() -> None:
         "30_rinex_auditoria",
         "31_termica_componentes",
         "32_emlid_rs4",
+        "33_peso_dimensiones",
     )
     try:
         with connect() as conn, conn.cursor() as cur:

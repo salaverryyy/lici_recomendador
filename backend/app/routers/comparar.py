@@ -97,6 +97,9 @@ COLUMNAS = {
     "constelaciones": ("Constelaciones", None),
     "autonomia_bateria": ("Autonomía", "h"),
     "peso_max": ("Peso", "g"),
+    "dimensiones_declaradas": ("Dimensiones y configuración", None),
+    "peso_condiciones": ("Condiciones del peso", None),
+    "fisica_fuente": ("Fuente de peso y dimensiones", None),
     "tiempo_inicializacion": ("Inicialización RTK", "s"),
     "rtk_horizontal_mm": ("RTK horizontal", "mm"),
     "rtk_vertical_mm": ("RTK vertical", "mm"),
@@ -124,7 +127,7 @@ COLUMNAS = {
 COLUMNAS_PREDETERMINADAS = [
     "pais_marca", "pais_fabricacion", "tiene_imu", "tiene_camara", "canales_gnss", "constelaciones",
     "rtk_horizontal_mm", "rtk_vertical_mm", "autonomia_bateria",
-    "peso_max", "radio_rangos", "laser", "cantidad_camaras", "memoria",
+    "peso_max", "dimensiones_declaradas", "peso_condiciones", "radio_rangos", "laser", "cantidad_camaras", "memoria",
 ]
 COLUMNAS.update({'cantidad_baterias':('Cantidad de baterías del equipo',None),
     'cantidad_baterias_kit':('Baterías incluidas en el kit declarado',None), 'lemo':('Conector LEMO',None),
@@ -206,6 +209,7 @@ def comparar(
                         'fov_horizontal_deg','fov_vertical_deg','precision_nube_cm',
                         'gnss_integrado','gnss_opcional','rtk_disponible','cantidad_camaras',
                         'colorizacion_rgb','visualizacion_tiempo_real','peso_operativo_g',
+                        'dimensiones_declaradas','peso_condiciones','fisica_fuente',
                         'autonomia_h','proteccion_ip','almacenamiento_gb','formatos_salida',
                     )
                 ]

@@ -166,7 +166,8 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
                        'rinex_2_directo','rinex_3_directo','rinex_2_conversion','rinex_3_conversion','rinex_conversion_software','rinex_conversion_nota',
                        'gps','glonass','galileo','beidou','qzss','navic_irnss','sbas',
                        'tiene_ppp','ppp_h_cm','ppp_v_cm','bluetooth','wifi','usb','usb_c','rs232',
-                       'auditoria_fuente','auditoria_notas','tecnica_fuente','tecnica_notas'}
+                       'auditoria_fuente','auditoria_notas','tecnica_fuente','tecnica_notas',
+                       'largo_mm','ancho_mm','alto_mm','dimensiones_declaradas','peso_condiciones','fisica_fuente'}
             for row in cur.fetchall():
                 data = row.pop('datos') or {}
                 rows.append({**row, **{key: data.get(key) for key in allowed}})
@@ -200,6 +201,7 @@ def _catalog(solo_cotecmi: bool, requested_type: str) -> list[dict]:
                 'rtk_disponible','operacion_sin_gnss','tiene_imu','cantidad_camaras',
                 'resolucion_camara_mp','colorizacion_rgb','visualizacion_tiempo_real',
                 'peso_operativo_g','autonomia_h','baterias_incluidas','hot_swap',
+                'dimensiones_declaradas','peso_condiciones','fisica_fuente',
                 'proteccion_ip','temperatura_operacion_min_c','temperatura_operacion_max_c',
                 'almacenamiento_gb','almacenamiento_expandible','usb_c','wifi','bluetooth',
                 'lte_4g','sim_fisica','conectividad_nota',

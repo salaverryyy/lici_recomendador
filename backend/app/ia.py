@@ -421,6 +421,11 @@ Reglas:
   que demostrara superioridad sobre las demás. Justifica después con diferencias
   documentadas y reconoce dónde la alternativa puede convenir más.
   No inventes medidas, certificaciones o ventajas para justificar la opción previa.
+  Para peso y dimensiones respeta dimensiones_declaradas y peso_condiciones:
+  distingue cuerpo, batería, empuñadura, bastón y caja de control; no compares
+  el peso de una cabeza sola con el conjunto operativo. No sumes dimensiones de
+  componentes como si fueran una envolvente montada. Si hay conflicto de revisión
+  o peso no publicado, dilo y no lo completes por analogía con otro modelo.
   En temperaturas distingue receptor GNSS, cámara y láser. Un límite específico
   del láser no limita la cámara. Usa temperatura_operacion_* para el receptor y
   temperatura_camara_*/temperatura_laser_* solo para la función correspondiente.

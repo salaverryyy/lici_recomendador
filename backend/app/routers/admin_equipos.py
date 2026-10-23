@@ -94,6 +94,7 @@ NUMERICOS.add('laser_alcance_m')
 ENTEROS.add('baterias_incluidas_por_receptor')
 TEXTOS |= {'auditoria_fuente','auditoria_notas'}
 TEXTOS |= {'conectividad_nota'}
+TEXTOS |= {'dimensiones_declaradas','peso_condiciones','fisica_fuente'}
 ENTEROS |= {'cantidad_baterias','cantidad_baterias_kit','lemo_pines'}
 TEXTOS |= {'baterias_conectores_fuente','baterias_conectores_notas'}
 NUMERICOS |= {'red_'+k for k in ('rtk_horizontal_mm','rtk_vertical_mm','rtk_ppm_h','rtk_ppm_v')}
